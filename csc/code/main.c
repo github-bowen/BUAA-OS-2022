@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <fibo.h>
+#include "../include/fibo.h"
 int main()
 {
 	int n,i;
