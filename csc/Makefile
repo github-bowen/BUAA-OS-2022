@@ -1,5 +1,5 @@
 all: ./code/fibo.c ./code/main.c
-	gcc ./code/fibo.o ./code/main.o -o fibo
+	gcc ./code/fibo.c ./code/main.c -o fibo
 
 clean: 
 	rm ./code/fibo.o
