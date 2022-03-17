@@ -6,7 +6,7 @@ n=$2
 gcc -Wall test.c -o test 2> warning.txt
 success=$?
 
-grep "warning" warning.txt | sed "s/"warning: "/""/g" >> result.txt
+grep "warning" warning.txt | sed "s/warning: //g" >> result.txt
 
 if [ $success -eq 0 ]
 then
