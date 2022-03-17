@@ -13,13 +13,9 @@ if [ $success -eq 0 ]
 then
 	while [ $count -le $n ]
 	do
-		temp="tempfile"
-		touch $temp
-		echo $count > $temp
-		$temp |  ./test $count >> result.txt
+		echo $count |  ./test >> result.txt
 		let "count++"
 	done
-	rm $temp
 fi
 
 pwd >> result.txt
