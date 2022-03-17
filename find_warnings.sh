@@ -1,5 +1,4 @@
 #!/bin/bash
-
 path=$1
 n=$2
 count=1
