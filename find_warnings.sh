@@ -2,6 +2,7 @@
 
 path=$1
 n=$2
+i=1
 
 gcc -Wall test.c -o test 2> warning.txt
 success=$?
@@ -10,10 +11,10 @@ grep "warning" warning.txt | sed "s/warning: //g" >> result.txt
 
 if [ $success -eq 0 ]
 then
-	while [ n -gt 0 ]
+	while [ $i -le $n ]
 	do
-		./test
-		let "n--"
+		./test $i
+		let "i++"
 	done
 fi
 
