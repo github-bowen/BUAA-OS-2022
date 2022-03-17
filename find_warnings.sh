@@ -3,7 +3,7 @@ path=$1
 n=$2
 count=1
 
-gcc -Wall test.c -o test 2> warning.txt
+gcc -Wall $1 -o test 2> warning.txt
 success=$?
 
 grep "warning" warning.txt | sed "s/warning: //g" >> result.txt
