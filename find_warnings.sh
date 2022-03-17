@@ -2,7 +2,7 @@
 path=$1
 n=$2
 count=1
-
+i
 gcc -Wall test.c -o test 2> warning.txt
 success=$?
 
@@ -16,6 +16,5 @@ then
 		let "count++"
 	done
 fi
-
 pwd >> result.txt
 
