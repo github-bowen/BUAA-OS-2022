@@ -13,7 +13,7 @@ if [ $success -eq 0 ]
 then
 	while [ $i -le $n ]
 	do
-		./test $i
+		./test $i  >> result.txt
 		let "i++"
 	done
 fi
