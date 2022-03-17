@@ -1,0 +1,216 @@
+[33m[01m[05m[ You are changing the branch: lab0-Extra ][0m
+Autotest: Begin at Thu Mar 17 16:04:52 CST 2022
+[32m[ You have passed testcase 1/10. ][0m
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result_ans.txt differ
+[31m[01m[ You have not passed testcase 2/10. ][0m
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result_ans.txt differ
+[31m[01m[ You have not passed testcase 3/10. ][0m
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result_ans.txt differ
+[31m[01m[ You have not passed testcase 4/10. ][0m
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result_ans.txt differ
+[31m[01m[ You have not passed testcase 5/10. ][0m
+runtime/cgo: pthread_create failed: Resource temporarily unavailable
+SIGABRT: abort
+PC=0x7fdb9810803b m=3 sigcode=18446744073709551610
+
+goroutine 0 [idle]:
+runtime: unknown pc 0x7fdb9810803b
+stack: frame={sp:0x7fdb9544e870, fp:0x0} stack=[0x7fdb94a4f288,0x7fdb9544ee88)
+00007fdb9544e770:  0000000000000000  0000000000000000 
+00007fdb9544e780:  0000000000000000  0000000000000000 
+00007fdb9544e790:  0000000000000000  00007fdb982db298 
+00007fdb9544e7a0:  00007fdb9544eb30  0000000000001000 
+00007fdb9544e7b0:  00007fdb73fff700  00007fdb9544ebc0 
+00007fdb9544e7c0:  00007fdb88000cc0  00007fdb98302187 
+00007fdb9544e7d0:  0000000000000005  0000000000000000 
+00007fdb9544e7e0:  0000000000000000  00007fdb982f1790 
+00007fdb9544e7f0:  00007fdb9544ea40  00007fdb98309aa7 
+00007fdb9544e800:  00007fdb88000cc0  00007fdb88000dc0 
+00007fdb9544e810:  00007fdb88000dc0  0000000000000000 
+00007fdb9544e820:  00007fdb73fff700  0000000000000000 
+00007fdb9544e830:  0000000000000fff  0000564ec27ade3e <runtime.(*mTreap).end+78> 
+00007fdb9544e840:  000000000000037f  0000000000000000 
+00007fdb9544e850:  0000000000000000  0000ffff00001fa0 
+00007fdb9544e860:  0000000000000000  0000000000000000 
+00007fdb9544e870: <0000000000000000  0000000000000000 
+00007fdb9544e880:  0000000000000000  0000000000000000 
+00007fdb9544e890:  0000000000000000  0000000000000000 
+00007fdb9544e8a0:  0000000000000000  0000000000000000 
+00007fdb9544e8b0:  0000000000000000  0000000000000000 
+00007fdb9544e8c0:  0000000000000000  0000000000000000 
+00007fdb9544e8d0:  0000000000000000  0000000000000000 
+00007fdb9544e8e0:  0000000000000000  0000000000000000 
+00007fdb9544e8f0:  fffffffe7fffffff  ffffffffffffffff 
+00007fdb9544e900:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e910:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e920:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e930:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e940:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e950:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e960:  ffffffffffffffff  ffffffffffffffff 
+runtime: unknown pc 0x7fdb9810803b
+stack: frame={sp:0x7fdb9544e870, fp:0x0} stack=[0x7fdb94a4f288,0x7fdb9544ee88)
+00007fdb9544e770:  0000000000000000  0000000000000000 
+00007fdb9544e780:  0000000000000000  0000000000000000 
+00007fdb9544e790:  0000000000000000  00007fdb982db298 
+00007fdb9544e7a0:  00007fdb9544eb30  0000000000001000 
+00007fdb9544e7b0:  00007fdb73fff700  00007fdb9544ebc0 
+00007fdb9544e7c0:  00007fdb88000cc0  00007fdb98302187 
+00007fdb9544e7d0:  0000000000000005  0000000000000000 
+00007fdb9544e7e0:  0000000000000000  00007fdb982f1790 
+00007fdb9544e7f0:  00007fdb9544ea40  00007fdb98309aa7 
+00007fdb9544e800:  00007fdb88000cc0  00007fdb88000dc0 
+00007fdb9544e810:  00007fdb88000dc0  0000000000000000 
+00007fdb9544e820:  00007fdb73fff700  0000000000000000 
+00007fdb9544e830:  0000000000000fff  0000564ec27ade3e <runtime.(*mTreap).end+78> 
+00007fdb9544e840:  000000000000037f  0000000000000000 
+00007fdb9544e850:  0000000000000000  0000ffff00001fa0 
+00007fdb9544e860:  0000000000000000  0000000000000000 
+00007fdb9544e870: <0000000000000000  0000000000000000 
+00007fdb9544e880:  0000000000000000  0000000000000000 
+00007fdb9544e890:  0000000000000000  0000000000000000 
+00007fdb9544e8a0:  0000000000000000  0000000000000000 
+00007fdb9544e8b0:  0000000000000000  0000000000000000 
+00007fdb9544e8c0:  0000000000000000  0000000000000000 
+00007fdb9544e8d0:  0000000000000000  0000000000000000 
+00007fdb9544e8e0:  0000000000000000  0000000000000000 
+00007fdb9544e8f0:  fffffffe7fffffff  ffffffffffffffff 
+00007fdb9544e900:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e910:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e920:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e930:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e940:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e950:  ffffffffffffffff  ffffffffffffffff 
+00007fdb9544e960:  ffffffffffffffff  ffffffffffffffff 
+
+goroutine 20 [syscall]:
+runtime.notetsleepg(0x564ec5847d80, 0x3082f7, 0x1)
+	/usr/lib/go-1.13/src/runtime/lock_futex.go:227 +0x38 fp=0xc00007af60 sp=0xc00007af30 pc=0x564ec279b488
+runtime.timerproc(0x564ec5847d60)
+	/usr/lib/go-1.13/src/runtime/time.go:311 +0x2f5 fp=0xc00007afd8 sp=0xc00007af60 pc=0x564ec27dd735
+runtime.goexit()
+	/usr/lib/go-1.13/src/runtime/asm_amd64.s:1357 +0x1 fp=0xc00007afe0 sp=0xc00007afd8 pc=0x564ec27ecc81
+created by runtime.(*timersBucket).addtimerLocked
+	/usr/lib/go-1.13/src/runtime/time.go:169 +0x110
+
+goroutine 1 [select]:
+net/http.(*persistConn).roundTrip(0xc000594ea0, 0xc00062d5c0, 0x0, 0x0, 0x0)
+	/usr/lib/go-1.13/src/net/http/transport.go:2431 +0x772
+net/http.(*Transport).roundTrip(0xc000410000, 0xc000636700, 0x564ec279faa0, 0x98, 0xc00006e240)
+	/usr/lib/go-1.13/src/net/http/transport.go:535 +0x9b8
+net/http.(*Transport).RoundTrip(0xc000410000, 0xc000636700, 0xc000410000, 0x0, 0x0)
+	/usr/lib/go-1.13/src/net/http/roundtrip.go:17 +0x37
+net/http.send(0xc000636700, 0x564ec47bc180, 0xc000410000, 0x0, 0x0, 0x0, 0xc000612598, 0xc000580102, 0x1, 0x0)
+	/usr/lib/go-1.13/src/net/http/client.go:250 +0x445
+net/http.(*Client).send(0xc0005bfd40, 0xc000636700, 0x0, 0x0, 0x0, 0xc000612598, 0x0, 0x1, 0xc00068c148)
+	/usr/lib/go-1.13/src/net/http/client.go:174 +0xfc
+net/http.(*Client).do(0xc0005bfd40, 0xc000636700, 0x0, 0x0, 0x0)
+	/usr/lib/go-1.13/src/net/http/client.go:641 +0x3d0
+net/http.(*Client).Do(...)
+	/usr/lib/go-1.13/src/net/http/client.go:509
+github.com/docker/cli/vendor/github.com/docker/docker/client.(*Client).doRequest(0xc00058e500, 0x564ec4818680, 0xc000616300, 0xc000636600, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, ...)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/vendor/github.com/docker/docker/client/request.go:125 +0x153
+github.com/docker/cli/vendor/github.com/docker/docker/client.(*Client).sendRequest(0xc00058e500, 0x564ec4818680, 0xc000616300, 0x564ec3d5db4d, 0x4, 0x564ec3d734ca, 0x12, 0xc000580790, 0x564ec47b94c0, 0xc00062c480, ...)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/vendor/github.com/docker/docker/client/request.go:113 +0x150
+github.com/docker/cli/vendor/github.com/docker/docker/client.(*Client).post(0xc00058e500, 0x564ec4818680, 0xc000616300, 0x564ec3d734ca, 0x12, 0xc000580790, 0x564ec4613da0, 0xc0006105a0, 0x0, 0x0, ...)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/vendor/github.com/docker/docker/client/request.go:46 +0x15c
+github.com/docker/cli/vendor/github.com/docker/docker/client.(*Client).ContainerCreate(0xc00058e500, 0x564ec4818680, 0xc000616300, 0xc00032a000, 0xc000650000, 0xc000612030, 0x0, 0x0, 0x0, 0x0, ...)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/vendor/github.com/docker/docker/client/container_create.go:55 +0x386
+github.com/docker/cli/cli/command/container.createContainer(0x564ec4818680, 0xc000616300, 0x564ec484a460, 0xc0003c3a00, 0xc000610440, 0xc0002fb630, 0x0, 0x0, 0x0)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/cli/command/container/create.go:258 +0x44b
+github.com/docker/cli/cli/command/container.runContainer(0x564ec484a460, 0xc0003c3a00, 0xc0002fb630, 0xc000241600, 0xc000610440, 0x0, 0x0)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/cli/command/container/run.go:128 +0x1f6
+github.com/docker/cli/cli/command/container.runRun(0x564ec484a460, 0xc0003c3a00, 0xc0004ba100, 0xc0002fb630, 0xc000241600, 0x564ec3d57f92, 0x564ec2dfcbb0)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/cli/command/container/run.go:91 +0x65c
+github.com/docker/cli/cli/command/container.NewRunCommand.func1(0xc000316dc0, 0xc000638240, 0x6, 0x11, 0x0, 0x0)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/cli/command/container/run.go:45 +0xff
+github.com/docker/cli/vendor/github.com/spf13/cobra.(*Command).execute(0xc000316dc0, 0xc000594910, 0x11, 0x11, 0xc000316dc0, 0xc000594910)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/vendor/github.com/spf13/cobra/command.go:850 +0x462
+github.com/docker/cli/vendor/github.com/spf13/cobra.(*Command).ExecuteC(0xc00040db80, 0xc000594900, 0x12, 0x12)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/vendor/github.com/spf13/cobra/command.go:958 +0x34b
+github.com/docker/cli/vendor/github.com/spf13/cobra.(*Command).Execute(...)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/vendor/github.com/spf13/cobra/command.go:895
+main.runDocker(0xc0003c3a00, 0x564ec47bc4a0, 0xc0000e4010)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/cmd/docker/docker.go:287 +0x1d3
+main.main()
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/cmd/docker/docker.go:298 +0xf3
+
+goroutine 6 [syscall]:
+os/signal.signal_recv(0x564ec27ecc86)
+	/usr/lib/go-1.13/src/runtime/sigqueue.go:147 +0x9e
+os/signal.loop()
+	/usr/lib/go-1.13/src/os/signal/signal_unix.go:23 +0x24
+created by os/signal.init.0
+	/usr/lib/go-1.13/src/os/signal/signal_unix.go:29 +0x43
+
+goroutine 7 [chan receive]:
+github.com/docker/cli/vendor/k8s.io/klog.(*loggingT).flushDaemon(0x564ec5842fc0)
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/vendor/k8s.io/klog/klog.go:1010 +0x8d
+created by github.com/docker/cli/vendor/k8s.io/klog.init.0
+	/build/docker.io-NgswvZ/docker.io-20.10.7/.gopath/src/github.com/docker/cli/vendor/k8s.io/klog/klog.go:411 +0xd8
+
+goroutine 50 [IO wait]:
+internal/poll.runtime_pollWait(0x7fdb8c1a6ea8, 0x72, 0xffffffffffffffff)
+	/usr/lib/go-1.13/src/runtime/netpoll.go:184 +0x57
+internal/poll.(*pollDesc).wait(0xc00060e018, 0x72, 0x1000, 0x1000, 0xffffffffffffffff)
+	/usr/lib/go-1.13/src/internal/poll/fd_poll_runtime.go:87 +0x47
+internal/poll.(*pollDesc).waitRead(...)
+	/usr/lib/go-1.13/src/internal/poll/fd_poll_runtime.go:92
+internal/poll.(*FD).Read(0xc00060e000, 0xc000614000, 0x1000, 0x1000, 0x0, 0x0, 0x0)
+	/usr/lib/go-1.13/src/internal/poll/fd_unix.go:169 +0x1d1
+net.(*netFD).Read(0xc00060e000, 0xc000614000, 0x1000, 0x1000, 0xc000504000, 0xc000623dd0, 0xc000623be8)
+	/usr/lib/go-1.13/src/net/fd_unix.go:202 +0x51
+net.(*conn).Read(0xc000612000, 0xc000614000, 0x1000, 0x1000, 0x0, 0x0, 0x0)
+	/usr/lib/go-1.13/src/net/net.go:184 +0x6a
+net/http.(*persistConn).Read(0xc000594ea0, 0xc000614000, 0x1000, 0x1000, 0xc000623ed8, 0x564ec27ea090, 0xc000623ed8)
+	/usr/lib/go-1.13/src/net/http/transport.go:1758 +0x77
+bufio.(*Reader).fill(0xc000258000)
+	/usr/lib/go-1.13/src/bufio/bufio.go:100 +0x105
+bufio.(*Reader).Peek(0xc000258000, 0x1, 0x2, 0x0, 0x0, 0xc00060c000, 0x0)
+	/usr/lib/go-1.13/src/bufio/bufio.go:138 +0x51
+net/http.(*persistConn).readLoop(0xc000594ea0)
+	/usr/lib/go-1.13/src/net/http/transport.go:1911 +0x1d8
+created by net/http.(*Transport).dialConn
+	/usr/lib/go-1.13/src/net/http/transport.go:1580 +0xb0f
+
+goroutine 51 [select]:
+net/http.(*persistConn).writeLoop(0xc000594ea0)
+	/usr/lib/go-1.13/src/net/http/transport.go:2210 +0x125
+created by net/http.(*Transport).dialConn
+	/usr/lib/go-1.13/src/net/http/transport.go:1581 +0xb34
+
+rax    0x0
+rbx    0x7fdb9544f700
+rcx    0x7fdb9810803b
+rdx    0x0
+rdi    0x2
+rsi    0x7fdb9544e870
+rbp    0x7fdb9544ebc0
+rsp    0x7fdb9544e870
+r8     0x0
+r9     0x7fdb9544e870
+r10    0x8
+r11    0x246
+r12    0x564ec403da6a
+r13    0x7fdb9544ec80
+r14    0x564ec3ff22f8
+r15    0x0
+rip    0x7fdb9810803b
+rflags 0x246
+cs     0x33
+fs     0x0
+gs     0x0
+diff: /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result.txt: No such file or directory
+[31m[01m[ Can not find your result.txt ][0m
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result_ans.txt differ
+[31m[01m[ You have not passed testcase 7/10. ][0m
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result_ans.txt differ
+[31m[01m[ You have not passed testcase 8/10. ][0m
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result_ans.txt differ
+[31m[01m[ You have not passed testcase 9/10. ][0m
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T16:04:52+08:00-AF6U4/result_ans.txt differ
+[31m[01m[ You have not passed testcase 10/10. ][0m
+/home/git/ostest/lab0-Extra/judge.sh: line 60: unexpected EOF while looking for matching `"'
+/home/git/ostest/lab0-Extra/judge.sh: line 67: syntax error: unexpected end of file
+[33m[01m[ You got 2 (of 100) this time. Thu Mar 17 16:21:40 CST 2022 ][0m
+Autotest: End at Thu Mar 17 16:21:40 CST 2022
