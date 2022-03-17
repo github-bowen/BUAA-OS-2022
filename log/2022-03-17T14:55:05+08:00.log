@@ -1,0 +1,124 @@
+[33m[01m[05m[ You are changing the branch: lab0-Extra ][0m
+Autotest: Begin at Thu Mar 17 14:55:05 CST 2022
+65532
+65530
+65530
+65530
+65534
+65532
+65530
+65530
+65528
+65530
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result_ans.txt differ
+[31m[01m[ You have not passed testcase 1/10. ][0m
+65534
+65532
+65530
+65534
+65534
+65532
+65528
+65534
+65532
+65528
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result_ans.txt differ
+[31m[01m[ You have not passed testcase 2/10. ][0m
+65534
+65530
+65528
+65532
+65534
+65534
+65532
+65534
+65534
+65530
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result_ans.txt differ
+[31m[01m[ You have not passed testcase 3/10. ][0m
+65528
+65534
+65534
+65534
+65530
+65530
+65528
+65528
+65534
+65530
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result_ans.txt differ
+[31m[01m[ You have not passed testcase 4/10. ][0m
+65530
+65530
+65534
+65530
+65532
+65534
+65534
+65528
+65532
+65528
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result_ans.txt differ
+[31m[01m[ You have not passed testcase 5/10. ][0m
+65532
+65528
+65532
+65528
+65534
+65532
+65530
+65530
+65534
+65532
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result_ans.txt differ
+[31m[01m[ You have not passed testcase 6/10. ][0m
+65532
+65534
+65528
+65530
+65530
+65528
+65528
+65532
+65532
+65534
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result_ans.txt differ
+[31m[01m[ You have not passed testcase 7/10. ][0m
+65530
+65528
+65528
+65534
+65534
+65534
+65530
+65530
+65528
+65530
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result_ans.txt differ
+[31m[01m[ You have not passed testcase 8/10. ][0m
+65530
+65532
+65532
+65534
+65530
+65532
+65528
+65532
+65532
+65534
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result_ans.txt differ
+[31m[01m[ You have not passed testcase 9/10. ][0m
+65530
+65532
+65528
+65534
+65528
+65534
+65534
+65528
+65534
+65528
+Files /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result.txt and /home/git/ostest/target/20231198/lab0-Extra-2022-03-17T14:55:05+08:00-8YCGu/result_ans.txt differ
+[31m[01m[ You have not passed testcase 10/10. ][0m
+[33m[01m[ You got 0 (of 100) this time. Thu Mar 17 15:03:24 CST 2022 ][0m
+Autotest: End at Thu Mar 17 15:03:24 CST 2022
