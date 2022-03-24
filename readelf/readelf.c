@@ -77,7 +77,7 @@ int readelf(u_char *binary, int size)
 						phdr2 = (Elf32_Phdr *)(ptr_ph_table + Nr2 * ph_entry_size);
 						Elf32_Addr left2 = phdr2->p_vaddr;
 	   					Elf32_Addr right2 = left2 + phdr2->p_memsz;
-						Elf32_Addr page_addr = right1 / 4096;
+						unsigned int page_addr = right1 / 4096;
 						if (left1 < right2 && left2 - right1 >= 4096) {
 								continue;
 						} else if (left1 < right2 && right1 <= left2) {
