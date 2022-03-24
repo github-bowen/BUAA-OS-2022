@@ -68,7 +68,7 @@ int readelf(u_char *binary, int size)
 		ptr_ph_table = binary + ehdr->e_phoff;
 		ph_entry_count = ehdr->e_phnum;  
 		ph_entry_size = ehdr->e_phentsize;  
-	/*	
+	
 	    for (Nr = 0; Nr < ph_entry_count - 1; Nr++) {
 				phdr1 = (Elf32_Phdr *)(ptr_ph_table + Nr * ph_entry_size);
 				Elf32_Addr left1 = phdr1->p_vaddr;
@@ -77,8 +77,8 @@ int readelf(u_char *binary, int size)
 						phdr2 = (Elf32_Phdr *)(ptr_ph_table + Nr2 * ph_entry_size);
 						Elf32_Addr left2 = phdr2->p_vaddr;
 	   					Elf32_Addr right2 = left2 + phdr2->p_memsz;
-						unsigned int page_addr = right1 / 4096;
-						unsigned int page_addr2 = right2 / 4096;
+						unsigned int page_addr = right1 & 0xfffff000;
+						unsigned int page_addr2 = right2 & 0xfffff000;
 						if ((left1 < right2 && left2 - right1 >= 4096) || 
 								(left2 < right1 && left1 - right2 >= 4096)) {
 								continue;
@@ -101,7 +101,7 @@ int readelf(u_char *binary, int size)
 				}
 				if (!flag) return 0;		
 		}
-*/
+
 		for (Nr = 0; Nr < ph_entry_count; Nr++) {
 				phdr = (Elf32_Phdr *)(ptr_ph_table + Nr * ph_entry_size);
 				printf("%d:0x%x,0x%x\n", Nr, phdr->p_filesz, phdr->p_memsz);
