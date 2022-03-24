@@ -78,7 +78,14 @@ int readelf(u_char *binary, int size)
 						Elf32_Addr left2 = phdr2->p_vaddr;
 	   					Elf32_Addr right2 = left2 + phdr2->p_memsz;
 						unsigned int page_addr = right1 & 0xfffff000;
+						if (right1 & 0x00000fff == 0) {
+								page_addr -= 4096;
+						}
 						unsigned int page_addr2 = right2 & 0xfffff000;
+						if (right2 & 0x00000fff == 0) {
+                                  page_addr -= 4096;
+                        }
+
 						if ((left1 < right2 && left2 - right1 >= 4096) || 
 								(left2 < right1 && left1 - right2 >= 4096)) {
 								continue;
