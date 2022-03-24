@@ -78,7 +78,9 @@ int readelf(u_char *binary, int size)
 						Elf32_Addr left2 = phdr2->p_vaddr;
 	   					Elf32_Addr right2 = left2 + phdr2->p_memsz;
 						unsigned int page_addr = right1 / 4096;
-						if (left1 < right2 && left2 - right1 >= 4096) {
+						unsigned int page_addr2 = right2 / 4096;
+						if ((left1 < right2 && left2 - right1 >= 4096) || 
+								(left2 < right1 && left1 - right2 >= 4096)) {
 								continue;
 						} else if (left1 < right2 && right1 <= left2) {
 								flag = 0;
@@ -88,6 +90,13 @@ int readelf(u_char *binary, int size)
 								flag = 0;
 								printf("Conflict at page va : 0x%x\n", page_addr);
 								break;
+						} else if (left2 < right1 && right2 <= left1) {
+								flag = 0;
+								printf("Overlay at page va : 0x%x\n", page_addr2);
+								break;
+						} else if (left2 < right1 && right2 > left1) {
+								flag = 0;
+								printf("Conflict at page va : 0x%x\n", page_addr2);
 						}
 				}
 				if (!flag) return 0;		
