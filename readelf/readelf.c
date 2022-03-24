@@ -53,6 +53,9 @@ int readelf(u_char *binary, int size)
         Elf32_Phdr *phdr = NULL;
 		Elf32_Phdr *phdr1 = NULL;
 		Elf32_Phdr *phdr2 = NULL;
+		
+		Elf32_Addr overlay_addr = -1;
+		Elf32_Addr conflict_addr = -1;
 
         u_char *ptr_ph_table = NULL;
         Elf32_Half ph_entry_count;
@@ -92,24 +95,58 @@ int readelf(u_char *binary, int size)
 								continue;
 						} else if (left1 < right2 && right1 <= left2) {
 								flag = 0;
-								printf("Overlay at page va : 0x%x\n", page_addr);
-								break;
+								//printf("Overlay at page va : 0x%x\n", page_addr);
+								if (overlay_addr == -1) {
+									overlay_addr = page_addr;
+								} else if (overlay_addr > page_addr) {
+									overlay_addr = page_addr;
+								}
+								//break;
 						} else if (left1 < right2 && right1 > left2) {
 								flag = 0;
-								printf("Conflict at page va : 0x%x\n", page_addr);
-								break;
+								//printf("Conflict at page va : 0x%x\n", page_addr);
+								if (conflict_addr == -1) {
+                                     conflict_addr = page_addr;
+                                 } else if (conflict_addr > page_addr) {
+                                     conflict_addr = page_addr;
+                                 } 
+								//break;
 						} else if (left2 < right1 && right2 <= left1) {
 								flag = 0;
-								printf("Overlay at page va : 0x%x\n", page_addr2);
-								break;
+								//printf("Overlay at page va : 0x%x\n", page_addr2);
+								if (overlay_addr == -1) {
+									overlay_addr = page_addr;
+								} else if (overlay_addr > page_addr) {
+									overlay_addr = page_addr;
+								}
+								//break;
 						} else if (left2 < right1 && right2 > left1) {
 								flag = 0;
-								printf("Conflict at page va : 0x%x\n", page_addr2);
-								break;
+								//printf("Conflict at page va : 0x%x\n", page_addr2);
+								if (conflict_addr == -1) {
+									conflict_addr = page_addr;
+								} else if (conflict_addr > page_addr) {
+									conflict_addr = page_addr;
+								}
+								//break;
 						}
 				}
-				if (!flag) return 0;		
 		}
+		if (!flag) {
+				if (conflict_addr == -1) {
+						printf("Overlay at page va : 0x%x\n", overlay_addr);
+						return 0;
+				} else if (overlay_addr == -1) {
+						printf("Conflict at page va : 0x%x\n", conflict_addr);
+						return 0;
+				} else if (overlay_addr < conflict_addr) {
+						printf("Overlay at page va : 0x%x\n", overlay_addr);
+						return 0;
+				} else {
+						printf("Conflict at page va : 0x%x\n", conflict_addr);
+				}
+				return 0;
+	   	}
 
 		for (Nr = 0; Nr < ph_entry_count; Nr++) {
 				phdr = (Elf32_Phdr *)(ptr_ph_table + Nr * ph_entry_size);
