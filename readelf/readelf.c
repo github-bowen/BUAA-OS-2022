@@ -104,6 +104,7 @@ int readelf(u_char *binary, int size)
 						} else if (left2 < right1 && right2 > left1) {
 								flag = 0;
 								printf("Conflict at page va : 0x%x\n", page_addr2);
+								break;
 						}
 				}
 				if (!flag) return 0;		
