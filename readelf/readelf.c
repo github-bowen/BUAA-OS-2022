@@ -48,33 +48,55 @@ int readelf(u_char *binary, int size)
         Elf32_Ehdr *ehdr = (Elf32_Ehdr *)binary;
 
         int Nr;
+		int Nr2;
 
-        Elf32_Shdr *shdr = NULL;
+        Elf32_Phdr *phdr = NULL;
+		Elf32_Phdr *phdr1 = NULL;
+		Elf32_Phdr *phdr2 = NULL;
 
-        u_char *ptr_sh_table = NULL;
-        Elf32_Half sh_entry_count;
-        Elf32_Half sh_entry_size;
+        u_char *ptr_ph_table = NULL;
+        Elf32_Half ph_entry_count;
+        Elf32_Half ph_entry_size;
 
-
+		int flag = 1;
         // check whether `binary` is a ELF file.
         if (size < 4 || !is_elf_format(binary)) {
                 printf("not a standard elf format\n");
                 return -1;
         }
 
-        // get section table addr, section header number and section header size.
-		ptr_sh_table = binary + ehdr->e_shoff;  // section table addr
-		sh_entry_count = ehdr->e_shnum;  // section number
-		sh_entry_size = ehdr->e_shentsize;  // section size
-        // for each section header, output section number and section addr.
+		ptr_ph_table = binary + ehdr->e_phoff;
+		ph_entry_count = ehdr->e_phnum;  
+		ph_entry_size = ehdr->e_phentsize;  
 		
-	    for (Nr = 0; Nr < sh_entry_count; Nr++) {
-				shdr = (Elf32_Shdr *)(ptr_sh_table + Nr * sh_entry_size);
-				printf("%d:0x%x\n", Nr, shdr->sh_addr);
+	    for (Nr = 0; Nr < ph_entry_count - 1; Nr++) {
+				phdr1 = (Elf32_Phdr *)(ptr_ph_table + Nr * ph_entry_size);
+				Elf32_Addr left1 = phdr1->p_vaddr;
+				Elf32_Addr right1 = left1 + phdr1->p_memsz;
+				for (Nr2 = Nr + 1; Nr2 < ph_entry_count; Nr2++) {
+						phdr2 = (Elf32_Phdr *)(ptr_ph_table + Nr2 * ph_entry_size);
+						Elf32_Addr left2 = phdr2->p_vaddr;
+	   					Elf32_Addr right2 = left2 + phdr2->p_memsz;
+						Elf32_Addr page_addr = right1 / 4096;
+						if (left1 < right2 && left2 - right1 >= 4096) {
+								continue;
+						} else if (left1 < right2 && right1 <= left2) {
+								flag = 0;
+								printf("Overlay at page va : 0x%x\n", page_addr);
+								break;
+						} else if (left1 < right2 && right1 > left2) {
+								flag = 0;
+								printf("Conflict at page va : 0x%x\n", page_addr);
+								break;
+						}
+				}
+				if (!flag) return 0;		
 		}
 
-        // hint: section number starts at 0.
-
+		for (Nr = 0; Nr < ph_entry_count; Nr++) {
+				phdr = (Elf32_Phdr *)(ptr_ph_table + Nr * ph_entry_size);
+				printf("%d:0x%x,0x%x\n", Nr, phdr->p_filesz, phdr->p_memsz);
+		}
 
         return 0;
 }
