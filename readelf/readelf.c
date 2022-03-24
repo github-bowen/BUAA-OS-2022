@@ -135,13 +135,10 @@ int readelf(u_char *binary, int size)
 		if (!flag) {
 				if (conflict_addr == -1) {
 						printf("Overlay at page va : 0x%x\n", overlay_addr);
-						return 0;
 				} else if (overlay_addr == -1) {
 						printf("Conflict at page va : 0x%x\n", conflict_addr);
-						return 0;
 				} else if (overlay_addr < conflict_addr) {
 						printf("Overlay at page va : 0x%x\n", overlay_addr);
-						return 0;
 				} else {
 						printf("Conflict at page va : 0x%x\n", conflict_addr);
 				}
