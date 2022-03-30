@@ -18,9 +18,8 @@ int main()
 
 	mips_init();
 	panic("main is over is error!");
-	//char c = '!';
-	//printf("hello%c\n", c);
-	
+	//int n = 987;
+	//printf("%00000010.3d", n);	
 
 
 	return 0;

@@ -75,10 +75,8 @@ lp_Print(void (*output)(void *, char *, int),
 			buf[length++] = *fmt++;
 		if (length != 0) {
 			OUTPUT(arg, buf, length);
-			if (*fmt == '\0') {
-				fmt--;
+			if (*fmt == '\0')
 				break;
-			}
 		}
 		length = 0;
 		fmt++;
