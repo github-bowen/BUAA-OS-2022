@@ -69,54 +69,97 @@ lp_Print(void (*output)(void *, char *, int),
 	{ 
 	    /* scan for the next '%' */
 	    /* flush the string found so far */
-
 	    /* check "are we hitting the end?" */
+		length = 0;
+		while (*fmt != '%' && *fmt != '\0') 
+			buf[length++] = *fmt++;
+		if (length != 0)
+			OUTPUT(arg, buf, length);
+		if (*fmt == '\0') {
+			fmt--;
+			break;
+		}
+		fmt++;
 	}
 
 	
 	/* we found a '%' */
-	
 	/* check for long */
-
 	/* check for other prefixes */
-
 	/* check format flag */
+	ladjust = 0;
+	padc = ' ';
+	// HANDLE [FLAG]: '-', '0'
+	while (*fmt == '-' || *fmt == '0') {
+		if (*fmt == '-')
+			ladjust = 1;
+		else
+			padc = '0';
+		fmt++;
+	}
 	
+
+	// HANDLE [WIDTH]
+	width = 0;
+	if (IsDigit(*fmt))
+		while (IsDigit(*fmt))
+			width = width * 10 + Ctod(*fmt++);
+
+
+	// HANDLE [PRECISION]
+	prec = 0;  // default value of the precision? I don't know anyway.
+	if (*fmt == '.') {
+		fmt++;
+		while (IsDigit(*fmt))
+			prec = prec * 10 + Ctod(*fmt++);
+	}
+
+
+	// HANDLE [LENGTH]: 'l'
+	longFlag = 0;
+	if (*fmt == 'l') {
+		longFlag = 1;
+		fmt++;
+	}
+
+	// HANDLE [SPECIFIER] in switch-case expressions
 
 	negFlag = 0;
 	switch (*fmt) {
 	 case 'b':
 	    if (longFlag) { 
-		num = va_arg(ap, long int); 
+			num = va_arg(ap, long int); 
 	    } else { 
-		num = va_arg(ap, int);
+			num = va_arg(ap, int);
 	    }
-	    length = PrintNum(buf, num, 2, 0, width, ladjust, padc, 0);
-	    OUTPUT(arg, buf, length);
+	   	length = PrintNum(buf, num, 2, 0, width, ladjust, padc, 0);
+	   	OUTPUT(arg, buf, length);
 	    break;
 
 	 case 'd':
 	 case 'D':
 	    if (longFlag) { 
-		num = va_arg(ap, long int);
+			num = va_arg(ap, long int);
 	    } else { 
-		num = va_arg(ap, int); 
+			num = va_arg(ap, int); 
 	    }
-	    
 		/*  Part2:
 			your code here.
 			Refer to other part (case 'b',case 'o' etc.) and func PrintNum to complete this part.
 			Think the difference between case 'd' and others. (hint: negFlag).
 		*/
-	    
+		if (num < 0) 
+			negFlag = 1;
+		length = PrintNum(buf, num, 10, negFlag, width, ladjust, padc, 0);
+		OUTPUT(arg, buf, length);
 		break;
 
 	 case 'o':
 	 case 'O':
 	    if (longFlag) { 
-		num = va_arg(ap, long int);
+			num = va_arg(ap, long int);
 	    } else { 
-		num = va_arg(ap, int); 
+			num = va_arg(ap, int); 
 	    }
 	    length = PrintNum(buf, num, 8, 0, width, ladjust, padc, 0);
 	    OUTPUT(arg, buf, length);
@@ -125,9 +168,9 @@ lp_Print(void (*output)(void *, char *, int),
 	 case 'u':
 	 case 'U':
 	    if (longFlag) { 
-		num = va_arg(ap, long int);
+			num = va_arg(ap, long int);
 	    } else { 
-		num = va_arg(ap, int); 
+			num = va_arg(ap, int); 
 	    }
 	    length = PrintNum(buf, num, 10, 0, width, ladjust, padc, 0);
 	    OUTPUT(arg, buf, length);
@@ -135,9 +178,9 @@ lp_Print(void (*output)(void *, char *, int),
 	    
 	 case 'x':
 	    if (longFlag) { 
-		num = va_arg(ap, long int);
+			num = va_arg(ap, long int);
 	    } else { 
-		num = va_arg(ap, int); 
+			num = va_arg(ap, int); 
 	    }
 	    length = PrintNum(buf, num, 16, 0, width, ladjust, padc, 0);
 	    OUTPUT(arg, buf, length);
@@ -145,9 +188,9 @@ lp_Print(void (*output)(void *, char *, int),
 
 	 case 'X':
 	    if (longFlag) { 
-		num = va_arg(ap, long int);
+			num = va_arg(ap, long int);
 	    } else { 
-		num = va_arg(ap, int); 
+			num = va_arg(ap, int); 
 	    }
 	    length = PrintNum(buf, num, 16, 0, width, ladjust, padc, 1);
 	    OUTPUT(arg, buf, length);
@@ -188,13 +231,16 @@ PrintChar(char * buf, char c, int length, int ladjust)
 {
     int i;
     
-    if (length < 1) length = 1;
+    if (length < 1) 
+		length = 1;
     if (ladjust) {
-	*buf = c;
-	for (i=1; i< length; i++) buf[i] = ' ';
+		*buf = c;
+		for (i=1; i< length; i++) 
+			buf[i] = ' ';
     } else {
-	for (i=0; i< length-1; i++) buf[i] = ' ';
-	buf[length - 1] = c;
+		for (i=0; i< length-1; i++) 
+			buf[i] = ' ';
+		buf[length - 1] = c;
     }
     return length;
 }
@@ -206,14 +252,19 @@ PrintString(char * buf, char* s, int length, int ladjust)
     int len=0;
     char* s1 = s;
     while (*s1++) len++;
-    if (length < len) length = len;
+    if (length < len) 
+		length = len;
 
     if (ladjust) {
-	for (i=0; i< len; i++) buf[i] = s[i];
-	for (i=len; i< length; i++) buf[i] = ' ';
+		for (i=0; i< len; i++) 
+			buf[i] = s[i];
+		for (i=len; i< length; i++) 
+			buf[i] = ' ';
     } else {
-	for (i=0; i< length-len; i++) buf[i] = ' ';
-	for (i=length-len; i < length; i++) buf[i] = s[i-length+len];
+		for (i=0; i< length-len; i++) 
+			buf[i] = ' ';
+		for (i=length-len; i < length; i++) 
+			buf[i] = s[i-length+len];
     }
     return length;
 }
@@ -232,59 +283,62 @@ PrintNum(char * buf, unsigned long u, int base, int negFlag,
      *  4. otherwise we only reverse the actual string representing the num.
      */
 
-    int actualLength =0;
+    int actualLength = 0;
     char *p = buf;
     int i;
 
     do {
-	int tmp = u %base;
-	if (tmp <= 9) {
-	    *p++ = '0' + tmp;
-	} else if (upcase) {
-	    *p++ = 'A' + tmp - 10;
-	} else {
-	    *p++ = 'a' + tmp - 10;
-	}
-	u /= base;
+		int tmp = u % base;
+		if (tmp <= 9) {
+	    	*p++ = '0' + tmp;
+		} else if (upcase) {
+	    	*p++ = 'A' + tmp - 10;
+		} else {
+	    	*p++ = 'a' + tmp - 10;
+		}
+		u /= base;
     } while (u != 0);
 
     if (negFlag) {
-	*p++ = '-';
+		*p++ = '-';
     }
 
     /* figure out actual length and adjust the maximum length */
     actualLength = p - buf;
-    if (length < actualLength) length = actualLength;
+    if (length < actualLength) 
+		length = actualLength;
 
     /* add padding */
     if (ladjust) {
-	padc = ' ';
+		padc = ' ';
     }
     if (negFlag && !ladjust && (padc == '0')) {
-	for (i = actualLength-1; i< length-1; i++) buf[i] = padc;
-	buf[length -1] = '-';
+		for (i = actualLength-1; i< length-1; i++) 
+			buf[i] = padc;
+		buf[length -1] = '-';
     } else {
-	for (i = actualLength; i< length; i++) buf[i] = padc;
+		for (i = actualLength; i< length; i++) 
+			buf[i] = padc;
     }
 	    
 
     /* prepare to reverse the string */
     {
-	int begin = 0;
-	int end;
-	if (ladjust) {
-	    end = actualLength - 1;
-	} else {
-	    end = length -1;
-	}
+		int begin = 0;
+		int end;
+		if (ladjust) {
+	    	end = actualLength - 1;
+		} else {
+	    	end = length -1;
+		}
 
-	while (end > begin) {
-	    char tmp = buf[begin];
-	    buf[begin] = buf[end];
-	    buf[end] = tmp;
-	    begin ++;
-	    end --;
-	}
+		while (end > begin) {
+	    	char tmp = buf[begin];
+	    	buf[begin] = buf[end];
+	    	buf[end] = tmp;
+	    	begin ++;
+	    	end --;
+		}
     }
 
     /* adjust the string pointer */
