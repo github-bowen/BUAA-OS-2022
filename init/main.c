@@ -18,6 +18,10 @@ int main()
 
 	mips_init();
 	panic("main is over is error!");
+	//char c = '!';
+	//printf("hello%c\n", c);
+	
+
 
 	return 0;
 }

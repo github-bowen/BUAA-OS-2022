@@ -74,7 +74,7 @@ lp_Print(void (*output)(void *, char *, int),
 		while (*fmt != '%' && *fmt != '\0') 
 			buf[length++] = *fmt++;
 		if (length != 0) {
-			OUTPUT(arg, buf, length - 1);
+			OUTPUT(arg, buf, length);
 			if (*fmt == '\0') {
 				fmt--;
 				break;
