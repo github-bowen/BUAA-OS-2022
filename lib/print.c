@@ -112,7 +112,8 @@ lp_Print(void (*output)(void *, char *, int),
 		fmt++;
 		while (IsDigit(*fmt))
 			prec = prec * 10 + Ctod(*fmt++);
-	}
+	} else 
+		prec = 6;
 
 
 	// HANDLE [LENGTH]: 'l'
