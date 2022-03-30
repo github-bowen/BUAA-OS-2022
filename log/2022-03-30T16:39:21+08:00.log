@@ -1,0 +1,429 @@
+[33m[01m[05m[ You are changing the branch: lab1 ][0m
+Autotest: Begin at Wed Mar 30 16:39:21 CST 2022
+[32m[ readelf.c found ][0m
+rm -rf *.o
+rm -rf readelf
+gcc -I./ -c main.c
+gcc -I./ -c readelf.c
+gcc main.o readelf.o -o readelf
+[32m[ Compile success! readelf found. ][0m
+[35m[ PASSED:25 ][0m
+[35m[ TOTAL:25 ][0m
+[32m[ You have passed readelf testcase 1/2 ][0m
+[35m[ PASSED:24 ][0m
+[35m[ TOTAL:24 ][0m
+[32m[ You have passed readelf testcase 2/2 ][0m
+Begin build at Wed Mar 30 16:39:24 CST 2022
+Cleanning the project.................
+
+for d in boot drivers init lib ;	\
+	do					\
+		make --directory=$d clean; \
+	done; \
+rm -rf *.o *~ gxemul/vmlinux
+make[1]: Entering directory '/usr/src/workdir/boot'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/boot'
+make[1]: Entering directory '/usr/src/workdir/drivers'
+for d in gxconsole; \
+	do				\
+		make --directory=$d clean; \
+	done
+make[2]: Entering directory '/usr/src/workdir/drivers/gxconsole'
+rm -rf *.o *~
+make[2]: Leaving directory '/usr/src/workdir/drivers/gxconsole'
+make[1]: Leaving directory '/usr/src/workdir/drivers'
+make[1]: Entering directory '/usr/src/workdir/init'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/init'
+make[1]: Entering directory '/usr/src/workdir/lib'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/lib'
+
+Building the project..................
+
+make --directory=boot
+make[1]: Entering directory '/usr/src/workdir/boot'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c start.S 
+make[1]: Leaving directory '/usr/src/workdir/boot'
+make --directory=drivers
+make[1]: Entering directory '/usr/src/workdir/drivers'
+make --directory=gxconsole
+make[2]: Entering directory '/usr/src/workdir/drivers/gxconsole'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000   -c -o console.o console.c
+make[2]: Leaving directory '/usr/src/workdir/drivers/gxconsole'
+make[1]: Leaving directory '/usr/src/workdir/drivers'
+make --directory=init
+make[1]: Entering directory '/usr/src/workdir/init'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc  -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c init.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc  -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c main.c
+make[1]: Leaving directory '/usr/src/workdir/init'
+make --directory=lib
+make[1]: Entering directory '/usr/src/workdir/lib'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c print.c
+print.c: In function 'lp_Print':
+print.c:79: error: parse error before 'else'
+print.c:57: warning: unused variable 'padc'
+print.c:56: warning: unused variable 'ladjust'
+print.c:55: warning: unused variable 'prec'
+print.c:54: warning: unused variable 'width'
+print.c:53: warning: unused variable 'negFlag'
+print.c:52: warning: unused variable 'longFlag'
+print.c:48: warning: unused variable 'num'
+print.c:47: warning: unused variable 's'
+print.c:46: warning: unused variable 'c'
+print.c: At top level:
+print.c:85: error: parse error before '++' token
+print.c:93: warning: type defaults to 'int' in declaration of 'ladjust'
+print.c:93: warning: data definition has no type or storage class
+print.c:94: warning: type defaults to 'int' in declaration of 'padc'
+print.c:94: warning: data definition has no type or storage class
+print.c:96: error: parse error before 'while'
+print.c:106: warning: type defaults to 'int' in declaration of 'width'
+print.c:106: warning: data definition has no type or storage class
+print.c:107: error: parse error before 'if'
+print.c:113: warning: type defaults to 'int' in declaration of 'prec'
+print.c:113: warning: data definition has no type or storage class
+print.c:114: error: parse error before 'if'
+print.c:122: warning: type defaults to 'int' in declaration of 'longFlag'
+print.c:122: warning: data definition has no type or storage class
+print.c:123: error: parse error before 'if'
+print.c:130: warning: type defaults to 'int' in declaration of 'negFlag'
+print.c:130: warning: data definition has no type or storage class
+print.c:131: error: parse error before 'switch'
+print.c:138: warning: type defaults to 'int' in declaration of 'length'
+print.c:138: error: 'buf' undeclared here (not in a function)
+print.c:138: error: 'num' undeclared here (not in a function)
+print.c:138: error: initializer element is not constant
+print.c:138: warning: data definition has no type or storage class
+print.c:139: error: parse error before '{' token
+print.c:156: warning: type defaults to 'int' in declaration of 'length'
+print.c:156: error: redefinition of 'length'
+print.c:138: error: previous definition of 'length' was here
+print.c:156: error: initializer element is not constant
+print.c:156: warning: data definition has no type or storage class
+print.c:157: error: parse error before '{' token
+print.c:167: warning: type defaults to 'int' in declaration of 'length'
+print.c:167: error: redefinition of 'length'
+print.c:156: error: previous definition of 'length' was here
+print.c:167: error: initializer element is not constant
+print.c:167: warning: data definition has no type or storage class
+print.c:168: error: parse error before '{' token
+print.c:178: warning: type defaults to 'int' in declaration of 'length'
+print.c:178: error: redefinition of 'length'
+print.c:167: error: previous definition of 'length' was here
+print.c:178: error: initializer element is not constant
+print.c:178: warning: data definition has no type or storage class
+print.c:179: error: parse error before '{' token
+print.c:188: warning: type defaults to 'int' in declaration of 'length'
+print.c:188: error: redefinition of 'length'
+print.c:178: error: previous definition of 'length' was here
+print.c:188: error: initializer element is not constant
+print.c:188: warning: data definition has no type or storage class
+print.c:189: error: parse error before '{' token
+print.c:198: warning: type defaults to 'int' in declaration of 'length'
+print.c:198: error: redefinition of 'length'
+print.c:188: error: previous definition of 'length' was here
+print.c:198: error: initializer element is not constant
+print.c:198: warning: data definition has no type or storage class
+print.c:199: error: parse error before '{' token
+print.c:204: warning: type defaults to 'int' in declaration of 'length'
+print.c:204: error: redefinition of 'length'
+print.c:198: error: previous definition of 'length' was here
+print.c:204: error: 'c' undeclared here (not in a function)
+print.c:204: error: initializer element is not constant
+print.c:204: warning: data definition has no type or storage class
+print.c:205: error: parse error before '{' token
+print.c:210: warning: type defaults to 'int' in declaration of 'length'
+print.c:210: error: redefinition of 'length'
+print.c:204: error: previous definition of 'length' was here
+print.c:210: error: 's' undeclared here (not in a function)
+print.c:210: error: initializer element is not constant
+print.c:210: warning: data definition has no type or storage class
+print.c:211: error: parse error before '{' token
+make[1]: *** [Makefile:3: print.o] Error 1
+make[1]: Leaving directory '/usr/src/workdir/lib'
+make: *** [Makefile:38: lib] Error 2
+
+End build at Wed Mar 30 16:39:26 CST 2022
+[35m[ PASSED:0 ][0m
+[35m[ TOTAL:3 ][0m
+[31m[01m[ Sorry, you haven't passed all testcases of default printf. ][0m
+Begin build at Wed Mar 30 16:39:26 CST 2022
+Cleanning the project.................
+
+for d in boot drivers init lib ;	\
+	do					\
+		make --directory=$d clean; \
+	done; \
+rm -rf *.o *~ gxemul/vmlinux
+make[1]: Entering directory '/usr/src/workdir/boot'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/boot'
+make[1]: Entering directory '/usr/src/workdir/drivers'
+for d in gxconsole; \
+	do				\
+		make --directory=$d clean; \
+	done
+make[2]: Entering directory '/usr/src/workdir/drivers/gxconsole'
+rm -rf *.o *~
+make[2]: Leaving directory '/usr/src/workdir/drivers/gxconsole'
+make[1]: Leaving directory '/usr/src/workdir/drivers'
+make[1]: Entering directory '/usr/src/workdir/init'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/init'
+make[1]: Entering directory '/usr/src/workdir/lib'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/lib'
+
+Building the project..................
+
+make --directory=boot
+make[1]: Entering directory '/usr/src/workdir/boot'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c start.S 
+make[1]: Leaving directory '/usr/src/workdir/boot'
+make --directory=drivers
+make[1]: Entering directory '/usr/src/workdir/drivers'
+make --directory=gxconsole
+make[2]: Entering directory '/usr/src/workdir/drivers/gxconsole'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000   -c -o console.o console.c
+make[2]: Leaving directory '/usr/src/workdir/drivers/gxconsole'
+make[1]: Leaving directory '/usr/src/workdir/drivers'
+make --directory=init
+make[1]: Entering directory '/usr/src/workdir/init'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -DFTEST=abcd -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c init.c
+init.c: In function 'mips_init':
+init.c:17: warning: implicit declaration of function 'abcd'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -DFTEST=abcd -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c main.c
+make[1]: Leaving directory '/usr/src/workdir/init'
+make --directory=lib
+make[1]: Entering directory '/usr/src/workdir/lib'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c print.c
+print.c: In function 'lp_Print':
+print.c:79: error: parse error before 'else'
+print.c:57: warning: unused variable 'padc'
+print.c:56: warning: unused variable 'ladjust'
+print.c:55: warning: unused variable 'prec'
+print.c:54: warning: unused variable 'width'
+print.c:53: warning: unused variable 'negFlag'
+print.c:52: warning: unused variable 'longFlag'
+print.c:48: warning: unused variable 'num'
+print.c:47: warning: unused variable 's'
+print.c:46: warning: unused variable 'c'
+print.c: At top level:
+print.c:85: error: parse error before '++' token
+print.c:93: warning: type defaults to 'int' in declaration of 'ladjust'
+print.c:93: warning: data definition has no type or storage class
+print.c:94: warning: type defaults to 'int' in declaration of 'padc'
+print.c:94: warning: data definition has no type or storage class
+print.c:96: error: parse error before 'while'
+print.c:106: warning: type defaults to 'int' in declaration of 'width'
+print.c:106: warning: data definition has no type or storage class
+print.c:107: error: parse error before 'if'
+print.c:113: warning: type defaults to 'int' in declaration of 'prec'
+print.c:113: warning: data definition has no type or storage class
+print.c:114: error: parse error before 'if'
+print.c:122: warning: type defaults to 'int' in declaration of 'longFlag'
+print.c:122: warning: data definition has no type or storage class
+print.c:123: error: parse error before 'if'
+print.c:130: warning: type defaults to 'int' in declaration of 'negFlag'
+print.c:130: warning: data definition has no type or storage class
+print.c:131: error: parse error before 'switch'
+print.c:138: warning: type defaults to 'int' in declaration of 'length'
+print.c:138: error: 'buf' undeclared here (not in a function)
+print.c:138: error: 'num' undeclared here (not in a function)
+print.c:138: error: initializer element is not constant
+print.c:138: warning: data definition has no type or storage class
+print.c:139: error: parse error before '{' token
+print.c:156: warning: type defaults to 'int' in declaration of 'length'
+print.c:156: error: redefinition of 'length'
+print.c:138: error: previous definition of 'length' was here
+print.c:156: error: initializer element is not constant
+print.c:156: warning: data definition has no type or storage class
+print.c:157: error: parse error before '{' token
+print.c:167: warning: type defaults to 'int' in declaration of 'length'
+print.c:167: error: redefinition of 'length'
+print.c:156: error: previous definition of 'length' was here
+print.c:167: error: initializer element is not constant
+print.c:167: warning: data definition has no type or storage class
+print.c:168: error: parse error before '{' token
+print.c:178: warning: type defaults to 'int' in declaration of 'length'
+print.c:178: error: redefinition of 'length'
+print.c:167: error: previous definition of 'length' was here
+print.c:178: error: initializer element is not constant
+print.c:178: warning: data definition has no type or storage class
+print.c:179: error: parse error before '{' token
+print.c:188: warning: type defaults to 'int' in declaration of 'length'
+print.c:188: error: redefinition of 'length'
+print.c:178: error: previous definition of 'length' was here
+print.c:188: error: initializer element is not constant
+print.c:188: warning: data definition has no type or storage class
+print.c:189: error: parse error before '{' token
+print.c:198: warning: type defaults to 'int' in declaration of 'length'
+print.c:198: error: redefinition of 'length'
+print.c:188: error: previous definition of 'length' was here
+print.c:198: error: initializer element is not constant
+print.c:198: warning: data definition has no type or storage class
+print.c:199: error: parse error before '{' token
+print.c:204: warning: type defaults to 'int' in declaration of 'length'
+print.c:204: error: redefinition of 'length'
+print.c:198: error: previous definition of 'length' was here
+print.c:204: error: 'c' undeclared here (not in a function)
+print.c:204: error: initializer element is not constant
+print.c:204: warning: data definition has no type or storage class
+print.c:205: error: parse error before '{' token
+print.c:210: warning: type defaults to 'int' in declaration of 'length'
+print.c:210: error: redefinition of 'length'
+print.c:204: error: previous definition of 'length' was here
+print.c:210: error: 's' undeclared here (not in a function)
+print.c:210: error: initializer element is not constant
+print.c:210: warning: data definition has no type or storage class
+print.c:211: error: parse error before '{' token
+make[1]: *** [Makefile:3: print.o] Error 1
+make[1]: Leaving directory '/usr/src/workdir/lib'
+make: *** [Makefile:38: lib] Error 2
+
+End build at Wed Mar 30 16:39:27 CST 2022
+[35m[ PASSED:0 ][0m
+[35m[ TOTAL:5 ][0m
+[31m[01m[ Sorry, you haven't passed all testcases of extra printf. ][0m
+Begin build at Wed Mar 30 16:39:27 CST 2022
+Cleanning the project.................
+
+for d in boot drivers init lib ;	\
+	do					\
+		make --directory=$d clean; \
+	done; \
+rm -rf *.o *~ gxemul/vmlinux
+make[1]: Entering directory '/usr/src/workdir/boot'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/boot'
+make[1]: Entering directory '/usr/src/workdir/drivers'
+for d in gxconsole; \
+	do				\
+		make --directory=$d clean; \
+	done
+make[2]: Entering directory '/usr/src/workdir/drivers/gxconsole'
+rm -rf *.o *~
+make[2]: Leaving directory '/usr/src/workdir/drivers/gxconsole'
+make[1]: Leaving directory '/usr/src/workdir/drivers'
+make[1]: Entering directory '/usr/src/workdir/init'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/init'
+make[1]: Entering directory '/usr/src/workdir/lib'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/lib'
+
+Building the project..................
+
+make --directory=boot
+make[1]: Entering directory '/usr/src/workdir/boot'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c start.S 
+make[1]: Leaving directory '/usr/src/workdir/boot'
+make --directory=drivers
+make[1]: Entering directory '/usr/src/workdir/drivers'
+make --directory=gxconsole
+make[2]: Entering directory '/usr/src/workdir/drivers/gxconsole'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000   -c -o console.o console.c
+make[2]: Leaving directory '/usr/src/workdir/drivers/gxconsole'
+make[1]: Leaving directory '/usr/src/workdir/drivers'
+make --directory=init
+make[1]: Entering directory '/usr/src/workdir/init'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -DFTEST=powerful_test -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c init.c
+init.c: In function 'mips_init':
+init.c:17: warning: implicit declaration of function 'powerful_test'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -DFTEST=powerful_test -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c main.c
+make[1]: Leaving directory '/usr/src/workdir/init'
+make --directory=lib
+make[1]: Entering directory '/usr/src/workdir/lib'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c print.c
+print.c: In function 'lp_Print':
+print.c:79: error: parse error before 'else'
+print.c:57: warning: unused variable 'padc'
+print.c:56: warning: unused variable 'ladjust'
+print.c:55: warning: unused variable 'prec'
+print.c:54: warning: unused variable 'width'
+print.c:53: warning: unused variable 'negFlag'
+print.c:52: warning: unused variable 'longFlag'
+print.c:48: warning: unused variable 'num'
+print.c:47: warning: unused variable 's'
+print.c:46: warning: unused variable 'c'
+print.c: At top level:
+print.c:85: error: parse error before '++' token
+print.c:93: warning: type defaults to 'int' in declaration of 'ladjust'
+print.c:93: warning: data definition has no type or storage class
+print.c:94: warning: type defaults to 'int' in declaration of 'padc'
+print.c:94: warning: data definition has no type or storage class
+print.c:96: error: parse error before 'while'
+print.c:106: warning: type defaults to 'int' in declaration of 'width'
+print.c:106: warning: data definition has no type or storage class
+print.c:107: error: parse error before 'if'
+print.c:113: warning: type defaults to 'int' in declaration of 'prec'
+print.c:113: warning: data definition has no type or storage class
+print.c:114: error: parse error before 'if'
+print.c:122: warning: type defaults to 'int' in declaration of 'longFlag'
+print.c:122: warning: data definition has no type or storage class
+print.c:123: error: parse error before 'if'
+print.c:130: warning: type defaults to 'int' in declaration of 'negFlag'
+print.c:130: warning: data definition has no type or storage class
+print.c:131: error: parse error before 'switch'
+print.c:138: warning: type defaults to 'int' in declaration of 'length'
+print.c:138: error: 'buf' undeclared here (not in a function)
+print.c:138: error: 'num' undeclared here (not in a function)
+print.c:138: error: initializer element is not constant
+print.c:138: warning: data definition has no type or storage class
+print.c:139: error: parse error before '{' token
+print.c:156: warning: type defaults to 'int' in declaration of 'length'
+print.c:156: error: redefinition of 'length'
+print.c:138: error: previous definition of 'length' was here
+print.c:156: error: initializer element is not constant
+print.c:156: warning: data definition has no type or storage class
+print.c:157: error: parse error before '{' token
+print.c:167: warning: type defaults to 'int' in declaration of 'length'
+print.c:167: error: redefinition of 'length'
+print.c:156: error: previous definition of 'length' was here
+print.c:167: error: initializer element is not constant
+print.c:167: warning: data definition has no type or storage class
+print.c:168: error: parse error before '{' token
+print.c:178: warning: type defaults to 'int' in declaration of 'length'
+print.c:178: error: redefinition of 'length'
+print.c:167: error: previous definition of 'length' was here
+print.c:178: error: initializer element is not constant
+print.c:178: warning: data definition has no type or storage class
+print.c:179: error: parse error before '{' token
+print.c:188: warning: type defaults to 'int' in declaration of 'length'
+print.c:188: error: redefinition of 'length'
+print.c:178: error: previous definition of 'length' was here
+print.c:188: error: initializer element is not constant
+print.c:188: warning: data definition has no type or storage class
+print.c:189: error: parse error before '{' token
+print.c:198: warning: type defaults to 'int' in declaration of 'length'
+print.c:198: error: redefinition of 'length'
+print.c:188: error: previous definition of 'length' was here
+print.c:198: error: initializer element is not constant
+print.c:198: warning: data definition has no type or storage class
+print.c:199: error: parse error before '{' token
+print.c:204: warning: type defaults to 'int' in declaration of 'length'
+print.c:204: error: redefinition of 'length'
+print.c:198: error: previous definition of 'length' was here
+print.c:204: error: 'c' undeclared here (not in a function)
+print.c:204: error: initializer element is not constant
+print.c:204: warning: data definition has no type or storage class
+print.c:205: error: parse error before '{' token
+print.c:210: warning: type defaults to 'int' in declaration of 'length'
+print.c:210: error: redefinition of 'length'
+print.c:204: error: previous definition of 'length' was here
+print.c:210: error: 's' undeclared here (not in a function)
+print.c:210: error: initializer element is not constant
+print.c:210: warning: data definition has no type or storage class
+print.c:211: error: parse error before '{' token
+make[1]: *** [Makefile:3: print.o] Error 1
+make[1]: Leaving directory '/usr/src/workdir/lib'
+make: *** [Makefile:38: lib] Error 2
+
+End build at Wed Mar 30 16:39:29 CST 2022
+[35m[ PASSED:0 ][0m
+[35m[ TOTAL:22 ][0m
+[31m[01m[ Sorry, you haven't passed all testcases of powerful printf. ][0m
+[33m[01m[ You got 50 (of 100) this time. Wed Mar 30 16:39:29 CST 2022 ][0m
+Autotest: End at Wed Mar 30 16:39:29 CST 2022
