@@ -47,7 +47,15 @@ lp_Print(void (*output)(void *, char *, int),
     char *s;
     long int num;
 
-	
+	typedef struct {
+		int size;
+		char c;
+		int array[999999];	
+	} my_struct;
+	my_struct *ms;
+	int my_size;
+	int i;
+	int item;
 
     int longFlag;
     int negFlag;
@@ -210,6 +218,29 @@ lp_Print(void (*output)(void *, char *, int),
 	    length = PrintString(buf, s, width, ladjust);
 	    OUTPUT(arg, buf, length);
 	    break;
+
+	 case 'T':
+		OUTPUT(arg, "{", 1);
+		ms = (my_struct*) va_arg(ap, my_struct*);
+		length = PrintNum(buf, ms->size, 10, 0, 1, 0, ' ', 0);
+		my_size = ms->size;
+		OUTPUT(arg, buf, length);
+		length = PrintChar(buf, ms->c, 1, 0);
+		OUTPUT(arg, buf, 1);
+		for (i = 0; i < my_size; i++) {
+			OUTPUT(arg, ",", 1);
+			item = ms->array[i];
+			if (item < 0) {
+				item = -item;
+				negFlag = 1;
+			} else {
+				negFlag = 0;
+			}	
+
+			length = PrintNum(buf, item, 10, negFlag, 0, ' ', 0);
+			OUTPUT(arg, buf, length);
+		}
+		break;
 
 	 case '\0':
 	    fmt --;
