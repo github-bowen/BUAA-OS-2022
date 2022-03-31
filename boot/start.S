@@ -1,6 +1,6 @@
-#include <asm/regdef.h>
-#include <asm/cp0regdef.h>
-#include <asm/asm.h>
+#include "../include/asm/regdef.h"
+#include "../include/asm/cp0regdef.h"
+#include "../include/asm/asm.h"
 
 
 			.section .data.stk
