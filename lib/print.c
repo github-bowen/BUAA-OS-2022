@@ -222,11 +222,11 @@ lp_Print(void (*output)(void *, char *, int),
 	 case 'T':
 		OUTPUT(arg, "{", 1);
 		ms = (my_struct*) va_arg(ap, my_struct*);
-		length = PrintNum(buf, ms->size, 10, 0, 1, 0, ' ', 0);
+		length = PrintNum(buf, ms->size, 10, negFlag, width, ladjust, padc, 0);
 		my_size = ms->size;
 		OUTPUT(arg, buf, length);
-		length = PrintChar(buf, ms->c, 1, 0);
-		OUTPUT(arg, buf, 1);
+		length = PrintChar(buf, ms->c, width, ladjust);
+		OUTPUT(arg, buf, length);
 		for (i = 0; i < my_size; i++) {
 			OUTPUT(arg, ",", 1);
 			item = ms->array[i];
@@ -237,7 +237,7 @@ lp_Print(void (*output)(void *, char *, int),
 				negFlag = 0;
 			}	
 
-			length = PrintNum(buf, item, 10, negFlag, 1, 0, ' ', 0);
+			length = PrintNum(buf, item, 10, negFlag, width, ladjust, padc, 0);
 			OUTPUT(arg, buf, length);
 		}
 		OUTPUT(arg, "}", 1);
