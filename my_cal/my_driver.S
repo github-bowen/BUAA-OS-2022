@@ -1,6 +1,6 @@
-#include </home/git/20231198/include/asm/regdef.h>
-#include </home/git/20231198/include/asm/cp0regdef.h>
-#include </home/git/20231198/include/asm/asm.h>
+#include <asm/regdef.h>
+#include <asm/cp0regdef.h>
+#include <asm/asm.h>
 
 // my_driver.S
 
