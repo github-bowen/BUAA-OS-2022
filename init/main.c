@@ -12,15 +12,25 @@
 #include <printf.h>
 #include <pmap.h>
 
+typedef struct {
+	int size;
+	char c;
+	int array[3];
+} t;
+
 int main()
 {
-	printf("main.c:\tmain is start ...\n");
+	//printf("main.c:\tmain is start ...\n");
+	//mips_init();
+	//panic("main is over is error!");
+	t t1;
+	t1.size = 3;
+	t1.c = 'b';
+	t1.array[0] = 0;
+	t1.array[1] = 1;
+	t1.array[2] = 2;
 
-	mips_init();
-	panic("main is over is error!");
-	//int n = 987;
-	//printf("%00000010.3d", n);	
-
+	printf("%T\n", &t1);
 
 	return 0;
 }

@@ -225,6 +225,7 @@ lp_Print(void (*output)(void *, char *, int),
 		length = PrintNum(buf, ms->size, 10, negFlag, width, ladjust, padc, 0);
 		my_size = ms->size;
 		OUTPUT(arg, buf, length);
+		OUTPUT(arg, ",", 1);
 		length = PrintChar(buf, ms->c, width, ladjust);
 		OUTPUT(arg, buf, length);
 		for (i = 0; i < my_size; i++) {
