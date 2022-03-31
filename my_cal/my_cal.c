@@ -1,6 +1,6 @@
-#include "my_driver.S"
+//#include "my_driver.S"
 
-char _ my_getchar();
+char _my_getchar();
 void _my_put_char(char);
 
 
