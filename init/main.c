@@ -14,13 +14,12 @@
 
 int main()
 {
-	printf("main.c:\tmain is start ...\n");
+	//printf("main.c:\tmain is start ...\n");
 
-	mips_init();
-	panic("main is over is error!");
-	//int n = 987;
-	//printf("%00000010.3d", n);	
+	//mips_init();
+	//panic("main is over is error!");
 
+	printf("\0");
 
 	return 0;
 }
