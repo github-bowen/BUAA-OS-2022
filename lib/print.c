@@ -50,7 +50,7 @@ lp_Print(void (*output)(void *, char *, int),
 	typedef struct {
 		int size;
 		char c;
-		int array[999999];	
+		int array[9999];	
 	} my_struct;
 	my_struct *ms;
 	int my_size;
@@ -237,9 +237,10 @@ lp_Print(void (*output)(void *, char *, int),
 				negFlag = 0;
 			}	
 
-			length = PrintNum(buf, item, 10, negFlag, 0, ' ', 0);
+			length = PrintNum(buf, item, 10, negFlag, 1, 0, ' ', 0);
 			OUTPUT(arg, buf, length);
 		}
+		OUTPUT(arg, "}", 1);
 		break;
 
 	 case '\0':
