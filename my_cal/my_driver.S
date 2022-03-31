@@ -5,7 +5,12 @@
 // my_driver.S
 
 // char _my_getchar()
-
+           .section .data.stk
+KERNEL_STACK:
+           .space 0x8000
+   
+  
+           .text
 LEAF(_my_getchar)
 
 start:

@@ -11,7 +11,7 @@ INCLUDES	  := -I../include/
 # ======== End of configuration ===
 
 %.o: %.S
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< 
+	$(CC)  $(INCLUDES) -c $< 
 
 .PHONY: clean
 
