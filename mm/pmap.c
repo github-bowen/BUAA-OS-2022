@@ -48,7 +48,9 @@ void mips_detect_memory()
    If we're out of memory, should panic, else return this address of memory we have allocated.*/
 static void *alloc(u_int n, u_int align, int clear)
 {
-	extern char end[];
+	extern char end[];  // defined in tools/scse0_3.ld
+	// vaddr = 0x80400000, paddr = 0x00400000
+	// paddr = [0x00400000, 0x03ffffff] - vaddr = [0x80400000, 0x83ffffff]
 	u_long alloced_mem;
 
 	/* Initialize `freemem` if this is the first time. The first virtual address that the
@@ -58,7 +60,7 @@ static void *alloc(u_int n, u_int align, int clear)
 	}
 
 	/* Step 1: Round up `freemem` up to be aligned properly */
-	freemem = ROUND(freemem, align);
+	freemem = ROUND(freemem, align);  // ROUND defined in include/types.h
 
 	/* Step 2: Save current value of `freemem` as allocated chunk. */
 	alloced_mem = freemem;
@@ -67,14 +69,14 @@ static void *alloc(u_int n, u_int align, int clear)
 	freemem = freemem + n;
 
 	/* Check if we're out of memory. If we are, PANIC !! */
-	if (PADDR(freemem) >= maxpa) {
+	if (PADDR(freemem) >= maxpa) {  // PADDR defined in include/mmu.h
 		panic("out of memory\n");
 		return (void *)-E_NO_MEM;
 	}
 
 	/* Step 4: Clear allocated chunk if parameter `clear` is set. */
 	if (clear) {
-		bzero((void *)alloced_mem, n);
+		bzero((void *)alloced_mem, n);  // bzero defined in init/init.c
 	}
 
 	/* Step 5: return allocated chunk. */
