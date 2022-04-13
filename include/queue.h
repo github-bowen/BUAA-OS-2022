@@ -116,7 +116,7 @@
         //step 3: Assign listelm.next to a proper value.
         //step 4: Assign elm.pre to a proper value.
 #define LIST_INSERT_AFTER(listelm, elm, field) do { \
-       			LIST_NEXT((elm, field)) = LIST_NEXT((listelm), field); \
+       			LIST_NEXT((elm), field) = LIST_NEXT((listelm), field); \
 				if (LIST_NEXT((listelm), field)) \
 						LIST_NEXT((listelm), field)->field.le_prev = &LIST_NEXT((elm), field); \
 				LIST_NEXT((listelm), field) = (elm); \
@@ -165,7 +165,6 @@
 				}  \
 		} while (0)
 						
-
 
 
 #define LIST_NEXT(elm, field)   ((elm)->field.le_next)
