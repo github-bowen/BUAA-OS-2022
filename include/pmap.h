@@ -5,11 +5,33 @@
 #include "queue.h"
 #include "mmu.h"
 #include "printf.h"
-
+/* the structure of Page_list:
+struct Page_list{
+    struct {
+        struct {
+            struct Page *le_next;
+            struct Page **le_prev;
+        } pp_link;
+        u_short pp_ref;
+    }* lh_first;
+}
+*/ 
+// !!!! head = Page_list     
 
 LIST_HEAD(Page_list, Page);
+/*
+        struct Page_list {                                                           
+                struct Page *lh_first;  // first element                      
+        }
+*/
 typedef LIST_ENTRY(Page) Page_LIST_entry_t;
-
+/*
+   LIST_ENTRY(Page)                                                    \
+        struct {                                                                \
+                struct Page *le_next;   // next element                       \
+                struct Page **le_prev;  // address of previous next element   \
+        }
+*/
 struct Page {
 	Page_LIST_entry_t pp_link;	/* free list link */
 
