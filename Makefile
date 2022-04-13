@@ -3,7 +3,6 @@
 # Copyright (C) 2007 Beihang University
 # Written by Zhu Like ( zlike@cse.buaa.edu.cn )
 #
-
 drivers_dir	  := drivers
 boot_dir	  := boot
 init_dir	  := init
@@ -39,7 +38,6 @@ clean:
 		done; \
 	rm -rf *.o *~ $(vmlinux_elf)
 
-gxemul_run: /OSLAB/gxemul
-    /OSLAB/gxemul -E testmips -C R3000 -M 64 ./gxemul/vmlinux
 
 include include.mk
+
