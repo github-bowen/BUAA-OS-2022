@@ -3,6 +3,7 @@
 #include "printf.h"
 #include "env.h"
 #include "error.h"
+#define BIT_MAP_SIZE 512
 
 /* These variables are set by mips_detect_memory() */
 u_long maxpa;            /* Maximum physical address */
@@ -32,6 +33,7 @@ void mips_detect_memory()
 	// Step 2: Calculate corresponding npage value.
 	extmem = 0;
 	npage = basemem >> PGSHIFT; // PGSHIFT defined in include/mmu.h
+	// napge = 1 << 26 >> 12 = 1 << 14 = 16k
 
 	printf("Physical memory: %dK available, ", (int)(maxpa / 1024));
 	printf("base = %dK, extended = %dK\n", (int)(basemem / 1024),
@@ -203,6 +205,41 @@ void page_init(void)
 	}
 }
 
+
+
+
+/*
+unsigned int page_bitmap[BIT_MAP_SIZE];
+void page_init(void) {
+	freemem = ROUND(freemem, BY2PG);
+
+	int used_page = PPN(PADDR(freemem));
+	int i, j, im, jm;
+	for (i = 0; i < MAPSIZE; i++) {
+		page_bitmap[i] = 0;
+	}
+	im = used_page >> 5;
+	jm = used_page % 32;
+	for (i = 0; i < im; i++) {
+		page_bitmap[i] = ~0;
+	}
+	for (j = 0; j < jm; j++) {
+		page_bitmap[im] |= (1 << j);
+	}
+	printf("page bitmap size is %x\n", BIT_MAP_SIZE);
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
 /* Exercise 2.4 */
 /*Overview:
   Allocates a physical page from free memory, and clear this page.
@@ -231,6 +268,77 @@ int page_alloc(struct Page **pp)
 	LIST_REMOVE(ppage_temp, pp_link);
 	return 0;
 }
+/*
+int page_alloc2(struct Page **pp) {
+    struct Page *ppage_temp;
+    if (LIST_EMPTY(&page_free_list))  return -E_NO_MEM;
+    ppage_temp = LIST_FIRST(&page_free_list);
+    bzero((void*) page2kva(ppage_temp), BY2PG);
+    *pp = ppage_temp;
+    LIST_REMOVE(ppage_temp, pp_link);
+    
+    printf("page number is %x, start from pa %x\n",
+           page2ppn(ppage_temp), page2pa(ppage_temp));
+    return 0;
+}
+*/
+
+
+/*
+int page_alloc(struct Page **pp) {
+	int ppn;
+	int byte, bit;
+	unsigned int bits;
+	for (byte = 0; byte < BIT_MAP_SIZE; byte++) {
+		bits = page_bitmap[byte];
+		if (bits != ~0) {
+			for (bit = 0; bit < 32; j++) {
+				if ((bits & (1 << bit)) == 0) {
+					bits |= (1 << bit);
+					page_bitmap[byte] = bits;
+					ppn = byte << 5 + bit;
+					*pp = pages + ppn;
+					return 0;
+				}
+			}
+		}
+	}
+
+	return -E_NO_MEM;
+}
+*/
+
+
+
+
+/*
+static int exam_times = 0;
+void get_page_status(int pa) {
+    struct Page *pp = pa2page(pa);
+    struct Page *page;  // used for for-iteration
+    
+    int is_free = 0;
+    int status;
+    
+    LIST_FOREACH(page, &page_free_list, pp_link) {
+        if (page == pp) {
+            is_free = 1;
+            break;
+        }
+    }
+    exam_times++;
+    if (is_free) status = 3; 
+    else {
+        if (pp->pp_ref == 0)  status = 2;
+        else status = 1;
+    }
+    printf("times:%d, page status:%d\n", exam_times, status);
+    
+}
+*/
+
+
+
 
 /* Exercise 2.5 */
 /*Overview:
@@ -250,6 +358,31 @@ void page_free(struct Page *pp)
 	 * so PANIC !!! */
 	panic("cgh:pp->pp_ref is less than zero\n");
 }
+
+
+/*
+void page_free(struct Page *pp)
+{
+	if(pp->pp_ref > 0) {
+		return;
+	}
+
+	int ppn = page2ppn(pp);
+
+	if(pp->pp_ref == 0) {
+		page_bitmap[ppn >> 5] &= ~(1 << (ppn % 32));
+		return;
+	}
+
+
+    panic("cgh:pp->pp_ref is less than zero\n");
+}
+*/
+
+
+
+
+
 
 /* Exercise 2.8 */
 /*Overview:
