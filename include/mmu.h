@@ -13,8 +13,8 @@
 /*
  * Part 1.  MIPS definitions.
  */
-#define BY2PG		4096		// bytes to a page
-#define PDMAP		(4*1024*1024)	// bytes mapped by a page directory entry
+#define BY2PG		4096		// bytes to a page: 4K
+#define PDMAP		(4*1024*1024)	// bytes mapped by a page directory entry  // size of one page table: 4M / 1024 pages
 #define PGSHIFT		12
 #define PDSHIFT		22		// log2(PDMAP)
 #define PDX(va)		((((u_long)(va))>>22) & 0x03FF)

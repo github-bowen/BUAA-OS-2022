@@ -35,7 +35,7 @@
  */
 
 /*
- * A list is headed by a structure defined by the LIST_HEAD macro.  This structure con‐
+ * A list is headed by a structure defined by the LIST_HEAD macro.  This structure con
  * tains a single pointer to the first element on the list.  The elements are doubly
  * linked so that an arbitrary element can be removed without traversing the list.  New
  * elements can be added to the list after an existing element or at the head of the list.
@@ -109,13 +109,19 @@
  * already in the list.  The "field" name is the link element
  * as above.
  */
-#define LIST_INSERT_AFTER(listelm, elm, field)
-        // Note: assign a to b <==> a = b
+
+		// Note: assign a to b <==> a = b
         //Step 1, assign elm.next to listelm.next.
         //Step 2: Judge whether listelm.next is NULL, if not, then assign listelm.next.pre to a proper value.
         //step 3: Assign listelm.next to a proper value.
         //step 4: Assign elm.pre to a proper value.
-
+#define LIST_INSERT_AFTER(listelm, elm, field) do { \
+       			LIST_NEXT((elm, field)) = LIST_NEXT((listelm), field); \
+				if (LIST_NEXT((listelm), field)) \
+						LIST_NEXT((listelm), field)->field.le_prev = &LIST_NEXT((elm), field); \
+				LIST_NEXT((listelm), field) = (elm); \
+				(elm)->field.le_prev = &LIST_NEXT((listelm), field); \
+		} while (0)
 
 /*
  * Insert the element "elm" *before* the element "listelm" which is
@@ -146,8 +152,20 @@
  * The "field" name is the link element as above. You can refer to LIST_INSERT_HEAD.
  * Note: this function has big differences with LIST_INSERT_HEAD !
  */
-#define LIST_INSERT_TAIL(head, elm, field)
-/* finish your code here. */
+#define LIST_INSERT_TAIL(head, elm, field) do {  \
+				if (LIST_EMPTY((head)))  \
+						LIST_INSERT_HEAD((head), (elm), field);  \
+				else {  \
+						LIST_NEXT((elm), field) = LIST_FIRST((head));  \
+						while (LIST_NEXT(LIST_NEXT((elm), field), field))  \
+								LIST_NEXT((elm), field) = LIST_NEXT(LIST_NEXT((elm), field), field);  \
+						LIST_NEXT(LIST_NEXT((elm), field), field) = (elm);  \
+						(elm)->field.le_prev = &(LIST_NEXT(LIST_NEXT((elm), field), field));  \
+						LIST_NEXT((elm), field) = NULL;  \
+				}  \
+		} while (0)
+						
+
 
 
 #define LIST_NEXT(elm, field)   ((elm)->field.le_next)

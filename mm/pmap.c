@@ -50,7 +50,7 @@ static void *alloc(u_int n, u_int align, int clear)
 {
 	extern char end[];  // defined in tools/scse0_3.ld
 	// vaddr = 0x80400000, paddr = 0x00400000
-	// paddr = [0x00400000, 0x03ffffff] - vaddr = [0x80400000, 0x83ffffff]
+	// paddr = [0x00400000, 0x03ffffff] \ vaddr = [0x80400000, 0x83ffffff]
 	u_long alloced_mem;
 
 	/* Initialize `freemem` if this is the first time. The first virtual address that the
@@ -151,7 +151,7 @@ void mips_vm_init()
 	printf("to memory %x for struct page directory.\n", freemem);
 	mCONTEXT = (int)pgdir;
 
-	boot_pgdir = pgdir;
+	boot_pgdir = pgdir;  // original virtual address of page directory
 
 	/* Step 2: Allocate proper size of physical memory for global array `pages`,
 	 * for physical memory management. Then, map virtual address `UPAGES` to
@@ -160,13 +160,13 @@ void mips_vm_init()
 	pages = (struct Page *)alloc(npage * sizeof(struct Page), BY2PG, 1);
 	printf("to memory %x for struct Pages.\n", freemem);
 	n = ROUND(npage * sizeof(struct Page), BY2PG);
-	boot_map_segment(pgdir, UPAGES, n, PADDR(pages), PTE_R);
+	boot_map_segment(pgdir, UPAGES, n, PADDR(pages), PTE_R);  // UPAGES: original virtual address of page tables
 
 	/* Step 3, Allocate proper size of physical memory for global array `envs`,
 	 * for process management. Then map the physical address to `UENVS`. */
 	envs = (struct Env *)alloc(NENV * sizeof(struct Env), BY2PG, 1);
 	n = ROUND(NENV * sizeof(struct Env), BY2PG);
-	boot_map_segment(pgdir, UENVS, n, PADDR(envs), PTE_R);
+	boot_map_segment(pgdir, UENVS, n, PADDR(envs), PTE_R);  // UENVS: original virtual address of page tables for process management
 
 	printf("pmap.c:\t mips vm init success\n");
 }
