@@ -226,7 +226,7 @@ int page_alloc(struct Page **pp)
 	/* Step 2: Initialize this page.
 	 * Hint: use `bzero`. */
 	if (LIST_EMPTY(&page_free_list))  return -E_NO_MEM;
-	ppage_temp = LIST_FIRST(&page_first_list);
+	ppage_temp = LIST_FIRST(&page_free_list);
 	bzero((void*) page2kva(ppage_temp), BY2PG);
 	*pp = ppage_temp;
 	LIST_REMOVE(ppage_temp, pp_link);
