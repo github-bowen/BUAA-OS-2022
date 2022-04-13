@@ -170,6 +170,10 @@ void mips_vm_init()
 
 	printf("pmap.c:\t mips vm init success\n");
 }
+/*
+	struct Page *pages;
+	static struct Page_list page_free_list;
+*/
 
 /* Exercise 2.3 */
 /*Overview:
@@ -182,16 +186,22 @@ void page_init(void)
 {
 	/* Step 1: Initialize page_free_list. */
 	/* Hint: Use macro `LIST_INIT` defined in include/queue.h. */
-
+	LIST_INIT((&page_free_list));
 
 	/* Step 2: Align `freemem` up to multiple of BY2PG. */
-
+	freemem = ROUND(freemem, BY2PG);
 
 	/* Step 3: Mark all memory blow `freemem` as used(set `pp_ref`
 	 * filed to 1) */
-
-
+	int used_pages_num = PPN(freemem);
+	int i;
+	for (i = 0; i < used_pages_num; i++)  // PPN = VPN, defined in include/mmu.h 
+		pages[i].pp_ref = 1;
 	/* Step 4: Mark the other memory as free. */
+	for (; i < npage; i++) {
+		pages[i].pp_ref = 0;
+		LIST_INSERT_HEAD(&page_free_list, pages[i], pp_link);
+	}
 }
 
 /* Exercise 2.4 */
