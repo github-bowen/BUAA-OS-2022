@@ -417,17 +417,15 @@ void buddy_free(u_int pa) {
 			buddy->free = 0;
             break;
         }
-		former = buddy;
     }
 	u_short former_none = 1;	
 	LIST_FOREACH(former, &buddy_list, bb_link) {
-        if (LIST_NEXT(former, bb_link) == pa) 
+        if (LIST_NEXT(former, bb_link)->base == pa) 
 			former_none = 0;
             break;
         }
     }
 
-	struct Buddy* right = LIST_NEXT(buddy, bb_link);
 	if (!former_none) {
 	if (former->size == buddy->size && former->id == buddy->id && buddy->size <= (1 <<22)) {
 		buddy->base = former->base;
