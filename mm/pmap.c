@@ -420,6 +420,7 @@ void buddy_free(u_int pa) {
     }
 	u_short former_none = 1;	
 	LIST_FOREACH(former, &buddy_list, bb_link) {
+		if (LIST_NEXT(former, bb_link) == NULL) break;
         if (LIST_NEXT(former, bb_link)->base == pa) 
 			former_none = 0;
             break;
