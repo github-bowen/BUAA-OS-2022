@@ -210,6 +210,8 @@ void page_init(void)
 }
 
 int page_status_query(struct Page *pp) {
+	if (pp->pp_ref > 0 && pp->status == 2)
+		pp->status = 1;
 	return (int) pp->status;
 }
 
