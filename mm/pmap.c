@@ -217,10 +217,10 @@ int page_protect(struct Page *pp) {
 	if (pp->status == 2) {
 		pp->status = 3;
 		return 0;
-	} else if (pp->status == 1) {
-		return -1;
+	} else if (pp->status == 3) {
+		return -2;
 	}
-	return -2;
+	return -1;
 }
 
 /*
