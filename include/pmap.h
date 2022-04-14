@@ -17,13 +17,14 @@ struct Page_list{
 }
 */ 
 // !!!! head = Page_list     
-
+LIST_HEAD(Buddy_list, Buddy);
 LIST_HEAD(Page_list, Page);
 /*
         struct Page_list {                                                           
                 struct Page *lh_first;  // first element                      
         }
 */
+typedef LIST_ENTRY(Buddy) Buddy_LIST_entry_t;
 typedef LIST_ENTRY(Page) Page_LIST_entry_t;
 /*
    LIST_ENTRY(Page)                                                    \
@@ -32,6 +33,13 @@ typedef LIST_ENTRY(Page) Page_LIST_entry_t;
                 struct Page **le_prev;  // address of previous next element   \
         }
 */
+struct Buddy {
+	Buddy_LIST_entry_t bb_link;
+	u_long base;
+	u_long size;
+	u_short free;
+	u_short id;
+};
 struct Page {
 	Page_LIST_entry_t pp_link;	/* free list link */
 
@@ -102,6 +110,10 @@ va2pa(Pde *pgdir, u_long va)
 }
 
 /********** functions for memory management(see implementation in mm/pmap.c). ***********/
+
+void buddy_init(void);
+int buddy_alloc(u_int size, u_int *pa, u_char *pi);
+void buddy_free(u_int pa);
 
 void mips_detect_memory();
 

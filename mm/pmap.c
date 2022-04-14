@@ -18,7 +18,9 @@ static u_long freemem;
 
 static struct Page_list page_free_list;	/* Free list of physical pages */
 
-
+u_long high_start;
+u_long high_end;
+static struct Buddy_list buddy_list;
 /* Exercise 2.1 */
 /* Overview:
    Initialize basemem and npage.
@@ -33,6 +35,8 @@ void mips_detect_memory()
 	// Step 2: Calculate corresponding npage value.
 	extmem = 0;
 	npage = basemem >> PGSHIFT; // PGSHIFT defined in include/mmu.h
+	high_start = 0x00400000 + (1 << 25);
+	high_end = maxpa - 1;
 	// napge = 1 << 26 >> 12 = 1 << 14 = 16k
 
 	printf("Physical memory: %dK available, ", (int)(maxpa / 1024));
@@ -205,8 +209,23 @@ void page_init(void)
 	}
 }
 
-
-
+//u_long high_start;
+//u_long high_end;
+//static struct Buddy_list buddy_free_list;
+void buddy_init(void) {
+	LIST_INIT((&buddy_list));
+	u_long high_base = high_start;
+	struct Buddy* buddy;
+	int i = 0;
+	for (; i < 8; i++) {
+		buddy->base = high_base;
+		buddy->size = (1 << 22);
+		buddy->free = 0;
+		buddy->id = (u_short) i;
+		LIST_INSERT_TAIL(&buddy_list, buddy, bb_link);
+		high_base += (1 << 22);
+	}
+}
 
 /*
 unsigned int page_bitmap[BIT_MAP_SIZE];
@@ -268,6 +287,38 @@ int page_alloc(struct Page **pp)
 	LIST_REMOVE(ppage_temp, pp_link);
 	return 0;
 }
+
+int buddy_alloc(u_int size, u_int *pa, u_char *pi) {
+	struct Buddy *buddy;
+	u_short find = 0;
+	LIST_FOREACH(buddy, &buddy_list, bb_link) {
+        if (buddy->size >= size && buddy->free == 0) {
+            buddy->free = 1;
+			find = 1;
+            break;
+        }
+    }
+	if (!find) return -1;
+	struct Buddy* temp;
+	while ((buddy->size >> 1) > size) {
+		buddy->size >>= 1;
+		temp->base = buddy->base + buddy->size;
+		temp->size = buddy->size;
+		temp->id = buddy->id;
+		temp->free = 0;
+		LIST_INSERT_AFTER(buddy, temp, bb_link);
+	}
+	pa = buddy->base;
+	u_long temp_size = buddy->size >> 12;
+	u_char j = 0;
+	while (temp_size > 1) {
+		j++;
+		temp_size /= 2;
+	}
+	*pi = j;
+	return 0;
+}
+
 /*
 int page_alloc2(struct Page **pp) {
     struct Page *ppage_temp;
@@ -357,6 +408,33 @@ void page_free(struct Page *pp)
 	/* If the value of `pp_ref` is less than 0, some error must occurr before,
 	 * so PANIC !!! */
 	panic("cgh:pp->pp_ref is less than zero\n");
+}
+
+void buddy_free(u_int pa) {
+	struct Buddy* buddy;
+	struct Buddy* former;
+	LIST_FOREACH(buddy, &buddy_list, bb_link) {
+        if (buddy->base == pa) {
+			buddy->free = 0;
+            break;
+        }
+		former = buddy;
+    }
+	
+	struct Buddy* left = former;
+	struct Buddy* right = LIST_NEXT(buddy, bb_link);
+	if (former->size == buddy->size && former->id == buddy->id) {
+		buddy->base = former->base;
+		buddy->size <<= 1;
+		buddy->free = 0;
+		LIST_REMOVE(former, bb_link);
+	}
+
+	while (buddy->size == right->size && buddy->id == right->id) {
+		buddy->size <<= 2;
+		LIST_REMOVE(right, bb_link);
+		right = LIST_NEXT(buddy, bb_link);
+	}
 }
 
 
