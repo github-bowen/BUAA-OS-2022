@@ -197,16 +197,31 @@ void page_init(void)
 	int used_pages_num = PPN(PADDR(freemem));
 	int i;
 	for (i = 0; i < used_pages_num; i++)  // PPN = VPN, defined in include/mmu.h 
+	{
 		pages[i].pp_ref = 1;
+		pages[i].status = 1;
+	}
 	/* Step 4: Mark the other memory as free. */
 	for (; i < npage; i++) {
 		pages[i].pp_ref = 0;
+		pages[i].status = 2;
 		LIST_INSERT_HEAD(&page_free_list, (pages + i), pp_link);
 	}
 }
 
+int page_status_query(struct Page *pp) {
+	return (int) pp->status;
+}
 
-
+int page_protect(struct Page *pp) {
+	if (pp->status == 2) {
+		pp->status = 3;
+		return 0;
+	} else if (pp->status == 1) {
+		return -1;
+	}
+	return -2;
+}
 
 /*
 unsigned int page_bitmap[BIT_MAP_SIZE];

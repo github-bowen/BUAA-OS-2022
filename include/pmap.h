@@ -41,6 +41,7 @@ struct Page {
 	// do not have valid reference count fields.
 
 	u_short pp_ref;
+	u_short status;
 };
 
 extern struct Page *pages;
@@ -102,6 +103,8 @@ va2pa(Pde *pgdir, u_long va)
 }
 
 /********** functions for memory management(see implementation in mm/pmap.c). ***********/
+int page_protect(struct Page *pp);
+int page_status_query(struct Page *pp);
 
 void mips_detect_memory();
 
