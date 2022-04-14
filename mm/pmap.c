@@ -419,13 +419,22 @@ void buddy_free(u_int pa) {
         }
 		former = buddy;
     }
-	
+	u_short former_none = 1;	
+	LIST_FOREACH(former, &buddy_list, bb_link) {
+        if (LIST_NEXT(former, bb_link) == pa) 
+			former_none = 0;
+            break;
+        }
+    }
+
 	struct Buddy* right = LIST_NEXT(buddy, bb_link);
+	if (!former_none) {
 	if (former->size == buddy->size && former->id == buddy->id && buddy->size <= (1 <<22)) {
 		buddy->base = former->base;
 		buddy->size <<= 1;
 		buddy->free = 0;
 		LIST_REMOVE(former, bb_link);
+	}
 	}
 	if (LIST_NEXT(buddy, bb_link) == NULL) return;
 	while (buddy->size == LIST_NEXT(buddy, bb_link)->size && buddy->id == LIST_NEXT(buddy, bb_link)->id) {
