@@ -216,6 +216,9 @@ int page_status_query(struct Page *pp) {
 }
 
 int page_protect(struct Page *pp) {
+	if (pp->pp_ref > 0 && pp->status == 2)
+        pp->status = 1;
+
 	if (pp->status == 2) {
 		pp->status = 3;
 		return 0;
