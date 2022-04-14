@@ -18,8 +18,8 @@ static u_long freemem;
 
 static struct Page_list page_free_list;	/* Free list of physical pages */
 
-u_long high_start;
-u_long high_end;
+u_long high_start = 0x00400000 + (1 << 25);
+u_long high_end = 0x4000000 - 1;
 static struct Buddy_list buddy_list;
 /* Exercise 2.1 */
 /* Overview:
@@ -35,8 +35,6 @@ void mips_detect_memory()
 	// Step 2: Calculate corresponding npage value.
 	extmem = 0;
 	npage = basemem >> PGSHIFT; // PGSHIFT defined in include/mmu.h
-	high_start = 0x00400000 + (1 << 25);
-	high_end = maxpa - 1;
 	// napge = 1 << 26 >> 12 = 1 << 14 = 16k
 
 	printf("Physical memory: %dK available, ", (int)(maxpa / 1024));
