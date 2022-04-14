@@ -215,7 +215,7 @@ void page_init(void)
 void buddy_init(void) {
 	LIST_INIT((&buddy_list));
 	u_long high_base = high_start;
-	struct Buddy* buddy;
+	struct Buddy* buddy = (struct Buddy*) alloc(sizeof(struct Buddy), sizeof(struct Buddy), 1);
 	int i = 0;
 	for (; i < 8; i++) {
 		buddy->base = high_base;
@@ -224,6 +224,7 @@ void buddy_init(void) {
 		buddy->id = (u_short) i;
 		LIST_INSERT_TAIL(&buddy_list, buddy, bb_link);
 		high_base += (1 << 22);
+		buddy = (struct Buddy*) alloc(sizeof(struct Buddy), sizeof(struct Buddy), 1);
 	}
 }
 
@@ -299,7 +300,7 @@ int buddy_alloc(u_int size, u_int *pa, u_char *pi) {
         }
     }
 	if (!find) return -1;
-	struct Buddy* temp;
+	struct Buddy* temp = (struct Buddy*) alloc(sizeof(struct Buddy), sizeof(struct Buddy), 1);
 	while ((buddy->size >> 1) > size) {
 		buddy->size >>= 1;
 		temp->base = buddy->base + buddy->size;
@@ -313,7 +314,7 @@ int buddy_alloc(u_int size, u_int *pa, u_char *pi) {
 	u_char j = 0;
 	while (temp_size > 1) {
 		j++;
-		temp_size /= 2;
+		temp_size >>= 1;
 	}
 	*pi = j;
 	return 0;
@@ -421,19 +422,18 @@ void buddy_free(u_int pa) {
 		former = buddy;
     }
 	
-	struct Buddy* left = former;
 	struct Buddy* right = LIST_NEXT(buddy, bb_link);
-	if (former->size == buddy->size && former->id == buddy->id) {
+	if (former->size == buddy->size && former->id == buddy->id && buddy->size <= (1 <<22)) {
 		buddy->base = former->base;
 		buddy->size <<= 1;
 		buddy->free = 0;
 		LIST_REMOVE(former, bb_link);
 	}
-
-	while (buddy->size == right->size && buddy->id == right->id) {
-		buddy->size <<= 2;
-		LIST_REMOVE(right, bb_link);
-		right = LIST_NEXT(buddy, bb_link);
+	if (LIST_NEXT(buddy, bb_link) == NULL) return;
+	while (buddy->size == LIST_NEXT(buddy, bb_link)->size && buddy->id == LIST_NEXT(buddy, bb_link)->id) {
+		buddy->size <<= 1;
+		LIST_REMOVE(LIST_NEXT(buddy, bb_link), bb_link);
+		if (LIST_NEXT(buddy, bb_link) == NULL) return;
 	}
 }
 
