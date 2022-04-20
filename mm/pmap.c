@@ -103,12 +103,12 @@ static Pte *boot_pgdir_walk(Pde *pgdir, u_long va, int create)
 	/* Step 2: If the corresponding page table is not exist and parameter `create`
 	 * is set, create one. And set the correct permission bits for this new page
 	 * table. */
-	if ((*pgdir_entryp & PTE_V) == 0)
+	if ((*pgdir_entryp & PTE_V) == 0) {
 		if (create) {
 			*pgdir_entryp = (Pte *) PADDR(alloc(BY2PG, BY2PG, 1));
 			*pgdir_entryp |= (PTE_V | PTE_R);
 		} else return 0;
-
+	}
 	/* Step 3: Get the page table entry for `va`, and return it. */
 	pgtable = (Pte *) KADDR(PTE_ADDR(*pgdir_entryp));  // PTE_ADDR():get physical addr of a pte
 	pgtable_entry = pgtable + PTX(va);
