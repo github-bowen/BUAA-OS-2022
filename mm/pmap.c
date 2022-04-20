@@ -299,8 +299,8 @@ int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte)
 			return 0;
 		}
 	}
-	*ppte = pgtable + PTX(va);
 	pgtable = (Pte *) KADDR(PTE_ADDR(*pgdir_entryp));
+	*ppte = pgtable + PTX(va);
 	return 0;
 }
 
