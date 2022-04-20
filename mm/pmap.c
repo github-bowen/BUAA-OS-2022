@@ -280,7 +280,7 @@ This function has something in common with function `boot_pgdir_walk`.*/
 int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte)
 {
 	Pde *pgdir_entryp = pgdir + PDX(va);
-	Pte *pgtable = (Pte *) KADDR(PTE_ADDR(*pgdir_entryp));
+	Pte *pgtable;
 	int ret;
 	struct Page *ppage;
 
@@ -300,6 +300,7 @@ int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte)
 		}
 	}
 	*ppte = pgtable + PTX(va);
+	pgtable = (Pte *) KADDR(PTE_ADDR(*pgdir_entryp));
 	return 0;
 }
 
