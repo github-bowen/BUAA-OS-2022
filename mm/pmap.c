@@ -17,6 +17,32 @@ static u_long freemem;
 
 static struct Page_list page_free_list;	/* Free list of physical pages */
 
+/*
+
+u_long cal_page(int func, u_long va, int n, Pde *pgdir) {
+	u_long second_begin, first_pn;
+	switch (func) {
+		case 0:  // 64bit system, va bits
+			return 39;
+			break;
+		case 1:  // va = pte_base, return pde_base
+			return va + (va >> 10);
+			break;
+			case 2:  //va=pgdir_va, n:the n entry of pte, return pte_addr
+			return ((va>>22)<<22) + ((n)<<12);
+			break;
+			case 3:  // va: pte_base, pgdir:pde_base
+			first_pn = (va >> 22); 
+			*(pgdir + first_pn) = PADDR(pgdir) | PTE_V | PTE_R;
+			return 0;
+			break;
+	}
+	return 0;
+}
+
+*/
+
+
 
 /* Exercise 2.1 */
 /* Overview:
