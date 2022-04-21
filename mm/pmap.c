@@ -416,7 +416,7 @@ int inverted_page_lookup(Pde *pgdir, struct Page *pp, int vpn_buffer[]) {
 	struct Page *page;
 
 	for (i = 0; pp->va[i] != -1; i++) {
-		vpn_buffer[i] = pp->va[i];
+		vpn_buffer[i] = VPN(pp->va[i]);
 	}
 	count = i;
 	int m, n;
@@ -465,11 +465,11 @@ void page_remove(Pde *pgdir, u_long va)
 
 	/* Hint: When there's no virtual address mapped to this page, release it. */
 	ppage->pp_ref--;
-	for (i = 0; ppage->vpn[i] != -1; i++) {
-		if (ppage->vpn[i] == VPN(va)) break;
+	for (i = 0; ppage->va[i] != -1; i++) {
+		if (ppage->va[i] == VPN(va)) break;
 	}
-	for (j = i; ppage->vpn[j] != -1; j++) {
-		ppage->vpn[j] = ppage->vpn[j + 1];
+	for (j = i; ppage->va[j] != -1; j++) {
+		ppage->va[j] = ppage->va[j + 1];
 	}
 
 	if (ppage->pp_ref == 0) {
