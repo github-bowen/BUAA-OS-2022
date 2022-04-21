@@ -379,10 +379,8 @@ struct Page *page_lookup(Pde *pgdir, u_long va, Pte **ppte)
 {
 	struct Page *ppage;
 	Pte *pte;
-
 	/* Step 1: Get the page table entry. */
 	pgdir_walk(pgdir, va, 0, &pte);
-
 	/* Hint: Check if the page table entry doesn't exist or is not valid. */
 	if (pte == 0) {
 		return 0;
@@ -390,18 +388,49 @@ struct Page *page_lookup(Pde *pgdir, u_long va, Pte **ppte)
 	if ((*pte & PTE_V) == 0) {
 		return 0;    //the page is not in memory.
 	}
-
 	/* Step 2: Get the corresponding Page struct. */
-
 	/* Hint: Use function `pa2page`, defined in include/pmap.h . */
 	ppage = pa2page(*pte);
 	if (ppte) {
 		*ppte = pte;
 	}
-
 	return ppage;
 }
+int inverted_page_lookup(Pde *pgdir, struct Page *pp, int vpn_buffer[]) {
+	int count = 0;
+	int i = 0;
+	for (i = 0; i < 1024; i++) {
+		Pte *pgtable_entry = (Pte *) (pgdir + i);
+		if ((*pgtable_entry & PTE_V) == 0) continue;
+		int* pte_base = PTE_ADDR(pgtable_entry);
+		int j;
+		for (j = 0; j < 1024; j++) {
+			int* pte = pte_base + j;
+			if ((*pte & PTE_V) == 0) continue;
+			if (pa2page(PTE_ADDR(pte)) == pp) {
+			    vpn_buffer[count++] = i << 10 + j;
+			}
+		}
+	}
 
+	int m, n;
+	for (m = 0; m < count - 1; m++) {
+		int vpn = vpn_buffer[m];
+		int index = m;
+		for (n = m + 1; n < count; n++) {
+			if (vpn_buffer[n] < vpn) {
+				index = n;
+				vpn = vpn_buffer[n];
+			}
+		}
+		int temp;
+		if (index != m) {
+			temp = vpn_buffer[m];
+			vpn_buffer[m] = vpn_buffer[index];
+			vpn_buffer[index] = temp;
+		}
+	}
+}
 // Overview:
 // 	Decrease the `pp_ref` value of Page `*pp`, if `pp_ref` reaches to 0, free this page.
 void page_decref(struct Page *pp) {
