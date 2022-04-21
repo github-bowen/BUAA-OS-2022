@@ -39,7 +39,7 @@ struct Page {
 	// to this page.  This only holds for pages allocated using
 	// page_alloc.  Pages allocated at boot time using pmap.c's "alloc"
 	// do not have valid reference count fields.
-	int vpn[240];
+	int vpn[200];
 	u_short pp_ref;
 };
 
