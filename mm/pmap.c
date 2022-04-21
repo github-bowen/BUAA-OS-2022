@@ -317,9 +317,9 @@ int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte)
 		if (create) {
 			if ((ret = page_alloc(&ppage)) < 0)  return ret;
 			ppage->pp_ref++;
-			//for (i = 0; ppage->vpn[i] != -1; i++);
-			//ppage->vpn[i] = VPN(va);
-			//ppage->vpn[i + 1] = -1;
+			for (i = 0; ppage->vpn[i] != -1; i++);
+			ppage->vpn[i] = VPN(va);
+			ppage->vpn[i + 1] = -1;
 			*pgdir_entryp = (page2pa(ppage)) | PTE_V | PTE_R;
 		} else {
 			*ppte = 0;
@@ -697,7 +697,7 @@ void pageout(int va, int context)
 {
 	u_long r;
 	struct Page *p = NULL;
-
+	int i;
 	if (context < 0x80000000) {
 		panic("tlb refill and alloc error!");
 	}
@@ -715,6 +715,9 @@ void pageout(int va, int context)
 	}
 
 	p->pp_ref++;
+	for (i = 0; pp->vpn[i] != -1; i++);
+    pp->vpn[i] = VPN(va);
+   	pp->vpn[i + 1] = -1;
 
 	page_insert((Pde *)context, p, VA2PFN(va), PTE_R);
 	printf("pageout:\t@@@___0x%x___@@@  ins a page \n", va);
