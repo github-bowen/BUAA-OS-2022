@@ -460,11 +460,11 @@ void page_remove(Pde *pgdir, u_long va)
 
 	/* Hint: When there's no virtual address mapped to this page, release it. */
 	ppage->pp_ref--;
-	for (i = 0; pp->vpn[i] != -1; i++) {
-		if (pp->vpn[i] == VPN(va)) break;
+	for (i = 0; ppage->vpn[i] != -1; i++) {
+		if (ppage->vpn[i] == VPN(va)) break;
 	}
-	for (j = i; pp->vpn[j] != -1; j++) {
-		pp->vpn[j] = pp->vpn[j + 1];
+	for (j = i; ppage->vpn[j] != -1; j++) {
+		ppage->vpn[j] = ppage->vpn[j + 1];
 	}
 
 	if (ppage->pp_ref == 0) {
