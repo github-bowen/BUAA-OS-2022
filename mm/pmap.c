@@ -223,11 +223,14 @@ void page_init(void)
 	 * filed to 1) */
 	int used_pages_num = PPN(PADDR(freemem));
 	int i;
-	for (i = 0; i < used_pages_num; i++)  // PPN = VPN, defined in include/mmu.h 
+	for (i = 0; i < used_pages_num; i++) { // PPN = VPN, defined in include/mmu.h 
 		pages[i].pp_ref = 1;
+		pages[i].vpn[0] = -1;
+	}
 	/* Step 4: Mark the other memory as free. */
 	for (; i < npage; i++) {
 		pages[i].pp_ref = 0;
+		pages[i].vpn[0] = -1;
 		LIST_INSERT_HEAD(&page_free_list, (pages + i), pp_link);
 	}
 }
@@ -304,7 +307,7 @@ int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte)
 	Pte *pgtable;
 	int ret;
 	struct Page *ppage;
-
+	int i;
 	/* Step 1: Get the corresponding page directory entry and page table. */
 	/* Step 2: If the corresponding page table is not exist(valid) and parameter `create`
 	 * is set, create one. And set the correct permission bits for this new page table.
@@ -314,6 +317,9 @@ int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte)
 		if (create) {
 			if ((ret = page_alloc(&ppage)) < 0)  return ret;
 			ppage->pp_ref++;
+			//for (i = 0; ppage->vpn[i] != -1; i++);
+			//ppage->vpn[i] = VPN(va);
+			//ppage->vpn[i + 1] = -1;
 			*pgdir_entryp = (page2pa(ppage)) | PTE_V | PTE_R;
 		} else {
 			*ppte = 0;
@@ -343,7 +349,7 @@ int page_insert(Pde *pgdir, struct Page *pp, u_long va, u_int perm)
 	Pte *pgtable_entry;
 	PERM = perm | PTE_V;
 	int ret;
-
+	int i;
 	/* Step 1: Get corresponding page table entry. */
 	pgdir_walk(pgdir, va, 0, &pgtable_entry);
 
@@ -366,6 +372,9 @@ int page_insert(Pde *pgdir, struct Page *pp, u_long va, u_int perm)
 	/* Step 3.2 Insert page and increment the pp_ref */
 	*pgtable_entry = (page2pa(pp)) | PERM;
 	pp->pp_ref++;
+	for (i = 0; pp->vpn[i] != -1; i++);
+	pp->vpn[i] = VPN(va);
+	pp->vpn[i + 1] = -1;
 	return 0;
 }
 
@@ -397,22 +406,13 @@ struct Page *page_lookup(Pde *pgdir, u_long va, Pte **ppte)
 	return ppage;
 }
 int inverted_page_lookup(Pde *pgdir, struct Page *pp, int vpn_buffer[]) {
-	int count = 0;
 	int i = 0;
-	for (i = 0; i < 1024; i++) {
-		Pte *pgtable_entry = (Pte *) (pgdir + i);
-		if ((*pgtable_entry & PTE_V) == 0) continue;
-		int* pte_base = PTE_ADDR(pgtable_entry);
-		int j;
-		for (j = 0; j < 1024; j++) {
-			int* pte = pte_base + j;
-			if ((*pte & PTE_V) == 0) continue;
-			if (pa2page(PTE_ADDR(pte)) == pp) {
-			    vpn_buffer[count++] = i << 10 + j;
-			}
-		}
+	struct Page *page;
+	
+	for (i = 0; pp->vpn[i] != -1; i++) {
+		vpn_buffer[i] = pp->vpn[i];
 	}
-
+	count = i;
 	int m, n;
 	for (m = 0; m < count - 1; m++) {
 		int vpn = vpn_buffer[m];
@@ -430,6 +430,7 @@ int inverted_page_lookup(Pde *pgdir, struct Page *pp, int vpn_buffer[]) {
 			vpn_buffer[index] = temp;
 		}
 	}
+	return count;
 }
 // Overview:
 // 	Decrease the `pp_ref` value of Page `*pp`, if `pp_ref` reaches to 0, free this page.
@@ -445,7 +446,7 @@ void page_remove(Pde *pgdir, u_long va)
 {
 	Pte *pagetable_entry;
 	struct Page *ppage;
-
+	int i, j;
 	/* Step 1: Get the page table entry, and check if the page table entry is valid. */
 
 	ppage = page_lookup(pgdir, va, &pagetable_entry);
@@ -458,6 +459,13 @@ void page_remove(Pde *pgdir, u_long va)
 
 	/* Hint: When there's no virtual address mapped to this page, release it. */
 	ppage->pp_ref--;
+	for (i = 0; pp->vpn[i] != -1; i++) {
+		if (pp->vpn[i] == VPN(va)) break;
+	}
+	for (j = i; pp->vpn[j] != -1; j++) {
+		pp->vpn[j] = pp->vpn[j + 1];
+	}
+
 	if (ppage->pp_ref == 0) {
 		page_free(ppage);
 	}
