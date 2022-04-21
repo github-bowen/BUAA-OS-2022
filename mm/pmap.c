@@ -226,13 +226,13 @@ void page_init(void)
 	int j;
 	for (i = 0; i < used_pages_num; i++) { // PPN = VPN, defined in include/mmu.h 
 		pages[i].pp_ref = 1;
-		for (j = 0; j < 50; j++) 
+		for (j = 0; j < 30; j++) 
 			pages[i].vpn[j] = -1;
 	}
 	/* Step 4: Mark the other memory as free. */
 	for (; i < npage; i++) {
 		pages[i].pp_ref = 0;
-		for (j = 0; j < 50; j++) 
+		for (j = 0; j < 30; j++) 
 			pages[i].vpn[j] = -1;
 
 		LIST_INSERT_HEAD(&page_free_list, (pages + i), pp_link);
