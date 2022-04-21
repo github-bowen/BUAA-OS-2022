@@ -227,13 +227,13 @@ void page_init(void)
 	for (i = 0; i < used_pages_num; i++) { // PPN = VPN, defined in include/mmu.h 
 		pages[i].pp_ref = 1;
 		for (j = 0; j < 30; j++) 
-			pages[i].vpn[j] = -1;
+			pages[i].va[j] = -1;
 	}
 	/* Step 4: Mark the other memory as free. */
 	for (; i < npage; i++) {
 		pages[i].pp_ref = 0;
 		for (j = 0; j < 30; j++) 
-			pages[i].vpn[j] = -1;
+			pages[i].va[j] = -1;
 
 		LIST_INSERT_HEAD(&page_free_list, (pages + i), pp_link);
 	}
@@ -278,7 +278,7 @@ void page_free(struct Page *pp)
 	/* Step 1: If there's still virtual address referring to this page, do nothing. */
 	/* Step 2: If the `pp_ref` reaches 0, mark this page as free and return. */
 	if (pp->pp_ref == 0) {
-		pp->vpn[0] = -1;
+		pp->va[0] = -1;
 		LIST_INSERT_HEAD(&page_free_list, pp, pp_link);
 		return;
 	} else if (pp->pp_ref > 0) return;
@@ -377,9 +377,9 @@ int page_insert(Pde *pgdir, struct Page *pp, u_long va, u_int perm)
 	/* Step 3.2 Insert page and increment the pp_ref */
 	*pgtable_entry = (page2pa(pp)) | PERM;
 	pp->pp_ref++;
-		for (i = 0; pp->vpn[i] != -1; i++);
-		pp->vpn[i] = VPN(va);
-		pp->vpn[i + 1] = -1;
+		for (i = 0; pp->va[i] != -1; i++);
+		pp->va[i] = va;
+		pp->va[i + 1] = -1;
 	return 0;
 }
 
@@ -414,9 +414,9 @@ int inverted_page_lookup(Pde *pgdir, struct Page *pp, int vpn_buffer[]) {
 	int i = 0;
 	int count = 0;
 	struct Page *page;
-	
-	for (i = 0; pp->vpn[i] != -1; i++) {
-		vpn_buffer[i] = pp->vpn[i];
+
+	for (i = 0; pp->va[i] != -1; i++) {
+		vpn_buffer[i] = pp->va[i];
 	}
 	count = i;
 	int m, n;
