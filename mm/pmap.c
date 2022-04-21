@@ -715,9 +715,9 @@ void pageout(int va, int context)
 	}
 
 	p->pp_ref++;
-	for (i = 0; pp->vpn[i] != -1; i++);
-    pp->vpn[i] = VPN(va);
-   	pp->vpn[i + 1] = -1;
+	for (i = 0; p->vpn[i] != -1; i++);
+    p->vpn[i] = VPN(va);
+   	p->vpn[i + 1] = -1;
 
 	page_insert((Pde *)context, p, VA2PFN(va), PTE_R);
 	printf("pageout:\t@@@___0x%x___@@@  ins a page \n", va);
