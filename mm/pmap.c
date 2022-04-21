@@ -378,7 +378,7 @@ int page_insert(Pde *pgdir, struct Page *pp, u_long va, u_int perm)
 	*pgtable_entry = (page2pa(pp)) | PERM;
 	pp->pp_ref++;
 	for (i = 0; pp->vpn[i] != -1; i++);
-	pp->vpn[i] = VPN(va);
+	pp->vpn[i] = (va);
 	pp->vpn[i + 1] = -1;
 	return 0;
 }
@@ -414,11 +414,16 @@ int inverted_page_lookup(Pde *pgdir, struct Page *pp, int vpn_buffer[]) {
 	int i = 0;
 	int count = 0;
 	struct Page *page;
-	
+	Pte * pte;
+	int j = 0;
 	for (i = 0; pp->vpn[i] != -1; i++) {
-		vpn_buffer[i] = pp->vpn[i];
+		pgtable_entry = (Pte* ) (pgdir + PDX(pp->vpn[i]));
+		pgdir_walk(pgdir, va, 0, &pte);
+		if (pte == 0) continue;
+		vpn_buffer[j] = pp->vpn[i];
+		j++;
 	}
-	count = i;
+	count = j;
 	int m, n;
 	for (m = 0; m < count - 1; m++) {
 		int vpn = vpn_buffer[m];
