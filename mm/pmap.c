@@ -377,11 +377,9 @@ int page_insert(Pde *pgdir, struct Page *pp, u_long va, u_int perm)
 	/* Step 3.2 Insert page and increment the pp_ref */
 	*pgtable_entry = (page2pa(pp)) | PERM;
 	pp->pp_ref++;
-	if (perm & PTE_V != 0) {	
 		for (i = 0; pp->vpn[i] != -1; i++);
 		pp->vpn[i] = VPN(va);
 		pp->vpn[i + 1] = -1;
-	}
 	return 0;
 }
 
