@@ -407,6 +407,7 @@ struct Page *page_lookup(Pde *pgdir, u_long va, Pte **ppte)
 }
 int inverted_page_lookup(Pde *pgdir, struct Page *pp, int vpn_buffer[]) {
 	int i = 0;
+	int count = 0;
 	struct Page *page;
 	
 	for (i = 0; pp->vpn[i] != -1; i++) {
