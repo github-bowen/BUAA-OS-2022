@@ -10,7 +10,7 @@
 
 #define LOG2NENV	10
 #define NENV		(1<<LOG2NENV)
-#define ENVX(envid)	((envid) & (NENV - 1))
+#define ENVX(envid)	((envid) & (NENV - 1))   // get low 10 bits
 #define GET_ENV_ASID(envid) (((envid)>> 11)<<6)
 
 // Values of env_status in struct Env

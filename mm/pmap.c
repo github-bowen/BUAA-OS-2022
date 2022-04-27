@@ -17,28 +17,6 @@ static u_long freemem;
 
 static struct Page_list page_free_list;	/* Free list of physical pages */
 
-/*
-u_long cal_page(int func, u_long va, int n, Pde *pgdir) {
-	if (func == 0) {
-		return (u_long) 39;
-	}
-	if (func == 1) {
-		return (u_long) (va + ((va >> 12) << 2));
-	}
-	if (func == 2) {
-		return (u_long) (((va>>22)<<22) + ((n)<<12));
-	}
-	if (func == 3) {
-		u_long* x;
-		x = &pgdir[(va>>22)&0x3ff];
-		*x = PADDR(pgdir) | PTE_V;
-		return 0;	
-	}
-	return 0;
-}
-
-*/
-
 /* Exercise 2.1 */
 /* Overview:
    Initialize basemem and npage.
@@ -230,6 +208,9 @@ void page_init(void)
 		pages[i].pp_ref = 0;
 		LIST_INSERT_HEAD(&page_free_list, (pages + i), pp_link);
 	}
+	struct Page* p = pa2page(PADDR(TIMESTACK));
+	LIST_REMOVE(p, pp_link);
+	p->pp_ref = 1;
 }
 
 /* Exercise 2.4 */
