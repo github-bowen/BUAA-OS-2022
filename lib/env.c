@@ -285,24 +285,17 @@ static int load_icode_mapper(u_long va, u_int32_t sgsize,
 		size = MIN(BY2PG, bin_size - i);
 		if ((r = page_alloc(&p)) < 0) return r;
 		page_insert(env->env_pgdir, p, va + i, PTE_R);
-		bcopy((void*) (bin + i), (void*) (page2kva(p)), size);
+		bcopy((void*) bin + i, (void*) (page2kva(p)), size);
     }
-	// i == binsize now
-	offset = i - ROUNDDOWN(i, BY2PG);
-	if (offset > 0) {
-		if ((r = page_alloc(&p)) < 0) return r;
-		page_insert(env->env_pgdir, p, va + i, PTE_R);
-		size = MIN(sgsize - i, BY2PG - offset);
-		bzero((void*) (page2kva(p) + offset), size);
-		i += size;
-	}
 
     /* Step 2: alloc pages to reach `sgsize` when `bin_size` < `sgsize`.*/
+	i = bin_size;
     while (i < sgsize) {
-		size = MIN(BY2PG, sgsize - i);
+		offset =(va + i) - ROUNDDOWN((va + i), BY2PG);
+		size = MIN(BY2PG - offset, sgsize - i);
 		if ((r = page_alloc(&p)) < 0) return r;
 		page_insert(env->env_pgdir, p, va + i, PTE_R);
-		bzero((void*) page2kva(p), size);
+		bzero((void*) page2kva(p) + offset, size);
 		i += size;
     }
     return 0;
