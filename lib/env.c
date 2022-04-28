@@ -39,6 +39,7 @@ u_int exam_env_run(struct Env *e) {
 							// unused 
             				asid_bitmap[index] |= 1 << inner;
 							find = 1;
+							asid_bitmap[index] |= 1 << inner;
             				break;
         				}
     				}
