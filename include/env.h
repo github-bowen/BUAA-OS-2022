@@ -19,6 +19,8 @@
 #define ENV_NOT_RUNNABLE	2
 
 struct Env {
+	LIST_ENTRY(Env) env_wait_link;
+
 	struct Trapframe env_tf;        // Saved registers
 	LIST_ENTRY(Env) env_link;       // Free list
 	u_int env_id;                   // Unique environment identifier
@@ -51,6 +53,15 @@ LIST_HEAD(Env_list, Env);
 extern struct Env *envs;		// All environments
 extern struct Env *curenv;	        // the current env
 extern struct Env_list env_sched_list[2]; // runnable env list
+
+
+void S_init(int s, int num);
+int P(struct Env* e, int s);
+int V(struct Env* e, int s);
+int get_status(struct Env* e);
+int my_env_create();
+
+
 
 void env_init(void);
 int env_alloc(struct Env **e, u_int parent_id);
