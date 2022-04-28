@@ -295,7 +295,7 @@ static int load_icode_mapper(u_long va, u_int32_t sgsize,
 		size = MIN(BY2PG - offset, sgsize - i);
 		if ((r = page_alloc(&p)) < 0) return r;
 		page_insert(env->env_pgdir, p, va + i, PTE_R);
-		bzero((void*) page2kva(p) + offset, size);
+		bzero((void*) (page2kva(p) + offset), size);
 		i += size;
     }
     return 0;
@@ -572,7 +572,7 @@ void load_icode_check() {
     Pte* pte;
     u_int paddr;
     assert(envid2env(1024, &e, 0) == 0);
-    /* text & data: 0x00401030 - 0x00409adc left closed and right open interval */
+    /* text & data: 0x00401030 - 0x00409aac left closed and right open interval */
     assert(pgdir_walk(e->env_pgdir, 0x00401000, 0, &pte) == 0);
     assert(*((int *)KADDR(PTE_ADDR(*pte)) + 0xc) == 0x8fa40000);
     assert(*((int *)KADDR(PTE_ADDR(*pte)) + 1023) == 0x26300001);
@@ -601,7 +601,7 @@ void load_icode_check() {
     assert(*((int *)KADDR(PTE_ADDR(*pte))) == 0x00000000);
     assert(*((int *)KADDR(PTE_ADDR(*pte)) + 0x2aa) == 0x004099fc);
     printf("text & data segment load right!\n");
-    /* bss        : 0x00409adc - 0x0040aab4 left closed and right open interval */
+    /* bss        : 0x00409aac - 0x0040aab4 left closed and right open interval */
     assert(*((int *)KADDR(PTE_ADDR(*pte)) + 0x2b7) == 0x00000000);
     assert(*((int *)KADDR(PTE_ADDR(*pte)) + 1023) == 0x00000000);
     assert(pgdir_walk(e->env_pgdir, 0x0040a000, 0, &pte) == 0);
