@@ -65,7 +65,6 @@ int V(struct Env* e, int s) {
 			new = LIST_FIRST(&env_wait_list1);
 			LIST_REMOVE(new, env_wait_link);
 			new->b1 = 2;
-			if (new->b2 == 1) new->b2 = 3;
 		} else {
 			s1_value++;
 		}
@@ -75,7 +74,6 @@ int V(struct Env* e, int s) {
 			new = LIST_FIRST(&env_wait_list2);
 			LIST_REMOVE(new, env_wait_link);
 			new->b2 = 2;
-			if (new->b1 == 1) new->b1 = 3;
 		} else {
 			s2_value++;
 		}
@@ -86,9 +84,8 @@ int V(struct Env* e, int s) {
 int get_status(struct Env* e) {
 	int b1 = e->b1;
 	int b2 = e->b2;
-
-	if (b1 == 2 || b2 == 2) return 2;
 	if (b1 == 1 || b2 == 1) return 1;
+	if (b1 == 2 || b2 == 2) return 2;
 	return 3;
 }
 
@@ -97,8 +94,7 @@ int my_env_create() {
 	/* Step 1: Use env_alloc to alloc a new env. */
 	int r = env_alloc( &e, 0);
 	if (r) return -1;
-	e->b1 = 3;
-	e->b2 = 3;
+	e->b = 3;
 	return e->env_id;
 }
 
