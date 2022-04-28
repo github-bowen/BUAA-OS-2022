@@ -133,8 +133,8 @@ env_init(void)
     int i;
     /* Step 1: Initialize env_free_list. */
 	LIST_INIT(&env_free_list);
-	LIST_INIT(&env_sched_list[0]);
-	LIST_INIT(&env_sched_list[1]);
+//	LIST_INIT(&env_sched_list[0]);
+//	LIST_INIT(&env_sched_list[1]);
     /* Step 2: Traverse the elements of 'envs' array,
      *   set their status as free and insert them into the env_free_list.
      * Choose the correct loop order to finish the insertion.
@@ -334,7 +334,7 @@ load_icode(struct Env *e, u_char *binary, u_int size)
 	if ((r = page_insert(e->env_pgdir, p, USTACKTOP - BY2PG, PTE_R)) < 0) return;
 
     /* Step 3: load the binary using elf loader. */
-	if ((r = load_elf(binary, size, &entry_point, (void*) e, load_icode_mapper)) < 0) return;
+	load_elf(binary, size, &entry_point, (void*) e, load_icode_mapper);
 
     /* Step 4: Set CPU's PC register as appropriate value. */
     e->env_tf.pc = entry_point;
