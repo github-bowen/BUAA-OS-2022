@@ -63,7 +63,10 @@ int V(struct Env* e, int s) {
 	//if (e->b == 3) return 0;
 	if (s == 1) {
 		e->b1_num--;
-		if (e->b1_num == 0) e->b1 = 3;
+		if (e->b1_num <= 0) {
+		   	e->b1 = 3;
+			e->b1_num = 0;
+		}
 		if (!LIST_EMPTY(&env_wait_list1)) {
 			new = LIST_FIRST(&env_wait_list1);
 			LIST_REMOVE(new, env_wait_link);
@@ -73,7 +76,10 @@ int V(struct Env* e, int s) {
 		}
 	} else {
 		e->b2_num--;
-		if (e->b2_num == 0) e->b2 = 3;
+		if (e->b2_num <= 0) {
+		   	e->b2 = 3;
+			e->b2_num = 0;
+		}
 		if (!LIST_EMPTY(&env_wait_list2)) {
 			new = LIST_FIRST(&env_wait_list2);
 			LIST_REMOVE(new, env_wait_link);
