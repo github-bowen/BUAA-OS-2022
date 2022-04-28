@@ -71,6 +71,7 @@ int V(struct Env* e, int s) {
 			new = LIST_FIRST(&env_wait_list1);
 			LIST_REMOVE(new, env_wait_link);
 			new->b1 = 2;
+			new->b1_num++;
 		} else {
 			s1_value++;
 		}
@@ -84,6 +85,7 @@ int V(struct Env* e, int s) {
 			new = LIST_FIRST(&env_wait_list2);
 			LIST_REMOVE(new, env_wait_link);
 			new->b2 = 2;
+			new->b2_num++;
 		} else {
 			s2_value++;
 		}
