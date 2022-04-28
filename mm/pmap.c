@@ -208,7 +208,7 @@ void page_init(void)
 		pages[i].pp_ref = 0;
 		LIST_INSERT_HEAD(&page_free_list, (pages + i), pp_link);
 	}
-	struct Page* p = pa2page(PADDR(TIMESTACK));
+	struct Page* p = pa2page(PADDR(TIMESTACK - BY2PG));
 	LIST_REMOVE(p, pp_link);
 	p->pp_ref = 1;
 }
