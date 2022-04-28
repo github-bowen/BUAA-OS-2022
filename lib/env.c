@@ -14,23 +14,90 @@ struct Env *curenv = NULL;            // the current env
 
 static struct Env_list env_free_list;    // Free list
 struct Env_list env_sched_list[2];      // Runnable list
-struct Env_list env_wait_list;
  
 extern Pde *boot_pgdir;
 extern char *KERNEL_SP;
 
 static u_int asid_bitmap[2] = {0}; // 64
 
-/* Overview:
- *  This function is to allocate an unused ASID
- *
- * Pre-Condition:
- *  the number of running processes should be less than 64
- *
- * Post-Condition:
- *  return the allocated ASID on success
- *  panic when too many processes are running
- */
+
+
+
+struct Env_list env_wait_list1;
+struct Env_list env_wait_list2;
+int s1_value;
+int s2_value;
+
+void S_init(int s, int num) {
+	if (s == 1) s1_value = num;
+	else s2_value = num;
+}
+
+int P(struct Env* e, int s) {
+	if (e->b == 1) return -1;
+	if (s == 1) {
+		e->type = 1;
+		if (s1_value > 0) {
+			s1_value--;
+			e->b = 2;
+		} else {
+			LIST_INSERT_TAIL(&env_wait_list1, e, env_wait_link);
+			e->b = 1;
+		}
+	} else {
+		e->type = 2;
+		if (s2_value > 0) {
+			s2_value--;
+			e->b = 2;
+		} else {
+			LIST_INSERT_TAIL(&env_wait_list2, e, env_wait_link);
+			e->b = 1;
+		}
+	}
+	return 0;
+}
+
+int V(struct Env* e, int s) {
+	struct Env* new = NULL;
+	if (e->b == 1) return -1;
+	//if (e->b == 3) return 0;
+	e->b = 3;
+	if (e->type == 1) {
+		if (!LIST_EMPTY(&env_wait_list1)) {
+			new = LIST_FIRST(&env_wait_list1);
+			LIST_REMOVE(new, env_wait_link);
+			new->b = 2;
+		} else {
+			s1_value++;
+		}
+	} else {
+		if (!LIST_EMPTY(&env_wait_list2)) {
+			new = LIST_FIRST(&env_wait_list2);
+			LIST_REMOVE(new, env_wait_link);
+			new->b = 2;
+		} else {
+			s2_value++;
+		}
+	}
+	return 0;
+}
+
+int get_status(struct Env* e) {
+	return e->b;
+}
+
+int my_env_create() {
+	struct Env *e;
+	/* Step 1: Use env_alloc to alloc a new env. */
+	int r = env_alloc( &e, 0);
+	if (r) return -1;
+	e->b = 3;
+	return e->env_id;
+}
+
+
+
+	
 static u_int asid_alloc() {
     int i, index, inner;
     for (i = 0; i < 64; ++i) {
@@ -45,12 +112,6 @@ static u_int asid_alloc() {
     panic("too many processes!");
 }
 
-/* Overview:
- *  When a process is killed, free its ASID
- *
- * Post-Condition:
- *  ASID is free and can be allocated again later
- */
 static void asid_free(u_int i) {
     int index, inner;
     index = i >> 5;
@@ -135,7 +196,8 @@ env_init(void)
 {
     int i;
     /* Step 1: Initialize env_free_list. */
-
+	LIST_INIT(&env_wait_list1);
+	LIST_INIT(&env_wait_list2);
 	LIST_INIT(&env_free_list);
 
     /* Step 2: Traverse the elements of 'envs' array,
@@ -145,8 +207,9 @@ env_init(void)
      *   should be the same as that in the envs array. */
 
 	for (i=NENV-1; i>=0; i--) {
-			LIST_INSERT_HEAD(&env_free_list, envs+i, env_link);
-			(envs+i)->env_status = ENV_FREE;	
+		LIST_INSERT_HEAD(&env_free_list, envs + i, env_link);
+		(envs + i)->env_status = ENV_FREE;	
+		envs[i].b = 3;
 	}
 
 }
