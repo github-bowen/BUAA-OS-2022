@@ -26,7 +26,7 @@ u_int exam_env_run(struct Env *e) {
 	u_int asid_1 = e->env_asid >> 6;
 	u_int asid_2 = e->env_asid & 0x3f;
 	if (asid_1 != sys_num) {
-		if (asid_bitmap[asid_2 >> 5] & (1 << (asid_2 & 31)) == 0) {  // unused
+		if ((asid_bitmap[asid_2 >> 5] & (1 << (asid_2 & 31))) == 0) {  // unused
 			e->env_asid = (sys_num << 6) | asid_2;
 		} else {
 			    	int i, index, inner;
