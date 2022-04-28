@@ -47,6 +47,7 @@ u_int exam_env_run(struct Env *e) {
 					sys_num++;
 					asid_bitmap[0] = 0;
 					asid_bitmap[1] = 0;
+					asid_bitmap[0] = 1;
 					e->env_asid = (sys_num << 6);
 					return 1;
 				}
