@@ -37,7 +37,6 @@ u_int exam_env_run(struct Env *e) {
         				inner = i & 31;
         				if ((asid_bitmap[index] & (1 << inner)) == 0) {
 							// unused 
-            				asid_bitmap[index] |= 1 << inner;
 							find = 1;
 							asid_bitmap[index] |= 1 << inner;
             				break;
@@ -50,7 +49,7 @@ u_int exam_env_run(struct Env *e) {
 					asid_bitmap[0] = 0;
 					asid_bitmap[1] = 0;
 					asid_bitmap[0] = 1;
-					e->env_asid = (sys_num << 6 | asid_2);
+					e->env_asid = (sys_num << 6);
 					return 1;
 				}
 		}
