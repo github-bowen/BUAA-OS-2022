@@ -94,7 +94,8 @@ int my_env_create() {
 	/* Step 1: Use env_alloc to alloc a new env. */
 	int r = env_alloc( &e, 0);
 	if (r) return -1;
-	e->b = 3;
+	e->b1 = 3;
+	e->b2 = 3;
 	return e->env_id;
 }
 
