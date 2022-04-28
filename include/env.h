@@ -42,6 +42,9 @@ struct Env {
 	// Lab 6 scheduler counts
 	u_int env_runs;			// number of times been env_run'ed
 	u_int env_nop;                  // align to avoid mul instruction
+
+//	int son_num;            // add on exam
+//  u_int son_id_arr[1024]; // add on exam
 };
 
 LIST_HEAD(Env_list, Env);

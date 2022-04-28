@@ -20,6 +20,95 @@ extern char *KERNEL_SP;
 
 static u_int asid_bitmap[2] = {0}; // 64
 
+/*
+u_int fork(struct Env *e)
+{
+        struct Env *e_son;
+        env_alloc(&e_son, e->env_id);
+        e_son->env_status = e->env_status;
+        e_son->env_pgdir = e->env_pgdir;
+        e_son->env_cr3 = e->env_cr3;
+        e_son->env_pri = e->env_pri;
+
+        // ---- father ----
+        int son_num = e->son_num;
+        e->son_id_arr[son_num] = e_son->env_id;
+        e->son_num += 1;
+
+        return e_son->env_id;
+}
+*/
+
+/*
+void lab3_output(u_int env_id)
+{
+        struct Env *e_now;
+        u_int fa_id = 0;
+        u_int first_son_id = 0;
+        u_int bro_bf_id = 0; // "bf" means "before"
+        u_int bro_af_id = 0; // "af" means "after"
+
+        envid2env(env_id, &e_now, 0);
+        // son part
+        first_son_id = e_now->son_id_arr[0];
+
+        // parent part
+        fa_id = e_now->env_parent_id;
+        if (fa_id == 0) { // do not have parent
+                // three 0 now
+                bro_bf_id = 0;
+                bro_af_id = 0;
+        } else { // have a parent
+                struct Env *e_fa;
+                envid2env(fa_id, &e_fa, 0);
+                int index = 0;
+                for (index = 0; index < 1024; index++) {
+                        if (e_fa->son_id_arr[index] == env_id) {
+                                break;
+                        } else {
+                                continue;
+                        }
+                }
+                // index is the env of father now
+                if (index > 0) { // have bro bf
+                        bro_bf_id = e_fa->son_id_arr[index - 1];
+                }
+
+                // have a bro_af
+                if (e_fa->son_num > index + 1) {
+                        bro_af_id = e_fa->son_id_arr[index + 1];
+                }
+        }
+        // fa_id, fist_son_id, bro_bf, bro_af
+        printf("%08x %08x %08x %08x\n", fa_id, first_son_id, bro_bf_id, bro_af_id);
+}
+*/
+
+/*
+int lab3_get_sum(u_int env_id)
+{
+        struct Env *e_now;
+        envid2env(env_id, &e_now, 0);
+        int son_num = e_now->son_num;
+        // if e_now has no son
+        if (son_num == 0) {
+                return 1;
+        } else {
+                // have many sons, recuring
+                int ans = 1;
+                int i = 0;
+                for (i = 0; i < son_num; i++) {
+                        struct Env *e_son;
+                        u_int son_id = e_now->son_id_arr[i];
+                        envid2env(son_id, &e_son, 0); // now got a son
+                        ans += lab3_get_sum(son_id);
+                }
+                return ans;
+        }
+}
+
+*/
+
 
 /* Overview:
  *  This function is to allocate an unused ASID
