@@ -234,7 +234,7 @@ env_alloc(struct Env **new, u_int parent_id)
 	e->env_id = mkenvid(e);
 	e->env_status = ENV_RUNNABLE;
 	e->env_parent_id = parent_id;
-	//e->env_runs = 0;
+	e->env_runs = 0;
 
     /* Step 4: Focus on initializing the sp register and cp0_status of env_tf field, located at this new Env. */
     e->env_tf.cp0_status = 0x10001004;
@@ -467,7 +467,8 @@ env_run(struct Env *e)
 		// TIMESTACK: 0x82000000
 		struct Trapframe *old;
 		old = (struct Trapframp *)(TIMESTACK - sizeof(struct Trapframe));
-		bcopy(old, &(curenv->env_tf), sizeof(struct Trapframe));
+	//	bcopy(old, &(curenv->env_tf), sizeof(struct Trapframe));
+		curenv->env_tf = *old;
 		curenv->env_tf.pc = curenv->env_tf.cp0_epc;
 	}
     /* Step 2: Set 'curenv' to the new environment. */
