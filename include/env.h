@@ -20,7 +20,8 @@
 
 struct Env {
 	LIST_ENTRY(Env) env_wait_link;
-	int b;
+	int b1;
+	int b2;
 	int type;
 
 	struct Trapframe env_tf;        // Saved registers
