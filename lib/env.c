@@ -36,7 +36,6 @@ void S_init(int s, int num) {
 int P(struct Env* e, int s) {
 	if (e->b1 == 1 || e->b2 == 1) return -1;
 	if (s == 1) {
-		e->type = 1;
 		if (s1_value > 0) {
 			s1_value--;
 			e->b1 = 2;
@@ -45,7 +44,6 @@ int P(struct Env* e, int s) {
 			e->b1 = 1;
 		}
 	} else {
-		e->type = 2;
 		if (s2_value > 0) {
 			s2_value--;
 			e->b2 = 2;
@@ -61,7 +59,7 @@ int V(struct Env* e, int s) {
 	struct Env* new = NULL;
 	if (e->b1 == 1 || e->b2 == 1) return -1;
 	//if (e->b == 3) return 0;
-	if (e->type == 1) {
+	if (s == 1) {
 		e->b1 = 3;
 		if (!LIST_EMPTY(&env_wait_list1)) {
 			new = LIST_FIRST(&env_wait_list1);
