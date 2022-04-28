@@ -39,6 +39,7 @@ int P(struct Env* e, int s) {
 		if (s1_value > 0) {
 			s1_value--;
 			e->b1 = 2;
+			e->b1_num++;
 		} else {
 			LIST_INSERT_TAIL(&env_wait_list1, e, env_wait_link);
 			e->b1 = 1;
@@ -47,6 +48,7 @@ int P(struct Env* e, int s) {
 		if (s2_value > 0) {
 			s2_value--;
 			e->b2 = 2;
+			e->b2_num++;
 		} else {
 			LIST_INSERT_TAIL(&env_wait_list2, e, env_wait_link);
 			e->b2 = 1;
@@ -60,7 +62,8 @@ int V(struct Env* e, int s) {
 	if (e->b1 == 1 || e->b2 == 1) return -1;
 	//if (e->b == 3) return 0;
 	if (s == 1) {
-		e->b1 = 3;
+		e->b1_num--;
+		if (e->b1_num == 0) e->b1 = 3;
 		if (!LIST_EMPTY(&env_wait_list1)) {
 			new = LIST_FIRST(&env_wait_list1);
 			LIST_REMOVE(new, env_wait_link);
@@ -69,7 +72,8 @@ int V(struct Env* e, int s) {
 			s1_value++;
 		}
 	} else {
-		e->b2 = 3;
+		e->b2_num--;
+		if (e->b2_num == 0) e->b2 = 3;
 		if (!LIST_EMPTY(&env_wait_list2)) {
 			new = LIST_FIRST(&env_wait_list2);
 			LIST_REMOVE(new, env_wait_link);
@@ -96,6 +100,8 @@ int my_env_create() {
 	if (r) return -1;
 	e->b1 = 3;
 	e->b2 = 3;
+	e->b1_num = 0;
+	e->b2_num = 0;
 	return e->env_id;
 }
 

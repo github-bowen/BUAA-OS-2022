@@ -22,7 +22,8 @@ struct Env {
 	LIST_ENTRY(Env) env_wait_link;
 	int b1;
 	int b2;
-	int type;
+	int b1_num;
+	int b2_num;
 
 	struct Trapframe env_tf;        // Saved registers
 	LIST_ENTRY(Env) env_link;       // Free list
