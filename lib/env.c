@@ -20,96 +20,6 @@ extern char *KERNEL_SP;
 
 static u_int asid_bitmap[2] = {0}; // 64
 
-/*
-u_int fork(struct Env *e)
-{
-        struct Env *e_son;
-        env_alloc(&e_son, e->env_id);
-        e_son->env_status = e->env_status;
-        e_son->env_pgdir = e->env_pgdir;
-        e_son->env_cr3 = e->env_cr3;
-        e_son->env_pri = e->env_pri;
-
-        // ---- father ----
-        int son_num = e->son_num;
-        e->son_id_arr[son_num] = e_son->env_id;
-        e->son_num += 1;
-
-        return e_son->env_id;
-}
-*/
-
-/*
-void lab3_output(u_int env_id)
-{
-        struct Env *e_now;
-        u_int fa_id = 0;
-        u_int first_son_id = 0;
-        u_int bro_bf_id = 0; // "bf" means "before"
-        u_int bro_af_id = 0; // "af" means "after"
-
-        envid2env(env_id, &e_now, 0);
-        // son part
-        first_son_id = e_now->son_id_arr[0];
-
-        // parent part
-        fa_id = e_now->env_parent_id;
-        if (fa_id == 0) { // do not have parent
-                // three 0 now
-                bro_bf_id = 0;
-                bro_af_id = 0;
-        } else { // have a parent
-                struct Env *e_fa;
-                envid2env(fa_id, &e_fa, 0);
-                int index = 0;
-                for (index = 0; index < 1024; index++) {
-                        if (e_fa->son_id_arr[index] == env_id) {
-                                break;
-                        } else {
-                                continue;
-                        }
-                }
-                // index is the env of father now
-                if (index > 0) { // have bro bf
-                        bro_bf_id = e_fa->son_id_arr[index - 1];
-                }
-
-                // have a bro_af
-                if (e_fa->son_num > index + 1) {
-                        bro_af_id = e_fa->son_id_arr[index + 1];
-                }
-        }
-        // fa_id, fist_son_id, bro_bf, bro_af
-        printf("%08x %08x %08x %08x\n", fa_id, first_son_id, bro_bf_id, bro_af_id);
-}
-*/
-
-/*
-int lab3_get_sum(u_int env_id)
-{
-        struct Env *e_now;
-        envid2env(env_id, &e_now, 0);
-        int son_num = e_now->son_num;
-        // if e_now has no son
-        if (son_num == 0) {
-                return 1;
-        } else {
-                // have many sons, recuring
-                int ans = 1;
-                int i = 0;
-                for (i = 0; i < son_num; i++) {
-                        struct Env *e_son;
-                        u_int son_id = e_now->son_id_arr[i];
-                        envid2env(son_id, &e_son, 0); // now got a son
-                        ans += lab3_get_sum(son_id);
-                }
-                return ans;
-        }
-}
-
-*/
-
-
 /* Overview:
  *  This function is to allocate an unused ASID
  *
@@ -183,7 +93,7 @@ int envid2env(u_int envid, struct Env **penv, int checkperm)
     /* Hint: If envid is zero, return curenv.*/
     /* Step 1: Assign value to e using envid. */
 
-	e = envs+ENVX(envid);
+	e = envs + ENVX(envid);
 
     if (e->env_status == ENV_FREE || e->env_id != envid) {
         *penv = 0;
@@ -233,8 +143,8 @@ env_init(void)
      * Make sure, after the insertion, the order of envs in the list
      *   should be the same as that in the envs array. */
 
-	for (i=NENV-1; i>=0; i--) {
-			LIST_INSERT_HEAD(&env_free_list, envs+i, env_link);
+	for (i = NENV - 1; i >= 0; i--) {
+			LIST_INSERT_HEAD(&env_free_list, envs + i, env_link);
 			(envs+i)->env_status = ENV_FREE;	
 	}
 
@@ -268,7 +178,7 @@ env_setup_vm(struct Env *e)
 	p->pp_ref++;
 	pgdir = (Pde*) page2kva(p);
     /* Step 2: Zero pgdir's field before UTOP. */
-	for (i=0; i<PDX(UTOP);i++) 
+	for (i = 0; i < PDX(UTOP); i++) 
 	{
 			pgdir[i] = 0;
 	}
@@ -291,7 +201,7 @@ env_setup_vm(struct Env *e)
      */
     /* UVPT maps the env's own page table, with read-only permission.*/
     e->env_pgdir[PDX(VPT)] = e->env_cr3;
-	e->env_pgdir[PDX(UVPT)]  = e->env_cr3 | PTE_V;// PTE_V :valid  PTE_R : writable
+	e->env_pgdir[PDX(UVPT)] = e->env_cr3 | PTE_V;// PTE_V :valid  PTE_R : writable
     return 0;
 }
 
@@ -382,7 +292,7 @@ static int load_icode_mapper(u_long va, u_int32_t sgsize,
 
 	if (offset) 
 	{
-			p = page_lookup(env->env_pgdir, va + i, NULL);
+			p = page_lookup(env->env_pgdir, va, NULL);
 			if (p == 0) 
 			{
 			
@@ -390,8 +300,8 @@ static int load_icode_mapper(u_long va, u_int32_t sgsize,
 					if (r != 0) return r;
 					page_insert(env->env_pgdir, p, va, PTE_R);
 			}
-			size = MIN(bin_size, BY2PG-offset);
-			bcopy((void *)bin, (void*)(page2kva(p)+offset), size);
+			size = MIN(bin_size, BY2PG - offset);
+			bcopy((void *)bin, (void*)(page2kva(p) + offset), size);
 			i += size;
 	}
 
@@ -415,9 +325,9 @@ static int load_icode_mapper(u_long va, u_int32_t sgsize,
      * hint: variable `i` has the value of `bin_size` now! */
 	i = bin_size;
     while (i < sgsize) {
-			offset =(va+i) - ROUNDDOWN((va + i), BY2PG);
-			p = page_lookup(env->env_pgdir, va+i, NULL);
-			if (p==0)//not found
+			offset = (va + i) - ROUNDDOWN((va + i), BY2PG);
+			p = page_lookup(env->env_pgdir, va + i, NULL);
+			if (p == 0)//not found
 			{
 					r = page_alloc(&p);
 					if (r) return r;
