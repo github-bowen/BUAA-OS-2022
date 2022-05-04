@@ -10,13 +10,13 @@ extern void handle_mod();
 unsigned long exception_handlers[32];
 void trap_init(){
 	int i;
-	for(i=0;i<32;i++)
-	set_except_vector(i, handle_reserved);
-	set_except_vector(0, handle_int);
-	set_except_vector(1, handle_mod);
-	set_except_vector(2, handle_tlb);
-	set_except_vector(3, handle_tlb);
-	set_except_vector(8, handle_sys);
+	for(i = 0; i < 32; i++) set_except_vector(i, handle_reserved);
+
+	set_except_vector(0, handle_int);  // handle interrupt (by kclock/console ...)
+	set_except_vector(1, handle_mod);  // storage exception: store in a page that is only readable (no PTE_V)
+	set_except_vector(2, handle_tlb);  // tlb key miss
+	set_except_vector(3, handle_tlb);  // tlb invalid ( and not in exception mode)
+	set_except_vector(8, handle_sys);  // execute syscall
 }
 void *set_except_vector(int n, void * addr){
 	unsigned long handler=(unsigned long)addr;

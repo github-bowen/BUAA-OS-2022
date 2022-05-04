@@ -1,7 +1,7 @@
 /* See COPYRIGHT for copyright information. */
 
 /* The Run Time Clock and other NVRAM access functions that go with it. */
-/* The run time clock is hard-wired to IRQ4. */
+/* The run time clock is hard-wired to IRQ4. */  /* cp0_status[12] = 1 */
 
 
 #include <kclock.h>
@@ -13,6 +13,6 @@ void
 kclock_init(void)
 {
 	// hint: use set_timer()
-	
+	set_timer();	
 }
 

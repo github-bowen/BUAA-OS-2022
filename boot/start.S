@@ -1,19 +1,23 @@
-/*
- * Copyright (C) 2001 MontaVista Software Inc.
- * Author: Jun Sun, jsun@mvista.com or jsun@junsun.net
- *
- * This program is free software; you can redistribute  it and/or modify it
- * under  the terms of  the GNU General  Public License as published by the
- * Free Software Foundation;  either version 2 of the  License, or (at your
- * option) any later version.
- *
- */
-
 #include <asm/regdef.h>
 #include <asm/cp0regdef.h>
 #include <asm/asm.h>
-.section .text.exc_vec3
+
 /*** exercise 3.12 ***/
+.section .text.exc_vec3
+NESTED(except_vec3, 0, sp)
+    .set noat
+    .set noreorder
+1:
+    mfc0 k1, CP0_CAUSE    // k1 = CP0_CAUSE
+    la k0, exception_handlers  // K0 = base_address(exception_handlers)
+    andi k1, 0x7c  // k1 = CP0_CAUSE[6..2] , i.e. ExcCode
+    addu k0, k1  // get the address that stores the certain exception_handler function's address
+    lw k0, (k0)  
+    nop
+    jr k0  // jump to this exception_handler 
+    nop
+END(except_vec3)
+	.set at
 
 
 .data
