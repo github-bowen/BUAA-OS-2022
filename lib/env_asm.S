@@ -16,8 +16,8 @@ LEAF(env_pop_tf)
 .set	mips1
 		//1:	j	1b
 	nop
-		move		k0,a0
-		mtc0	a1,CP0_ENTRYHI
+		move		k0,a0  // a0 = &(curenv->env_tf)
+		mtc0	a1,CP0_ENTRYHI  // a1 = GET_ENV_ASID(curenv->env_id)
 
 
 		mfc0	t0,CP0_STATUS
@@ -78,7 +78,7 @@ END(env_pop_tf)
 
 LEAF(lcontext)
 		.extern	mCONTEXT
-		sw		a0,mCONTEXT
+		sw		a0,mCONTEXT  // a0 = curenv->env_pgdir
 		jr	ra
 		nop
 END(lcontext)

@@ -3,7 +3,8 @@
 #include <asm/asm.h>
 #include <trap.h>
 
-.macro STI
+.macro STI  // set interrupt flag: allow interruption
+	// set CP0_STATUS[0] = IEc = 1
 	mfc0	t0,	CP0_STATUS
 	li	t1, (STATUS_CU0 | 0x1)
 	or	t0, t1
@@ -12,7 +13,8 @@
 .endm
 
 
-.macro CLI
+.macro CLI  // clear interrupt flag: prohibit interruption
+	// set CP0_STATUS[0] = IEc = 0
 	mfc0	t0, CP0_STATUS
 	li	t1, (STATUS_CU0 | 0x1)
 	or	t0, t1
@@ -23,8 +25,9 @@
 .macro SAVE_ALL
 
 		mfc0	k0,CP0_STATUS
-		sll		k0,3      /* extract cu0 bit */
-		bltz	k0,1f
+		sll		k0,3      /* extract cu0 bit */  // 31 - 3 = 28: CP0_STATUS[28] = CU0
+		// CU0 == 1: allow using CP0 in user mode
+		bltz	k0,1f  // if cu0 == 1: jump to label "1"
 		nop
 		/*
 		 * Called from user mode, new stack
@@ -34,11 +37,11 @@
 
 1:
 		move	k0,sp
-		get_sp
+		get_sp  // defined below!!
 		move	k1,sp
 		subu	sp,k1,TF_SIZE
 		sw	k0,TF_REG29(sp)
-		sw	$2,TF_REG2(sp)
+		sw	$2,TF_REG2(sp)  // $2 = $v0
 		mfc0	v0,CP0_STATUS
 		sw	v0,TF_STATUS(sp)
 		mfc0	v0,CP0_CAUSE
@@ -151,19 +154,19 @@
 .endm
 
 
-.macro get_sp
+.macro get_sp  // attention!!!!!
 	mfc0	k1, CP0_CAUSE
-	andi	k1, 0x107C
+	andi	k1, 0x107C  // get CP0_CAUSE[12] (IRQ4) and CP0_CAUSE[6...2] (ExcCode)
 	xori	k1, 0x1000
-	bnez	k1, 1f
+	bnez	k1, 1f  // not IRQ4: goto 1f
 	nop
-	li	sp, 0x82000000
+	li	sp, 0x82000000  // if is IRQ4: let sp = TIMESTACK
 	j	2f
 	nop
 1:
 	bltz	sp, 2f
 	nop
-	lw	sp, KERNEL_SP
+	lw	sp, KERNEL_SP  // not IRQ4: let sp = KERNEL_SP
 	nop
 
 2:	nop

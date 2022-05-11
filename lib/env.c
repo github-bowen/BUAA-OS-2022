@@ -140,7 +140,8 @@ env_init(void)
     /* Step 1: Initialize env_free_list. */
 
 	LIST_INIT(&env_free_list);
-
+	LIST_INIT(&env_sched_list[0]);
+	LIST_INIT(&env_sched_list[1]);
     /* Step 2: Traverse the elements of 'envs' array,
      *   set their status as free and insert them into the env_free_list.
      * Choose the correct loop order to finish the insertion.
@@ -406,9 +407,7 @@ env_create_priority(u_char *binary, int size, int priority)
 	e->env_pri = priority;
     /* Step 3: Use load_icode() to load the named elf binary,
        and insert it into env_sched_list using LIST_INSERT_HEAD. */
-
 	load_icode(e, binary, size);
-
 	LIST_INSERT_HEAD(env_sched_list, e, env_sched_link);
 }
 /* Overview:
@@ -422,7 +421,6 @@ void
 env_create(u_char *binary, int size)
 {
      /* Step 1: Use env_create_priority to alloc a new env with priority 1 */
-
 		env_create_priority(binary, size, 1);
 }
 
@@ -490,6 +488,7 @@ env_destroy(struct Env *e)
     }
 }
 
+/* defined in env_asm.S */
 extern void env_pop_tf(struct Trapframe *tf, int id);
 extern void lcontext(u_int contxt);
 
@@ -528,14 +527,15 @@ env_run(struct Env *e)
 
     /* Step 3: Use lcontext() to switch to its address space. */
 
-		lcontext((int)curenv->env_pgdir);//set mCONTEXT
+		lcontext((int)curenv->env_pgdir);  // let mCONTEXT = curenv->env_pgdir
+
     /* Step 4: Use env_pop_tf() to restore the environment's
      *   environment   registers and return to user mode.
      *
      * Hint: You should use GET_ENV_ASID there. Think why?
      *   (read <see mips run linux>, page 135-144)
      */
-		env_pop_tf(&(e->env_tf), GET_ENV_ASID(e->env_id));
+		env_pop_tf(&(e->env_tf), GET_ENV_ASID(e->env_id));  // load e->env_tf to regs.....
 
 }
 

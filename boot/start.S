@@ -4,7 +4,7 @@
 
 /*** exercise 3.12 ***/
 .section .text.exc_vec3
-NESTED(except_vec3, 0, sp)
+NESTED(except_vec3, 0, sp)  // exception distributing code
     .set noat
     .set noreorder
 1:
