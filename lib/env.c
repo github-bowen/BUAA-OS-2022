@@ -91,6 +91,10 @@ int envid2env(u_int envid, struct Env **penv, int checkperm)
 {
     struct Env *e;
     /* Hint: If envid is zero, return curenv.*/
+	if (envid == 0) {
+		*penv = curenv;
+		return 0;
+	}
     /* Step 1: Assign value to e using envid. */
 
 	e = envs + ENVX(envid);
