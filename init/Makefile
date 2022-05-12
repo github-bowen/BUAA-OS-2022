@@ -3,7 +3,8 @@ INCLUDES := -I../include
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< 
 
-%.o: %.S$(CC) $(CFLAGS) $(INCLUDES) -c $< 
+%.o: %.S
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< 
 
 .PHONY: clean 
 
