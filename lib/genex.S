@@ -153,13 +153,12 @@ nop
 END(do_refill)
 
 NESTED(adel_handler, 0, sp)
-	mfc0 k0, CP0_EPC
+	mfc0 k0, CP0_BADVADDR
 	lw k0, 0(k0)  // k0 = instruction
 	srl k0, k0, 26
 	li k1, 100001  // lh
 	beq k0, k1, lhtolb
 	nop
-	li k1, 100001
 	j end_adel
 	nop
 
@@ -167,7 +166,7 @@ lhtolb:
 	li k1, 100000  // k1 = lb
 end_adel:
 	sll k1, k1, 26
-	mfc0 k0, CP0_EPC
+	mfc0 k0, CP0_BADVADDR
 	move t0, k0
 	sll k0, k0, 6
 	srl k0, k0, 6
