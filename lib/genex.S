@@ -168,7 +168,7 @@ end_adel:
 	sll k1, k1, 26
 	mfc0 k0, CP0_EPC
 	lw k0, 0(k0)
-	move t0, k0
+	addi t0, k0, 0
 	sll k0, k0, 6
 	srl k0, k0, 6
 	or k1, k0, k1
