@@ -74,9 +74,15 @@ void sched_yield(void)
 				 cur->env_pri = 0;
 			 }
 		 }
+		 if (FUNC_2(cur) == count) {
+			 cur->env_status = ENV_NOT_RUNNABLE;
+		 }
 	 }
 	 maxpri = 0;
 	 LIST_FOREACH(tempe, &env_sched_list[0],env_sched_link) {
+	 	if (tempe->env_status == ENV_NOT_RUNNABLE && count == (FUNC_2(tempe) + FUNC_3(tempe))) {
+			 tempe->env_status = ENV_RUNNABLE;
+		}
 	 	if (PRI(tempe) > maxpri && tempe->env_status == ENV_RUNNABLE) {
 	 		cur = tempe;
 	 		maxpri = PRI(tempe);
