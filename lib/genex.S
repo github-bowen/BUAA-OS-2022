@@ -159,6 +159,17 @@ NESTED(adel_handler, 0, sp)
 	ori k1, $0, 0b100001  // lh
 	beq k0, k1, lhtolb
 	nop
+	
+	lw k0, 0(k0)
+	andi k0, k0, 1
+	bnez k0, lwtolb
+	nop
+
+	j end_adel
+	nop
+
+lwtolb:
+	ori k1, $0, 0b100000
 	j end_adel
 	nop
 
