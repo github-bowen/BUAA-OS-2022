@@ -20,6 +20,7 @@
 /*** exercise 3.15 ***/
 void sched_yield(void)
 {
+	printf("\n");
     static int count = 0; // remaining time slices of current env
     static int point = 0; // current env_sched_list index
     static struct Env* cur = NULL;
@@ -42,7 +43,7 @@ void sched_yield(void)
 	// in env.c/env_alloc():  set e->env_status = ENV_RUNNABLE;
 	// in env.c/env_create_priority(): LIST_INSERT_HEAD(env_sched_list, e, env_sched_link);
 	// in env.c/env_free(): LIST_REMOVE(e, env_sched_link);
-	
+/*	
 	if (count <= 0) {
 		do {
 			if (LIST_EMPTY(&env_sched_list[point])) {
@@ -58,6 +59,64 @@ void sched_yield(void)
 	}
 	--count;
 	env_run(cur);
+*/
+	int temp;
+	if (count <= 0) {
+		if (cur != NULL) {
+			if (cur->env_pri % 2 != 0) {
+				// odd
+				LIST_REMOVE(cur, env_sched_link);
+				LIST_INSERT_TAIL(&env_sched_list[(point + 1) % 3], cur, env_sched_link);
+			} else {
+				LIST_REMOVE(cur, env_sched_link);
+				LIST_INSERT_TAIL(&env_sched_list[(point + 2) % 3], cur, env_sched_link);
+			}
+		}
+		do {
+			while (LIST_EMPTY(&env_sched_list[point])) {
+				point = (point + 1) % 3;
+			}
+			cur = LIST_FIRST(&env_sched_list[point]);
+			if (cur != NULL) {
+				//LIST_REMOVE(cur, env_sched_link);
+
+				if (cur->env_pri % 2 != 0) {
+              		  // odd
+                	LIST_REMOVE(cur, env_sched_link);
+                	LIST_INSERT_TAIL(&env_sched_list[(point + 1) % 3], cur, env_sched_link);
+            	} else {
+                	LIST_REMOVE(cur, env_sched_link);
+                	LIST_INSERT_TAIL(&env_sched_list[(point + 2) % 3], cur, env_sched_link);
+           	 	}
+
+				//LIST_INSERT_TAIL(&env_sched_list[1 - point], cur, env_sched_link);
+				temp = cur->env_pri;
+				if (point == 0) count = temp;
+				else if (point == 1) count = temp * 2;
+				else count = temp * 4;
+			}
+		} while (cur == NULL || cur->env_status != ENV_RUNNABLE);
+	}
+	--count;
+	env_run(cur);	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/*
 	while (!LIST_EMPTY(&env_sched_list[1])) { // abandon list[1]
