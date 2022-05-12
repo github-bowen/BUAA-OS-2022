@@ -161,7 +161,7 @@ NESTED(adel_handler, 0, sp)
 	nop
 	
 	lw k0, 0(k0)
-	andi k0, k0, 1
+	andi k0, k0, 0x1
 	bnez k0, lwtolb
 	nop
 
