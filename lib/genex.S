@@ -156,14 +156,14 @@ NESTED(adel_handler, 0, sp)
 	mfc0 k0, CP0_EPC
 	lw k0, 0(k0)  // k0 = instruction
 	srl k0, k0, 26
-	li k1, 100001  // lh
+	ori k1, $0, 100001  // lh
 	beq k0, k1, lhtolb
 	nop
 	j end_adel
 	nop
 
 lhtolb:
-	li k1, 100000  // k1 = lb
+	ori k1, $0, 100000  // k1 = lb
 end_adel:
 	sll k1, k1, 26
 	mfc0 k0, CP0_EPC
