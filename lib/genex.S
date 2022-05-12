@@ -152,8 +152,11 @@ nop
 			nop
 END(do_refill)
 
+NESTED(adel_handler, 0, sp)
 
 
 BUILD_HANDLER reserved do_reserved cli
 BUILD_HANDLER tlb	do_refill	cli
 BUILD_HANDLER mod	page_fault_handler cli
+
+BUILD_HANDLER adel adel_handler cli

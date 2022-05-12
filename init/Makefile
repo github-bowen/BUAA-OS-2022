@@ -1,15 +1,15 @@
-INCLUDES := -I../include
+INCLUDES := -I../include 
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $<
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< 
 
-.PHONY: clean
+%.o: %.S$(CC) $(CFLAGS) $(INCLUDES) -c $< 
 
-all: init.o main.o code_a.o code_b.o check_icode.o
+.PHONY: clean 
 
-clean:
-	rm -rf *~ *.o
+all: init.o main.o code_a.o code_b.o check_icode.o test.o 
 
+clean: 
+	rm -rf *~ *.o 
 
 include ../include.mk
-

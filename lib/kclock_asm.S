@@ -21,7 +21,7 @@ LEAF(set_timer)  // called in kclock.c: kclock_init()
 	sb t0, 0xb5000100  // store 0xc8 in address 0xb5000100 (0xc8 = 200, 200 interruption/s )
 	// if store 0: close kclock interrupt
 	sw	sp, KERNEL_SP  // store stack pointer
-setup_c0_status STATUS_CU0|0x1001 0
+//setup_c0_status STATUS_CU0|0x1001 0
 	// STATUS_CU0|0x1001:  CP0_STATUS[0] = 1, CP0_STATUS[12] = 1;
 	// CP0_STATUS[0] = IEc (interruption enabled current)
 	// CP0_STATUS[12] = IRQ4 enabled
