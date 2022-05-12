@@ -153,7 +153,30 @@ nop
 END(do_refill)
 
 NESTED(adel_handler, 0, sp)
+	mfc0 k0, CP0_EPC
+	lw k0, 0(k0)  // k0 = instruction
+	srl k0, k0, 26
+	li k1, 100001  // lh
+	beq k0, k1, lhtolb
+	nop
+	li k1, 100001
+	j end_adel
+	nop
 
+lhtolb:
+	li k1, 100000  // k1 = lb
+end_adel:
+	sll k1, k1, 26
+	mfc0 k0, CP0_EPC
+	move t0, k0
+	sll k0, k0, 6
+	srl k0, k0, 6
+	or k1, k0, k1
+	sw k1, 0(t0)
+	
+	jr ra
+	nop
+END(adel_handler)
 
 BUILD_HANDLER reserved do_reserved cli
 BUILD_HANDLER tlb	do_refill	cli
