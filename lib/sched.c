@@ -1,13 +1,6 @@
 #include <env.h>
 #include <pmap.h>
 #include <printf.h>
-/*
-#define PRI(X) (((X)->env_pri) & 0xff)
-#define FUNC_1(X) ((((X)->env_pri) >> 8) & 0xff)
-#define FUNC_2(X) ((((X)->env_pri) >> 16) & 0xff)
-#define FUNC_3(X) ((((X)->env_pri) >> 24) & 0xff)
-*/
-
 /* Overview:
  *  Implement simple round-robin scheduling.
  *
@@ -59,36 +52,4 @@ void sched_yield(void)
 	--count;
 	env_run(cur);
 
-	/*
-	while (!LIST_EMPTY(&env_sched_list[1])) { // abandon list[1]
-	 	tempe = LIST_FIRST(&env_sched_list[1]);
-	 	LIST_REMOVE(tempe, env_sched_link);
-	 	LIST_INSERT_HEAD(&env_sched_list[0], tempe, env_sched_link);
-	 	
-	 }
-	 if (cur != NULL) {
-		 if (FUNC_1(cur) > 0) {
-			 if (PRI(cur) >= FUNC_1(cur)) {
-				 cur->env_pri -= FUNC_1(cur);
-			 } else {
-				 cur->env_pri = 0;
-			 }
-		 }
-		 if (FUNC_2(cur) == count) {
-			 cur->env_status = ENV_NOT_RUNNABLE;
-		 }
-	 }
-	 maxpri = 0;
-	 LIST_FOREACH(tempe, &env_sched_list[0],env_sched_link) {
-	 	if (tempe->env_status == ENV_NOT_RUNNABLE && count == (FUNC_2(tempe) + FUNC_3(tempe))) {
-			 tempe->env_status = ENV_RUNNABLE;
-		}
-	 	if (PRI(tempe) > maxpri && tempe->env_status == ENV_RUNNABLE) {
-	 		cur = tempe;
-	 		maxpri = PRI(tempe);
-	 	}
-	 }
-	
-	env_run(cur);
-	*/
 }
