@@ -27,11 +27,11 @@ struct Env {
 	Pde  *env_pgdir;                // Kernel virtual address of page dir
 	u_int env_cr3;
 	LIST_ENTRY(Env) env_sched_link;
-        u_int env_pri;
+	u_int env_pri;
 	// Lab 4 IPC
 	u_int env_ipc_value;            // data value sent to us 
 	u_int env_ipc_from;             // envid of the sender  
-	u_int env_ipc_recving;          // env is blocked receiving
+	u_int env_ipc_recving;          // env is blocked receiving -- 1: waiting for receiving; 0: prohibit receiving
 	u_int env_ipc_dstva;		// va at which to map received page
 	u_int env_ipc_perm;		// perm of page mapping received
 
@@ -43,8 +43,6 @@ struct Env {
 	u_int env_runs;			// number of times been env_run'ed
 	u_int env_nop;                  // align to avoid mul instruction
 
-//	int son_num;            // add on exam
-//  u_int son_id_arr[1024]; // add on exam
 };
 
 LIST_HEAD(Env_list, Env);
