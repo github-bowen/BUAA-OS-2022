@@ -1,0 +1,349 @@
+[33m[01m[05m[ You are changing the branch: lab4 ][0m
+Autotest: Begin at Wed May 18 18:39:50 CST 2022
+Begin build at Wed May 18 18:39:50 CST 2022
+Cleanning the project.................
+
+for d in boot drivers init lib mm user;	\
+	do					\
+		make --directory=$d clean; \
+	done; \
+rm -rf *.o *~ gxemul/vmlinux
+make[1]: Entering directory '/usr/src/workdir/boot'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/boot'
+make[1]: Entering directory '/usr/src/workdir/drivers'
+for d in gxconsole; \
+	do				\
+		make --directory=$d clean; \
+	done
+make[2]: Entering directory '/usr/src/workdir/drivers/gxconsole'
+rm -rf *.o *~
+make[2]: Leaving directory '/usr/src/workdir/drivers/gxconsole'
+make[1]: Leaving directory '/usr/src/workdir/drivers'
+make[1]: Entering directory '/usr/src/workdir/init'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/init'
+make[1]: Entering directory '/usr/src/workdir/lib'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/lib'
+make[1]: Entering directory '/usr/src/workdir/mm'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/mm'
+make[1]: Entering directory '/usr/src/workdir/user'
+rm -rf *~ *.o *.b.c *.x *.b
+make[1]: Leaving directory '/usr/src/workdir/user'
+
+Building the project..................
+
+make --directory=boot
+make[1]: Entering directory '/usr/src/workdir/boot'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c start.S 
+make[1]: Leaving directory '/usr/src/workdir/boot'
+make --directory=drivers
+make[1]: Entering directory '/usr/src/workdir/drivers'
+make --directory=gxconsole
+make[2]: Entering directory '/usr/src/workdir/drivers/gxconsole'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000   -c -o console.o console.c
+make[2]: Leaving directory '/usr/src/workdir/drivers/gxconsole'
+make[1]: Leaving directory '/usr/src/workdir/drivers'
+make --directory=init
+make[1]: Entering directory '/usr/src/workdir/init'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c init.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c main.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c code.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c check_icode.c
+make[1]: Leaving directory '/usr/src/workdir/init'
+make --directory=lib
+make[1]: Entering directory '/usr/src/workdir/lib'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c kernel_elfloader.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c env.c
+env.c: In function 'sys_putchar':
+env.c:19: warning: implicit declaration of function 'printcharc'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c print.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c printf.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c sched.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c env_asm.S
+env_asm.S: Assembler messages:
+env_asm.S:62: Warning: Used $at without ".set noat"
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c kclock.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c traps.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c genex.S
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c kclock_asm.S
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c syscall.S
+syscall.S: Assembler messages:
+syscall.S:9: Warning: Used $at without ".set noat"
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c syscall_all.c
+syscall_all.c: In function 'sys_putchar':
+syscall_all.c:19: warning: implicit declaration of function 'printcharc'
+syscall_all.c: In function 'sys_set_pgfault_handler':
+syscall_all.c:120: warning: unused variable 'ret'
+syscall_all.c:119: warning: unused variable 'env'
+syscall_all.c: In function 'sys_env_alloc':
+syscall_all.c:234: warning: unused variable 'r'
+syscall_all.c:238: warning: 'e' is used uninitialized in this function
+syscall_all.c: In function 'sys_set_env_status':
+syscall_all.c:259: warning: unused variable 'ret'
+syscall_all.c:258: warning: unused variable 'env'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c getc.S
+make[1]: Leaving directory '/usr/src/workdir/lib'
+make --directory=mm
+make[1]: Entering directory '/usr/src/workdir/mm'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c pmap.c
+pmap.c: In function 'boot_map_segment':
+pmap.c:128: warning: unused variable 'va_temp'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c tlb_asm.S
+make[1]: Leaving directory '/usr/src/workdir/mm'
+make --directory=user
+make[1]: Entering directory '/usr/src/workdir/user'
+echo as entry.S
+as entry.S
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o entry.o entry.S
+entry.S: Assembler messages:
+entry.S:104: Warning: Used $at without ".set noat"
+echo as syscall_wrap.S
+as syscall_wrap.S
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o syscall_wrap.o syscall_wrap.S
+echo user1 cc printf.c
+user1 cc printf.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o printf.o printf.c
+printf.c: In function '_exit_panic_ostest':
+printf.c:58: warning: implicit declaration of function '_exit_counted_ostest'
+printf.c: At top level:
+printf.c:61: warning: conflicting types for '_exit_counted_ostest'
+printf.c:58: warning: previous implicit declaration of '_exit_counted_ostest' was here
+echo user1 cc print.c
+user1 cc print.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o print.o print.c
+echo user1 cc libos.c
+user1 cc libos.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o libos.o libos.c
+echo user1 cc fork.c
+user1 cc fork.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o fork.o fork.c
+fork.c: In function 'pgfault':
+fork.c:85: warning: unused variable 'tmp'
+fork.c: In function 'duppage':
+fork.c:119: warning: unused variable 'perm'
+fork.c:118: warning: unused variable 'addr'
+fork.c: In function 'fork':
+fork.c:142: warning: unused variable 'i'
+fork.c:141: warning: unused variable 'env'
+fork.c:140: warning: unused variable 'envs'
+fork.c:150: warning: 'newenvid' is used uninitialized in this function
+fork.c: At top level:
+fork.c:84: warning: 'pgfault' defined but not used
+fork.c:117: warning: 'duppage' defined but not used
+echo user1 cc pgfault.c
+user1 cc pgfault.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o pgfault.o pgfault.c
+echo user1 cc syscall_lib.c
+user1 cc syscall_lib.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o syscall_lib.o syscall_lib.c
+echo user1 cc ipc.c
+user1 cc ipc.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o ipc.o ipc.c
+echo user1 cc string.c
+user1 cc string.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o string.o string.c
+echo user1 cc tltest.c
+user1 cc tltest.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o tltest.o tltest.c
+echo ld tltest.b
+ld tltest.b
+/OSLAB/compiler/usr/bin/mips_4KC-ld -o tltest.b  -G 0 -static -n -nostdlib -T ./user.lds entry.o syscall_wrap.o tltest.o printf.o print.o libos.o fork.o pgfault.o syscall_lib.o ipc.o string.o
+echo create tltest.b.c
+create tltest.b.c
+echo bintoc tltest tltest.b > tltest.b.c~
+chmod +x ./bintoc
+./bintoc tltest tltest.b > tltest.b.c~ && mv -f tltest.b.c~ tltest.b.c
+echo cc1 tltest.b.c
+cc1 tltest.b.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -c -o tltest.x tltest.b.c
+echo user1 cc fktest.c
+user1 cc fktest.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o fktest.o fktest.c
+echo ld fktest.b
+ld fktest.b
+/OSLAB/compiler/usr/bin/mips_4KC-ld -o fktest.b  -G 0 -static -n -nostdlib -T ./user.lds entry.o syscall_wrap.o fktest.o printf.o print.o libos.o fork.o pgfault.o syscall_lib.o ipc.o string.o
+echo create fktest.b.c
+create fktest.b.c
+echo bintoc fktest fktest.b > fktest.b.c~
+chmod +x ./bintoc
+./bintoc fktest fktest.b > fktest.b.c~ && mv -f fktest.b.c~ fktest.b.c
+echo cc1 fktest.b.c
+cc1 fktest.b.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -c -o fktest.x fktest.b.c
+echo user1 cc pingpong.c
+user1 cc pingpong.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o pingpong.o pingpong.c
+echo ld pingpong.b
+ld pingpong.b
+/OSLAB/compiler/usr/bin/mips_4KC-ld -o pingpong.b  -G 0 -static -n -nostdlib -T ./user.lds entry.o syscall_wrap.o pingpong.o printf.o print.o libos.o fork.o pgfault.o syscall_lib.o ipc.o string.o
+echo create pingpong.b.c
+create pingpong.b.c
+echo bintoc pingpong pingpong.b > pingpong.b.c~
+chmod +x ./bintoc
+./bintoc pingpong pingpong.b > pingpong.b.c~ && mv -f pingpong.b.c~ pingpong.b.c
+echo cc1 pingpong.b.c
+cc1 pingpong.b.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -c -o pingpong.x pingpong.b.c
+echo user1 cc idle.c
+user1 cc idle.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c -o idle.o idle.c
+echo ld idle.b
+ld idle.b
+/OSLAB/compiler/usr/bin/mips_4KC-ld -o idle.b  -G 0 -static -n -nostdlib -T ./user.lds entry.o syscall_wrap.o idle.o printf.o print.o libos.o fork.o pgfault.o syscall_lib.o ipc.o string.o
+echo create idle.b.c
+create idle.b.c
+echo bintoc idle idle.b > idle.b.c~
+chmod +x ./bintoc
+./bintoc idle idle.b > idle.b.c~ && mv -f idle.b.c~ idle.b.c
+echo cc1 idle.b.c
+cc1 idle.b.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -c -o idle.x idle.b.c
+rm tltest.o idle.o pingpong.b.c idle.b fktest.b.c tltest.b.c idle.b.c pingpong.o fktest.o
+make[1]: Leaving directory '/usr/src/workdir/user'
+/OSLAB/compiler/usr/bin/mips_4KC-ld -o gxemul/vmlinux -N -T tools/scse0_3.lds boot/start.o init/*.o drivers/gxconsole/console.o lib/*.o user/*.x mm/*.o
+lib/syscall_all.o: In function `sys_putchar':
+syscall_all.c:(.text+0x0): multiple definition of `sys_putchar'
+lib/env.o:env.c:(.text+0x0): first defined here
+lib/syscall_all.o: In function `memcpy':
+syscall_all.c:(.text+0x24): multiple definition of `memcpy'
+lib/env.o:env.c:(.text+0x24): first defined here
+lib/syscall_all.o: In function `sys_getenvid':
+syscall_all.c:(.text+0x58): multiple definition of `sys_getenvid'
+lib/env.o:env.c:(.text+0x58): first defined here
+lib/syscall_all.o: In function `sys_yield':
+syscall_all.c:(.text+0x70): multiple definition of `sys_yield'
+lib/env.o:env.c:(.text+0x70): first defined here
+lib/syscall_all.o: In function `sys_env_destroy':
+syscall_all.c:(.text+0xb0): multiple definition of `sys_env_destroy'
+lib/env.o:env.c:(.text+0xb0): first defined here
+lib/syscall_all.o: In function `sys_set_pgfault_handler':
+syscall_all.c:(.text+0x114): multiple definition of `sys_set_pgfault_handler'
+lib/env.o:env.c:(.text+0x114): first defined here
+lib/syscall_all.o: In function `sys_mem_alloc':
+syscall_all.c:(.text+0x11c): multiple definition of `sys_mem_alloc'
+lib/env.o:env.c:(.text+0x174): first defined here
+lib/syscall_all.o: In function `sys_mem_map':
+syscall_all.c:(.text+0x1c4): multiple definition of `sys_mem_map'
+lib/env.o:env.c:(.text+0x21c): first defined here
+lib/syscall_all.o: In function `sys_mem_unmap':
+syscall_all.c:(.text+0x2a4): multiple definition of `sys_mem_unmap'
+lib/env.o:env.c:(.text+0x308): first defined here
+lib/syscall_all.o: In function `sys_env_alloc':
+syscall_all.c:(.text+0x314): multiple definition of `sys_env_alloc'
+lib/env.o:env.c:(.text+0x378): first defined here
+lib/syscall_all.o: In function `sys_set_env_status':
+syscall_all.c:(.text+0x320): multiple definition of `sys_set_env_status'
+lib/env.o:env.c:(.text+0x424): first defined here
+lib/syscall_all.o: In function `sys_set_trapframe':
+syscall_all.c:(.text+0x328): multiple definition of `sys_set_trapframe'
+lib/env.o:env.c:(.text+0x514): first defined here
+lib/syscall_all.o: In function `sys_panic':
+syscall_all.c:(.text+0x330): multiple definition of `sys_panic'
+lib/env.o:env.c:(.text+0x51c): first defined here
+lib/syscall_all.o: In function `sys_ipc_recv':
+syscall_all.c:(.text+0x364): multiple definition of `sys_ipc_recv'
+lib/env.o:env.c:(.text+0x550): first defined here
+lib/syscall_all.o: In function `sys_ipc_can_send':
+syscall_all.c:(.text+0x3b8): multiple definition of `sys_ipc_can_send'
+lib/env.o:env.c:(.text+0x594): first defined here
+init/init.o: In function `mips_init':
+init.c:(.text+0x2c): undefined reference to `env_init'
+init.c:(.text+0x2c): relocation truncated to fit: R_MIPS_26 against `env_init'
+init.c:(.text+0x40): undefined reference to `env_create'
+init.c:(.text+0x40): relocation truncated to fit: R_MIPS_26 against `env_create'
+lib/env.o: In function `sys_getenvid':
+env.c:(.text+0x58): undefined reference to `curenv'
+env.c:(.text+0x5c): undefined reference to `curenv'
+lib/env.o: In function `sys_env_destroy':
+env.c:(.text+0xc0): undefined reference to `envid2env'
+env.c:(.text+0xc0): relocation truncated to fit: R_MIPS_26 against `envid2env'
+env.c:(.text+0xd0): undefined reference to `curenv'
+env.c:(.text+0xd4): undefined reference to `curenv'
+env.c:(.text+0xf8): undefined reference to `env_destroy'
+env.c:(.text+0xf8): relocation truncated to fit: R_MIPS_26 against `env_destroy'
+lib/env.o: In function `sys_set_pgfault_handler':
+env.c:(.text+0x134): undefined reference to `envid2env'
+env.c:(.text+0x134): relocation truncated to fit: R_MIPS_26 against `envid2env'
+lib/env.o: In function `sys_mem_alloc':
+env.c:(.text+0x1d0): undefined reference to `envid2env'
+env.c:(.text+0x1d0): relocation truncated to fit: R_MIPS_26 against `envid2env'
+lib/env.o: In function `sys_mem_map':
+env.c:(.text+0x280): undefined reference to `envid2env'
+env.c:(.text+0x280): relocation truncated to fit: R_MIPS_26 against `envid2env'
+env.c:(.text+0x294): undefined reference to `envid2env'
+env.c:(.text+0x294): relocation truncated to fit: R_MIPS_26 against `envid2env'
+lib/env.o: In function `sys_mem_unmap':
+env.c:(.text+0x33c): undefined reference to `envid2env'
+env.c:(.text+0x33c): relocation truncated to fit: R_MIPS_26 against `envid2env'
+lib/env.o: In function `sys_env_alloc':
+env.c:(.text+0x384): undefined reference to `curenv'
+env.c:(.text+0x388): undefined reference to `curenv'
+env.c:(.text+0x394): undefined reference to `env_alloc'
+env.c:(.text+0x394): relocation truncated to fit: R_MIPS_26 against `env_alloc'
+env.c:(.text+0x3f0): undefined reference to `curenv'
+lib/env.o: In function `sys_set_env_status':
+env.c:(.text+0x44c): undefined reference to `envid2env'
+env.c:(.text+0x44c): additional relocation overflows omitted from the output
+env.c:(.text+0x478): undefined reference to `env_sched_list'
+env.c:(.text+0x47c): undefined reference to `env_sched_list'
+env.c:(.text+0x48c): undefined reference to `env_sched_list'
+env.c:(.text+0x4a4): undefined reference to `env_sched_list'
+env.c:(.text+0x4a8): undefined reference to `env_sched_list'
+lib/env.o:env.c:(.text+0x4ac): more undefined references to `env_sched_list' follow
+lib/env.o: In function `sys_ipc_recv':
+env.c:(.text+0x558): undefined reference to `curenv'
+env.c:(.text+0x55c): undefined reference to `curenv'
+env.c:(.text+0x568): undefined reference to `curenv'
+env.c:(.text+0x574): undefined reference to `curenv'
+lib/env.o: In function `sys_ipc_can_send':
+env.c:(.text+0x5d4): undefined reference to `envid2env'
+env.c:(.text+0x608): undefined reference to `curenv'
+env.c:(.text+0x5f8): undefined reference to `curenv'
+env.c:(.text+0x62c): undefined reference to `curenv'
+lib/sched.o: In function `sched_yield':
+sched.c:(.text+0x24): undefined reference to `env_sched_list'
+sched.c:(.text+0x28): undefined reference to `env_sched_list'
+sched.c:(.text+0x150): undefined reference to `env_run'
+lib/syscall_all.o: In function `sys_getenvid':
+syscall_all.c:(.text+0x58): undefined reference to `curenv'
+syscall_all.c:(.text+0x5c): undefined reference to `curenv'
+lib/syscall_all.o: In function `sys_env_destroy':
+syscall_all.c:(.text+0xc0): undefined reference to `envid2env'
+syscall_all.c:(.text+0xd0): undefined reference to `curenv'
+syscall_all.c:(.text+0xd4): undefined reference to `curenv'
+syscall_all.c:(.text+0xf8): undefined reference to `env_destroy'
+lib/syscall_all.o: In function `sys_mem_alloc':
+syscall_all.c:(.text+0x164): undefined reference to `envid2env'
+lib/syscall_all.o: In function `sys_mem_map':
+syscall_all.c:(.text+0x224): undefined reference to `envid2env'
+syscall_all.c:(.text+0x238): undefined reference to `envid2env'
+lib/syscall_all.o: In function `sys_mem_unmap':
+syscall_all.c:(.text+0x2d8): undefined reference to `envid2env'
+lib/syscall_all.o: In function `sys_ipc_recv':
+syscall_all.c:(.text+0x37c): undefined reference to `curenv'
+syscall_all.c:(.text+0x380): undefined reference to `curenv'
+syscall_all.c:(.text+0x38c): undefined reference to `curenv'
+syscall_all.c:(.text+0x398): undefined reference to `curenv'
+lib/syscall_all.o: In function `sys_ipc_can_send':
+syscall_all.c:(.text+0x3f0): undefined reference to `envid2env'
+syscall_all.c:(.text+0x430): undefined reference to `curenv'
+syscall_all.c:(.text+0x414): undefined reference to `curenv'
+syscall_all.c:(.text+0x464): undefined reference to `curenv'
+lib/traps.o: In function `page_fault_handler':
+traps.c:(.text+0xd8): undefined reference to `curenv'
+traps.c:(.text+0xdc): undefined reference to `curenv'
+lib/traps.o:traps.c:(.text+0x12c): more undefined references to `curenv' follow
+mm/pmap.o: In function `mips_vm_init':
+pmap.c:(.text+0x3d0): undefined reference to `envs'
+pmap.c:(.text+0x3d4): undefined reference to `envs'
+mm/pmap.o: In function `tlb_invalidate':
+pmap.c:(.text+0xb68): undefined reference to `curenv'
+pmap.c:(.text+0xb6c): undefined reference to `curenv'
+make: *** [Makefile:31: vmlinux] Error 1
+Compile Error!
+[31m[01m[ There is something wrong with your vmlinx. ][0m
+[33m[01m[ You got 0 (of 100) this time. Wed May 18 18:39:53 CST 2022 ][0m
+Autotest: End at Wed May 18 18:39:53 CST 2022
