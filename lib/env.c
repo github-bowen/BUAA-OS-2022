@@ -290,60 +290,44 @@ static int load_icode_mapper(u_long va, u_int32_t sgsize,
 {
     struct Env *env = (struct Env *)user_data;
     struct Page *p = NULL;
-    u_long i = 0;
+    u_long i;
     int r;
     u_long offset = va - ROUNDDOWN(va, BY2PG);
-	int size;
 
-	if (offset) 
-	{
-			p = page_lookup(env->env_pgdir, va, NULL);
-			if (p == 0) 
-			{
-			
-					r = page_alloc(&p);
-					if (r != 0) return r;
-					page_insert(env->env_pgdir, p, va, PTE_R);
-			}
-			size = MIN(bin_size, BY2PG - offset);
-			bcopy((void *)bin, (void*)(page2kva(p) + offset), size);
-			i += size;
-	}
-
-	while (i < bin_size) 
-	{
-			size = MIN(BY2PG, bin_size - i);
-			r = page_alloc(&p);
-			if (r) return r;
-			page_insert(env->env_pgdir, p, va + i, PTE_R);
-			bcopy((void*)bin + i, (void*)(page2kva(p)),size);
-			i += size;
-	}
-
-	/* Step 1: load all content of bin into memory. */
-	
-   // for (i = 0; i < bin_size; i += BY2PG) {
+    if (offset != 0)
+    {
+        if ((r = page_alloc(&p)) != 0)
+            return r;
+        bcopy(bin, page2kva(p) + offset, MIN(bin_size, BY2PG - offset));
+        page_insert(env->env_pgdir, p, va, PTE_R);
+    }
+    /*Step 1: load all content of bin into memory. */
+    for (i = offset ? MIN(bin_size, BY2PG - offset) : 0; i < bin_size; i += BY2PG)
+    {
         /* Hint: You should alloc a new page. */
-
-    //}
-    /* Step 2: alloc pages to reach `sgsize` when `bin_size` < `sgsize`.
-     * hint: variable `i` has the value of `bin_size` now! */
-	i = bin_size;
-    while (i < sgsize) {
-			offset = (va + i) - ROUNDDOWN((va + i), BY2PG);
-			p = page_lookup(env->env_pgdir, va + i, NULL);
-			if (p == 0)//not found
-			{
-					r = page_alloc(&p);
-					if (r) return r;
-					page_insert(env->env_pgdir, p, va + i, PTE_R);
-			}
-			size = MIN(sgsize - i, BY2PG - offset);
-			bzero((void*)(page2kva(p) + offset), size);
-			i += size;
+        if ((r = page_alloc(&p)) != 0)
+            return r;
+        bcopy(bin + i, page2kva(p), MIN(bin_size - i, BY2PG));
+        page_insert(env->env_pgdir, p, va + i, PTE_R);
+    }
+    /*Step 2: alloc pages to reach `sgsize` when `bin_size` < `sgsize`.
+    * hint: variable `i` has the value of `bin_size` now! */
+    //    offset = va + i - ROUNDDOWN(va + i, BY2PG);
+    //    if (offset != 0) {
+    //    	if ((r = page_alloc(&p)) != 0) return r;
+    //	page_insert(env->env_pgdir, p, va + i, PTE_R);
+    //	i += MIN(sgsize - i, BY2PG - offset);
+    //    }
+    while (i < sgsize)
+    {
+        if ((r = page_alloc(&p)) != 0)
+            return r;
+        page_insert(env->env_pgdir, p, va + i, PTE_R);
+        i += BY2PG;
     }
     return 0;
 }
+
 /* Overview:
  *  Sets up the the initial stack and program binary for a user process.
  *  This function loads the complete binary image by using elf loader,
