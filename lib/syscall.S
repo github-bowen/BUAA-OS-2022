@@ -43,7 +43,7 @@ BD_SET:
 	lw a1, TF_REG5(sp)
 	lw a2, TF_REG6(sp)
 	lw a3, TF_REG7(sp)
-	addi sp, sp -24  // 4 * 6, 6 arguments
+	addi sp, sp, -24  // 4 * 6, 6 arguments
 	sw t3, 16(sp)
 	sw t4, 20(sp)
 
