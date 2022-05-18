@@ -33,8 +33,7 @@ void sched_yield(void)
 	// in env.c/env_alloc():  set e->env_status = ENV_RUNNABLE;
 	// in env.c/env_create_priority(): LIST_INSERT_HEAD(env_sched_list, e, env_sched_link);
 	// in env.c/env_free(): LIST_REMOVE(e, env_sched_link);
-	if (curenv->env_status != ENV_RUNNABLE) count = 0;	
-	if (count <= 0) {
+	if (count <= 0 || cur->env_status != ENV_RUNNABLE) {
 		do {
 			if (LIST_EMPTY(&env_sched_list[point])) {
 				point = 1 - point;
