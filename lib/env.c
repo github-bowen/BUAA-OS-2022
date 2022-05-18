@@ -155,7 +155,6 @@ env_init(void)
 
 }
 
-
 /* Overview:
  *  Initialize the kernel virtual memory layout for 'e'.
  *  Allocate a page directory, set e->env_pgdir and e->env_cr3 accordingly,
