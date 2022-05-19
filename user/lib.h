@@ -14,6 +14,8 @@ extern void exit();
 
 extern struct Env *env;
 
+int syscall_try_acquire_console(void);
+int syscall_release_console(void);
 
 #define USED(x) (void)(x)
 //////////////////////////////////////////////////////printf

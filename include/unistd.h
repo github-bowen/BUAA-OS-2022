@@ -20,4 +20,8 @@
 #define SYS_ipc_can_send		((__SYSCALL_BASE ) + (12 ) )
 #define SYS_ipc_recv		((__SYSCALL_BASE ) + (13 ) )
 #define SYS_cgetc			((__SYSCALL_BASE ) + (14 ) )
+
+#define SYS_acquire        ((__SYSCALL_BASE ) + (15 ) )
+#define SYS_release        ((__SYSCALL_BASE ) + (16 ) )
+
 #endif

@@ -7,7 +7,7 @@
 
 extern char *KERNEL_SP;
 extern struct Env *curenv;
-
+static int id = -1;
 /* Overview:
  * 	This function is used to print a character on screen.
  *
@@ -16,10 +16,28 @@ extern struct Env *curenv;
  */
 void sys_putchar(int sysno, int c, int a2, int a3, int a4, int a5)
 {
+	if (sys_acquire() == -1) return;
 	printcharc((char) c);
+	sys_release();
 	return ;
 }
 
+int sys_acquire() {
+	if (id == -1) {
+		id = curenv->env_id;
+		return 0;
+	}
+	return -1;
+}
+
+int sys_release() {
+	if (id == -1) return -1;
+	if (id == curenv->env_id) {
+		id = -1;
+		return 0;
+	}
+	return -1;
+}
 /* Overview:
  * 	This function enables you to copy content of `srcaddr` to `destaddr`.
  *
