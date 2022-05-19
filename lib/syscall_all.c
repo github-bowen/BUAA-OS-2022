@@ -313,7 +313,7 @@ void sys_ipc_recv(int sysno, u_int dstva)
 {
 	if (dstva >= UTOP) return;
 	if (!sender) sender->env_status = ENV_RUNNABLE;
-
+	sys_yield();
 	curenv->env_ipc_recving = 1;
 	curenv->env_ipc_dstva = dstva;
 	curenv->env_status = ENV_NOT_RUNNABLE;
