@@ -7,7 +7,18 @@
 
 extern char *KERNEL_SP;
 extern struct Env *curenv;
-static int id = -1;
+
+struct msg {
+	LIST_ENTRY(msg) q_link;
+	int s_id;
+	int r_id;
+	int value;
+	int srcva;
+	int perm;
+};
+LIST_HEAD(msg_list, msg);
+struct msg_list msgs;
+int init = 0;
 /* Overview:
  * 	This function is used to print a character on screen.
  *
@@ -16,27 +27,10 @@ static int id = -1;
  */
 void sys_putchar(int sysno, int c, int a2, int a3, int a4, int a5)
 {
-	if (id != curenv->env_id) return;
 	printcharc((char) c);
 	return ;
 }
 
-int sys_acquire() {
-	if (id == -1) {
-		id = curenv->env_id;
-		return 0;
-	}
-	return -1;
-}
-
-int sys_release() {
-	if (id == -1) return -1;
-	if (id == curenv->env_id) {
-		id = -1;
-		return 0;
-	}
-	return -1;
-}
 /* Overview:
  * 	This function enables you to copy content of `srcaddr` to `destaddr`.
  *
@@ -329,6 +323,8 @@ void sys_panic(int sysno, char *msg)
 void sys_ipc_recv(int sysno, u_int dstva)
 {
 	if (dstva >= UTOP) return;
+	if (!sender) sender->env_status = ENV_RUNNABLE;
+	sys_yield();
 	curenv->env_ipc_recving = 1;
 	curenv->env_ipc_dstva = dstva;
 	curenv->env_status = ENV_NOT_RUNNABLE;
@@ -356,107 +352,54 @@ void sys_ipc_recv(int sysno, u_int dstva)
 int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva, u_int perm)
 {  // envid: target env's envid
 // srcva == 0: just send value, not set ppage	
+	if (!init) {
+	  	init = 1;
+		LIST_INIT(&msgs);
+	}		
 	int r;
 	struct Env *e;  // targer env
 	struct Page *p;
+	struct msg message;
 	if (srcva >= UTOP) return -E_INVAL;
 	if ((r = envid2env(envid, &e, 0)) < 0) return r;
-	if (e->env_ipc_recving == 0) return -E_IPC_NOT_RECV;
-	e->env_ipc_value = value;
-	e->env_ipc_recving = 0;
-	e->env_ipc_from = curenv->env_id;
-	e->env_ipc_perm = perm;
-	e->env_status = ENV_RUNNABLE;
-	if (srcva) {
-		if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
-		if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
-	}
-	return 0;
-}
-
-
-/*
-   int sys_ipc_can_multi_send(int sysno, u_int value, u_int srcva, u_int perm, u_int envid_1, u_int envid_2, u_int envid_3, u_int envid_4, u_int envid_5) {
-	int r;
-	struct Env *e1, *e2, *e3, *e4, *e5;
-	struct Page *p;
-
-	perm = perm & (BY2PG - 1);
-
-	if (srcva >= UTOP) {
-		return -E_INVAL;
-	}
-
-	r = envid2env(envid_1, &e1, 0);
-	if (r < 0) {
-		return r;
-	}
-	r = envid2env(envid_2, &e2, 0);
-	if (r < 0) {
-		return r;
-	}
-	r = envid2env(envid_3, &e3, 0);
-	if (r < 0) {
-		return r;
-	}
-	r = envid2env(envid_4, &e4, 0);
-	if (r < 0) {
-		return r;
-	}
-	r = envid2env(envid_5, &e5, 0);
-	if (r < 0) {
-		return r;
-	}
-	int flag;
-	flag =
-		e1->env_ipc_recving &&
-		e2->env_ipc_recving &&
-		e3->env_ipc_recving &&
-		e4->env_ipc_recving &&
-		e5->env_ipc_recving;
-
-	if (flag == 0) {
-		return -E_IPC_NOT_RECV;
-	}
-
-	e1->env_ipc_recving = 0;
-	e1->env_ipc_from = curenv->env_id;
-	e1->env_ipc_value = value;
-	e1->env_ipc_perm = perm;
-	e1->env_status = ENV_RUNNABLE;
-	e2->env_ipc_recving = 0;
-	e2->env_ipc_from = curenv->env_id;
-	e2->env_ipc_value = value;
-	e2->env_ipc_perm = perm;
-	e2->env_status = ENV_RUNNABLE;
-	e3->env_ipc_recving = 0;
-	e3->env_ipc_from = curenv->env_id;
-	e3->env_ipc_value = value;
-	e3->env_ipc_perm = perm;
-	e3->env_status = ENV_RUNNABLE;
-	e4->env_ipc_recving = 0;
-	e4->env_ipc_from = curenv->env_id;
-	e4->env_ipc_value = value;
-	e4->env_ipc_perm = perm;
-	e4->env_status = ENV_RUNNABLE;
-	e5->env_ipc_recving = 0;
-	e5->env_ipc_from = curenv->env_id;
-	e5->env_ipc_value = value;
-	e5->env_ipc_perm = perm;
-	e5->env_status = ENV_RUNNABLE;
-
-	if (srcva != 0) {
-		p = page_lookup(curenv->env_pgdir, srcva, NULL);
-		if (p == NULL) {
-			return -E_INVAL;
+	if (e->env_ipc_recving == 0) {
+		curenv->env_status = ENV_NOT_RUNNABLE;
+		message->s_id = curenv->env_id;
+		message->r_id = envid;
+		message->value = value;
+		message->srcva = srcva;
+		message->perm = perm;	
+		LIST_INSERT_TAIL(&msgs, &message, q_link); 
+		do {
+			sys_yield();
+		} while (e->env_ipc_recving == 0);
+		struct msg* m;
+		LIST_FOREACH(m, &msgs, q_link) {
+			if (m->s_id == curenv->env_id) {
+				envid2env(envid, &e, 0);
+				e->env_ipc_value = m->value;
+				e->env_ipc_recving = 0;
+				e->env_ipc_perm = m->perm;
+				e->env_status = ENV_RUNNABLE;
+				if (srcva) {
+		             if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
+        		     if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
+				}
+				break;
+			}
+        }
+	} else {
+		e->env_ipc_value = value;
+		e->env_ipc_recving = 0;
+		e->env_ipc_from = curenv->env_id;
+		e->env_ipc_perm = perm;
+		e->env_status = ENV_RUNNABLE;
+		if (srcva) {
+			if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
+			if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
 		}
-		page_insert(e1->env_pgdir, p, e1->env_ipc_dstva, perm);
-		page_insert(e2->env_pgdir, p, e2->env_ipc_dstva, perm);
-		page_insert(e3->env_pgdir, p, e3->env_ipc_dstva, perm);
-		page_insert(e4->env_pgdir, p, e4->env_ipc_dstva, perm);
-		page_insert(e5->env_pgdir, p, e5->env_ipc_dstva, perm);
 	}
-
+	//return -E_IPC_NOT_RECV;
 	return 0;
 }
-*/
+
