@@ -16,9 +16,8 @@ static int id = -1;
  */
 void sys_putchar(int sysno, int c, int a2, int a3, int a4, int a5)
 {
-	if (sys_acquire() == -1) return;
+	if (id != curenv->env_id) return;
 	printcharc((char) c);
-	sys_release();
 	return ;
 }
 
