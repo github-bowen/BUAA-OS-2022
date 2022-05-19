@@ -343,10 +343,10 @@ void sys_ipc_recv(int sysno, u_int dstva)
 			curenv->env_ipc_perm = m->perm;
 			curenv->env_status = ENV_RUNNABLE;
 			struct Page* p;
-			int r;
+			int ret;
 			if (m->srcva) {
 				if ((p = page_lookup(s->env_pgdir, m->srcva, NULL)) == NULL) return -E_INVAL;
-				if ((r = page_insert(curenv->env_pgdir, p, curenv->env_ipc_dstva, m->perm)) < 0) return r;
+				if ((ret = page_insert(curenv->env_pgdir, p, curenv->env_ipc_dstva, m->perm)) < 0) return r;
 			}
 			sys_yield();
 			return;
@@ -382,7 +382,7 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva, u_int per
         message.perm = perm;
         LIST_INSERT_TAIL(&msgs, &message, q_link);
 		sys_yield();
-		return;
+		return 0;
     }
     e->env_ipc_value = value;
     e->env_ipc_recving = 0;
