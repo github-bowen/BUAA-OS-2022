@@ -47,6 +47,34 @@ BD_SET:
 	sw t3, 16(sp)
 	sw t4, 20(sp)
 
+/*
+	lw s0, TF_REG5(sp) // s0 is the size of stack
+	addiu s0, s0, 1
+	sll s0, s0, 2
+
+    lw      t0, TF_REG29(sp)            // t0 <- user's stack pointer
+	lw      a0, TF_REG4(sp)
+	lw      a1, TF_REG6(sp)
+	lw      a2, TF_REG7(sp)
+	lw      a3, 16(t0)
+
+	subu sp, sp, s0
+
+ 	li t9, 0
+ foo:
+ 	beq t9, s0, bar
+	nop
+ 	addu t3, t0, t9
+ 	addiu t3, t3, 4
+ 	lw t5, 0(t3)
+ 	addu t3, sp, t9
+ 	sw t5, 0(t3)
+ 	addu t9, t9, 4
+	j foo
+	nop
+ bar:
+ */
+
     jalr    t2                          // Invoke sys_* function
     nop
 
