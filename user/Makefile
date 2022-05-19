@@ -13,7 +13,9 @@ USERLIB := printf.o \
 		pgfault.o \
 		syscall_lib.o \
 		ipc.o \
-		string.o
+		string.o \
+		ipcsend.o \
+		ipcrecv.o
 
 CFLAGS += -nostdlib -static
 

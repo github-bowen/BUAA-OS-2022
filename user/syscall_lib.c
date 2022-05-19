@@ -73,6 +73,7 @@ syscall_panic(char *msg)
 int
 syscall_ipc_can_send(u_int envid, u_int value, u_int srcva, u_int perm)
 {
+	writef("%x: sending %d to %x\n", env->env_id, value, envid);
 	return msyscall(SYS_ipc_can_send, envid, value, srcva, perm, 0);
 }
 
