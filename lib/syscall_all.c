@@ -324,6 +324,10 @@ void sys_panic(int sysno, char *msg)
 void sys_ipc_recv(int sysno, u_int dstva)
 {
     if (dstva >= UTOP) return;
+	curenv->env_ipc_recving = 1;
+    curenv->env_ipc_dstva = dstva;
+    curenv->env_status = ENV_NOT_RUNNABLE;
+
 	struct msg *m;
     LIST_FOREACH(m, &msgs, q_link) {
 		if (m->r_id == curenv->env_id) {
