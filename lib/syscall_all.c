@@ -7,7 +7,18 @@
 
 extern char *KERNEL_SP;
 extern struct Env *curenv;
-static struct Env *sender = NULL;
+
+struct msg {
+	LIST_ENTRY(msg) q_link;
+	int s_id;
+	int r_id;
+	int value;
+	int srcva;
+	int perm;
+};
+LIST_HEAD(msg_list, msg);
+struct msg_list msgs;
+int init = 0;
 /* Overview:
  * 	This function is used to print a character on screen.
  *
@@ -341,27 +352,38 @@ void sys_ipc_recv(int sysno, u_int dstva)
 int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva, u_int perm)
 {  // envid: target env's envid
 // srcva == 0: just send value, not set ppage	
+	if (!init) {
+	  	init = 1;
+		LIST_INIT(&msgs);
+	}		
 	int r;
 	struct Env *e;  // targer env
 	struct Page *p;
+	struct msg message;
 	if (srcva >= UTOP) return -E_INVAL;
 	if ((r = envid2env(envid, &e, 0)) < 0) return r;
-	while (e->env_ipc_recving == 0) {
+	if (e->env_ipc_recving == 0) {
 		curenv->env_status = ENV_NOT_RUNNABLE;
-		sender = curenv;
+		message->s_id = curenv->env_id;
+		message->r_id = envid;
+		message->value = value;
+		message->srcva = srcva;
+		message->perm = perm;	
+		LIST_INSERT_TAIL(&msgs, &message, q_link); 
 		sys_yield();
+	} else {
+		e->env_ipc_value = value;
+		e->env_ipc_recving = 0;
+		e->env_ipc_from = curenv->env_id;
+		e->env_ipc_perm = perm;
+		e->env_status = ENV_RUNNABLE;
+		if (srcva) {
+			if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
+			if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
+		}
+
 	}
 	//return -E_IPC_NOT_RECV;
-	e->env_ipc_value = value;
-	e->env_ipc_recving = 0;
-	e->env_ipc_from = curenv->env_id;
-	e->env_ipc_perm = perm;
-	e->env_status = ENV_RUNNABLE;
-	if (srcva) {
-		if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
-		if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
-	}
-	sender = NULL;
 	return 0;
 }
 
