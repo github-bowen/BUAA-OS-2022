@@ -327,13 +327,25 @@ void sys_ipc_recv(int sysno, u_int dstva)
 	struct msg *m;
     LIST_FOREACH(m, &msgs, q_link) {
 		if (m->r_id == curenv->env_id) {
-			struct Env* s;
+			struct Env* s, *r;
+			envid2env(m->r_id, &r, 0);
 			envid2env(m->s_id, &s, 0);
 			s->env_status = ENV_RUNNABLE;
 			curenv->env_ipc_recving = 1;
 		    curenv->env_ipc_dstva = dstva;
 	    	curenv->env_status = ENV_NOT_RUNNABLE;	
 			LIST_REMOVE(m, q_link);
+			//sys_yield();
+			//return;
+			curenv->env_ipc_value = value;
+    		curenv->env_ipc_recving = 0;
+			curenv->env_ipc_from = curenv->env_id;
+			curenv->env_ipc_perm = perm;
+			curenv->env_status = ENV_RUNNABLE;
+			if (srcva) {
+				if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
+				if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
+			}
 			sys_yield();
 			return;
 		}
@@ -368,6 +380,7 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva, u_int per
         message.perm = perm;
         LIST_INSERT_TAIL(&msgs, &message, q_link);
 		sys_yield();
+		return;
     }
     e->env_ipc_value = value;
     e->env_ipc_recving = 0;
