@@ -17,8 +17,8 @@ struct msg {
 	int perm;
 };
 LIST_HEAD(msg_list, msg);
-struct msg_list msgs;
-int init = 0;
+static struct msg_list msgs;
+static int init = 0;
 /* Overview:
  * 	This function is used to print a character on screen.
  *
@@ -385,7 +385,8 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva, u_int per
         message.srcva = srcva;
         message.perm = perm;
         LIST_INSERT_TAIL(&msgs, &message, q_link);
-	//	sys_yield();
+		sys_yield();
+		e->env_status = ENV_RUNNABLE;
 		return 0;
     }
     e->env_ipc_value = value;
