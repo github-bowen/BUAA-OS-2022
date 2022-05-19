@@ -320,70 +320,69 @@ void sys_panic(int sysno, char *msg)
  * ENV_NOT_RUNNABLE, giving up cpu.
  */
 /*** exercise 4.7 ***/
+
 void sys_ipc_recv(int sysno, u_int dstva)
 {
-	if (dstva >= UTOP) return;
-	if (!sender) sender->env_status = ENV_RUNNABLE;
-	sys_yield();
-	curenv->env_ipc_recving = 1;
-	curenv->env_ipc_dstva = dstva;
-	curenv->env_status = ENV_NOT_RUNNABLE;
-	sys_yield();
+    if (dstva >= UTOP) return;
+    if (!sender) sender->env_status = ENV_RUNNABLE;
+    sys_yield();
+    curenv->env_ipc_recving = 1;
+    curenv->env_ipc_dstva = dstva;
+    curenv->env_status = ENV_NOT_RUNNABLE;
+    sys_yield();
 }
 
-/* Overview:
- * 	Try to send 'value' to the target env 'envid'.
- *
- * 	The send fails with a return value of -E_IPC_NOT_RECV if the
- * target has not requested IPC with sys_ipc_recv.
- * 	Otherwise, the send succeeds, and the target's ipc fields are
- * updated as follows:
- *    env_ipc_recving is set to 0 to block future sends
- *    env_ipc_from is set to the sending envid
- *    env_ipc_value is set to the 'value' parameter
- * 	The target environment is marked runnable again.
- *
- * Post-Condition:
- * 	Return 0 on success, < 0 on error.
- *
- * Hint: You need to call `envid2env`.
- */
 /*** exercise 4.7 ***/
 int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva, u_int perm)
 {  // envid: target env's envid
-// srcva == 0: just send value, not set ppage	
-	if (!init) {
-	  	init = 1;
-		LIST_INIT(&msgs);
-	}		
-	int r;
-	struct Env *e;  // targer env
-	struct Page *p;
-	struct msg message;
-	if (srcva >= UTOP) return -E_INVAL;
-	if ((r = envid2env(envid, &e, 0)) < 0) return r;
-	if (e->env_ipc_recving == 0) {
-		curenv->env_status = ENV_NOT_RUNNABLE;
-		message->s_id = curenv->env_id;
-		message->r_id = envid;
-		message->value = value;
-		message->srcva = srcva;
-		message->perm = perm;	
-		LIST_INSERT_TAIL(&msgs, &message, q_link); 
-		sys_yield();
-	} else {
-		e->env_ipc_value = value;
-		e->env_ipc_recving = 0;
-		e->env_ipc_from = curenv->env_id;
-		e->env_ipc_perm = perm;
-		e->env_status = ENV_RUNNABLE;
-		if (srcva) {
-			if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
-			if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
-		}
-
-	}
-	//return -E_IPC_NOT_RECV;
-	return 0;
+// srcva == 0: just send value, not set ppage   
+    if (!init) {
+        init = 1;
+        LIST_INIT(&msgs);
+    }
+    int r;
+    struct Env *e;  // targer env
+    struct Page *p;
+    struct msg message;
+    if (srcva >= UTOP) return -E_INVAL;
+    if ((r = envid2env(envid, &e, 0)) < 0) return r;
+    if (e->env_ipc_recving == 0) {
+        curenv->env_status = ENV_NOT_RUNNABLE;
+        message->s_id = curenv->env_id;
+        message->r_id = envid;
+        message->value = value;
+        message->srcva = srcva;
+        message->perm = perm;
+        LIST_INSERT_TAIL(&msgs, &message, q_link);
+        do {
+            sys_yield();
+        } while (e->env_ipc_recving == 0);
+        struct msg* m;
+        LIST_FOREACH(m, &msgs, q_link) {
+            if (m->s_id == curenv->env_id) {
+                envid2env(envid, &e, 0);
+                e->env_ipc_value = m->value;
+                e->env_ipc_recving = 0;
+                e->env_ipc_perm = m->perm;
+                e->env_status = ENV_RUNNABLE;
+                if (srcva) {
+                     if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
+                     if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
+                }
+                break;
+            }
+        }
+    } else {
+        e->env_ipc_value = value;
+        e->env_ipc_recving = 0;
+        e->env_ipc_from = curenv->env_id;
+        e->env_ipc_perm = perm;
+        e->env_status = ENV_RUNNABLE;
+        if (srcva) {
+            if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
+            if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
+        }
+    }
+    //return -E_IPC_NOT_RECV;
+    return 0;
 }
-
