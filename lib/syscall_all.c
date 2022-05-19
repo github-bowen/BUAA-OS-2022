@@ -357,11 +357,11 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva, u_int per
     if ((r = envid2env(envid, &e, 0)) < 0) return r;
     if (e->env_ipc_recving == 0) {
         curenv->env_status = ENV_NOT_RUNNABLE;
-        message->s_id = curenv->env_id;
-        message->r_id = envid;
-        message->value = value;
-        message->srcva = srcva;
-        message->perm = perm;
+        message.s_id = curenv->env_id;
+        message.r_id = envid;
+        message.value = value;
+        message.srcva = srcva;
+        message.perm = perm;
         LIST_INSERT_TAIL(&msgs, &message, q_link);
         do {
             sys_yield();
