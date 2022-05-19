@@ -327,7 +327,9 @@ void sys_ipc_recv(int sysno, u_int dstva)
 	struct msg *m;
     LIST_FOREACH(m, &msgs, q_link) {
 		if (m->r_id == curenv->env_id) {
-			r->env_status = ENV_RUNNALBLE;
+			struct Env* s;
+			envid2env(m->s_id, &s, 0);
+			s->env_status = ENV_RUNNABLE;
 			curenv->env_ipc_recving = 1;
 		    curenv->env_ipc_dstva = dstva;
 	    	curenv->env_status = ENV_NOT_RUNNABLE;	
