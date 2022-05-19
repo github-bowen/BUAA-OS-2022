@@ -385,7 +385,7 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva, u_int per
         message.srcva = srcva;
         message.perm = perm;
         LIST_INSERT_TAIL(&msgs, &message, q_link);
-		sys_yield();
+	//	sys_yield();
 		return 0;
     }
     e->env_ipc_value = value;
