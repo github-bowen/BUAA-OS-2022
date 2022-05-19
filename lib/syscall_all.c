@@ -1,4 +1,4 @@
-#include "../drivers/gxconsole/dev_cons.h"
+include "../drivers/gxconsole/dev_cons.h"
 #include <mmu.h>
 #include <env.h>
 #include <printf.h>
