@@ -5,11 +5,11 @@
 #include <trap.h>
 
 int syscall_try_acquire_console(void) {
-	return msyscall(SYS_acquire);
+	return msyscall(SYS_acquire, 0, 0, 0, 0, 0);
 }
 
 int syscall_release_console(void) {
-	return msyscall(SYS_release);
+	return msyscall(SYS_release, 0, 0, 0, 0, 0);
 }
 
 void syscall_putchar(char ch)
