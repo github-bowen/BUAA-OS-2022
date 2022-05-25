@@ -24,6 +24,7 @@ set_pgfault_handler(void (*fn)(u_int va))
 		// register assembly handler and stack with operating system
 		if (syscall_mem_alloc(0, UXSTACKTOP - BY2PG, PTE_V | PTE_R) < 0 ||
 			syscall_set_pgfault_handler(0, __asm_pgfault_handler, UXSTACKTOP) < 0) {
+			// int sys_set_pgfault_handler(int sysno, u_int envid, u_int func, u_int xstacktop)
 			writef("cannot set pgfault handler\n");
 			return;
 		}
