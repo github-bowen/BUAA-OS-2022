@@ -140,6 +140,7 @@ duppage(u_int envid, u_int pn)
 }
 
 int make_shared(void *va) {
+	// writef("test va: %x\n", va);
 	u_int addr = ROUNDDOWN((va), BY2PG);
 	u_int perm = (*vpt)[VPN(addr)] & (BY2PG - 1);
 	int r;
@@ -152,11 +153,11 @@ int make_shared(void *va) {
 			perm |= PTE_LIBRARY;
 			syscall_mem_map(0, addr, 0, addr, perm);
 		}
-		return PTE_ADDR(  ((Pte*)(*vpt))[PTX(addr)]    );
+		return PTE_ADDR(  ((Pte*)(*vpt))[PTX(addr)]    ) & (~0xfff);
 	}
 	if ((r = syscall_mem_alloc(0, addr, (PTE_V | PTE_R | PTE_LIBRARY))) < 0)
 		return -1;
-	return PTE_ADDR(  ((Pte*)(*vpt))[PTX(addr)]    );
+	return PTE_ADDR(  ((Pte*)(*vpt))[PTX(addr)]    ) & (~0xfff);
 }
 
 /*** exercise 4.9 4.15***/
