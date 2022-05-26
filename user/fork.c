@@ -145,7 +145,7 @@ int make_shared(void *va) {
 	u_int perm = (*vpt)[VPN(addr)] & (BY2PG - 1);
 	int r;
 
-	if ((((Pde*)(*vpd))[PDX(addr)] & PTE_V) && (((Pte*)(*vpt))[PTX(addr)] & PTE_V)) {
+	if ((((Pde*)(*vpd))[PDX(addr)] & PTE_V) && (((Pte*)(*vpt))[VPN(addr)] & PTE_V)) {
 		if (addr >= UTOP || ((perm & PTE_R) == 0)) {
 			return -1;
 		}
@@ -153,11 +153,11 @@ int make_shared(void *va) {
 			perm |= PTE_LIBRARY;
 			syscall_mem_map(0, addr, 0, addr, perm);
 		}
-		return PTE_ADDR(  ((Pte*)(*vpt))[PTX(addr)]    ) & (~0xfff);
+		return PTE_ADDR(  ((Pte*)(*vpt))[VPN(addr)]    ) & (~0xfff);
 	}
 	if ((r = syscall_mem_alloc(0, addr, (PTE_V | PTE_R | PTE_LIBRARY))) < 0)
 		return -1;
-	return PTE_ADDR(  ((Pte*)(*vpt))[PTX(addr)]    ) & (~0xfff);
+	return PTE_ADDR(  ((Pte*)(*vpt))[VPN(addr)]    ) & (~0xfff);
 }
 
 /*** exercise 4.9 4.15***/
