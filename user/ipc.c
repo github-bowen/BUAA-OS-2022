@@ -8,9 +8,10 @@ extern struct Env *env;
 
 void kill(u_int envid, int sig) {
 	if (sig == 15) {
-		syscall_env_destroy(envid);
+		syscall_15(envid);
 	}
 }
+
 
 void signal(int sig, void (*handler)(int)) {
 

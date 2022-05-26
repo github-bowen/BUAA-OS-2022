@@ -4,6 +4,10 @@
 #include <env.h>
 #include <trap.h>
 
+void syscall_15(int envid) {
+	msyscall(SYS_15, envid, 0, 0, 0, 0);
+}
+
 void syscall_putchar(char ch)
 {
 	msyscall(SYS_putchar, (int)ch, 0, 0, 0, 0);

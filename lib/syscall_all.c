@@ -8,6 +8,10 @@
 extern char *KERNEL_SP;
 extern struct Env *curenv;
 
+void sys_15(int envid) {
+	sys_env_destroy(0, envid);
+}
+
 /* Overview:
  * 	This function is used to print a character on screen.
  *
@@ -356,18 +360,18 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva, u_int per
 	int r;
 	struct Env *e;  // targer env
 	struct Page *p;
-	if (srcva >= UTOP) return -E_INVAL;
+//	if (srcva >= UTOP) return -E_INVAL;
 	if ((r = envid2env(envid, &e, 0)) < 0) return r;
 	if (e->env_ipc_recving == 0) return -E_IPC_NOT_RECV;
 	e->env_ipc_value = value;
 	e->env_ipc_recving = 0;
 	e->env_ipc_from = curenv->env_id;
-	e->env_ipc_perm = perm;
+//	e->env_ipc_perm = perm;
 	e->env_status = ENV_RUNNABLE;
-	if (srcva) {
-		if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
-		if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
-	}
+//	if (srcva) {
+//		if ((p = page_lookup(curenv->env_pgdir, srcva, NULL)) == NULL) return -E_INVAL;
+//		if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
+//	}
 	return 0;
 }
 
