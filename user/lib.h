@@ -32,6 +32,8 @@ __attribute__((noreturn));
 
 #define user_panic(...) _user_panic(__FILE__, __LINE__, __VA_ARGS__)
 
+void kill(u_int envid, int sig);
+void signal(int sig, void (*handler)(int));
 
 /////////////////////////////////////////////////////fork spawn
 int spawn(char *prog, char **argv);

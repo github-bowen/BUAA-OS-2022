@@ -6,6 +6,16 @@
 
 extern struct Env *env;
 
+void kill(u_int envid, int sig) {
+	if (sig == 15) {
+		syscall_env_destroy(envid);
+	}
+}
+
+void signal(int sig, void (*handler)(int)) {
+
+}
+
 // Send val to whom.  This function keeps trying until
 // it succeeds.  It should panic() on any error other than
 // -E_IPC_NOT_RECV.
