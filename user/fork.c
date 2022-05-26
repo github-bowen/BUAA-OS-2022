@@ -152,11 +152,11 @@ int make_shared(void *va) {
 			perm |= PTE_LIBRARY;
 			syscall_mem_map(0, addr, 0, addr, perm);
 		}
-		return ((Pte*)(*vpt))[PTX(addr)];
+		return PTE_ADDR(  ((Pte*)(*vpt))[PTX(addr)]    );
 	}
 	if ((r = syscall_mem_alloc(0, addr, (PTE_V | PTE_R | PTE_LIBRARY))) < 0)
 		return -1;
-	return ((Pte*)(*vpt))[PTX(addr)];
+	return PTE_ADDR(  ((Pte*)(*vpt))[PTX(addr)]    );
 }
 
 /*** exercise 4.9 4.15***/
