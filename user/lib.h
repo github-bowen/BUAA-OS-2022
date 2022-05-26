@@ -32,6 +32,7 @@ __attribute__((noreturn));
 
 #define user_panic(...) _user_panic(__FILE__, __LINE__, __VA_ARGS__)
 
+int make_shared(void *va);
 
 /////////////////////////////////////////////////////fork spawn
 int spawn(char *prog, char **argv);

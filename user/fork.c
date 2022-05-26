@@ -139,15 +139,26 @@ duppage(u_int envid, u_int pn)
 	//	user_panic("duppage not implemented");
 }
 
-/* Overview:
- * 	User-level fork. Create a child and then copy our address space
- * and page fault handler setup to the child.
- *
- * Hint: use vpd, vpt, and duppage.
- * Hint: remember to fix "env" in the child process!
- * Note: `set_pgfault_handler`(user/pgfault.c) is different from
- *       `syscall_set_pgfault_handler`.
- */
+int make_shared(void *va) {
+	u_int addr = ROUNDDOWN((va), BY2PG);
+	u_int perm = (*vpt)[VPN(addr)] & (BY2PG - 1);
+	int r;
+
+	if ((((Pde*)(*vpd))[PDX(addr)] & PTE_V) && (((Pte*)(*vpt))[PTX(addr)] & PTE_V)) {
+		if (addr >= UTOP || ((perm & PTE_R) == 0)) {
+			return -1;
+		}
+		if ((perm & PTE_LIBRARY) == 0) {
+			perm |= PTE_LIBRARY;
+			syscall_mem_map(0, addr, 0, addr, perm);
+		}
+		return (*vpt)[PTX(addr)] & (~0xfff);
+	}
+	if ((r = syscall_mem_alloc(0, addr, (PTE_V | PTE_R | PTE_LIBRARY))) < 0)
+		return -1;
+	return (*vpt)[PTX(addr)] & (~0xfff);
+}
+
 /*** exercise 4.9 4.15***/
 extern void __asm_pgfault_handler(void);
 int
