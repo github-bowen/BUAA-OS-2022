@@ -97,7 +97,7 @@ ide_write(u_int diskno, u_int secno, void *src, u_int nsecs)
 			user_panic("fs/ide.c/ide_write(): panic in writing to IDE_ID_ADDR");
 		if (syscall_write_dev((u_int) &cur_offset, IDE_OFFSET_ADDR, 4) < 0)
 			user_panic("fs/ide.c/ide_write(): panic in writing to IDE_OFFSET_ADDR");
-		if (syscall_write_dev((u_int) &op, IDE_OP_ADDR, 4) < 0) 
+		if (syscall_write_dev((u_int) &op, IDE_OP_ADDR, 1) < 0) 
 			user_panic("fs/ide.c/ide_write(): panic in writing to IDE_OP_ADDR");
 		if (syscall_read_dev((u_int) &status, IDE_STATUS_ADDR, 4) < 0)
 			user_panic("fs/ide.c/ide_write(): panic in reading from IDE_STATUS_ADDR");
