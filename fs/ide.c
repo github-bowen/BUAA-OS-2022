@@ -87,7 +87,7 @@ ide_write(u_int diskno, u_int secno, void *src, u_int nsecs)
 	// DO NOT DELETE WRITEF !!!
 	writef("diskno: %d\n", diskno);
 
-	while ( < ) {
+	while (offset_begin + offset < offset_end) {
 		// copy data from source array to disk buffer.
 		// if error occur, then panic.
 		cur_offset = offset_begin + offset;
