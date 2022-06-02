@@ -65,8 +65,13 @@ int time_read() {
 	int trigger = base;
 	int read = base + 0x0010;
 	int time;
+	int first = 1;
 	do {
-		syscall_write_dev((u_int) &time, trigger, 4);
+		if (first) {
+			first = 0;
+		} else {
+			syscall_write_dev((u_int) &time, trigger, 4);
+		}
 		syscall_read_dev((u_int) &time, read, 4);
 	} while (time == 0);
 	return time;
