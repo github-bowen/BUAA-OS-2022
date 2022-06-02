@@ -68,7 +68,7 @@ int time_read() {
 	do {
 		syscall_write_dev((u_int) &time, trigger, 4);
 		syscall_read_dev((u_int) &time, read, 4);
-	while (time == 0);
+	} while (time == 0);
 	return time;
 }
 
