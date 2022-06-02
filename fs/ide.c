@@ -17,16 +17,21 @@
 
 int raid4_valid(u_int diskno) {
 	int data;
-	ide_read(diskno, 0, &data, 1);
-	ide_write(diskno, 0, &data, 1);
 	int status;
+//	ide_read(diskno, 0, &data, 1);
+//	ide_write(diskno, 0, &data, 1);
+	int cur_offset = 0, op = 0;
+	syscall_write_dev((u_int) &diskno, IDE_ID_ADDR, 4);
+	syscall_write_dev((u_int) &cur_offset, IDE_OFFSET_ADDR, 4);
+	syscall_write_dev((u_int) &op, IDE_OP_ADDR, 4);
 	syscall_read_dev((u_int) &status, IDE_STATUS_ADDR, 4);
+
 	if (status == 0) return 0;
 	return 1;
 }
 // Overview:
 // 	read data from IDE disk. First issue a read request through
-// 	disk register and then copy data from disk buffer
+// 	disk register and then copy data from disk buffe
 // 	(512 bytes, a sector) to destination array.
 //
 // Parameters:
@@ -85,6 +90,42 @@ ide_read(u_int diskno, u_int secno, void *dst, u_int nsecs)
 //
 // Hint: use syscalls to access device registers and buffers
 /*** exercise 5.2 ***/
+int raid4_write(u_int blockno, void *src) {
+	int offset_start = blockno * 0x200 * 2;
+	int diskno;
+	int work[4] = {1, 1, 1, 1};
+	int not_work_num = 0;
+	for (diskno = 1; diskno <= 4; diskno++) {
+		if (raid4_valid(diskno)) {
+			int secno = blockno * 2;
+			int va = offset_start + (diskno - 1) * 0x200;
+			ide_write(diskno, secno, va, 1);
+			secno++;
+			va += (0x200 * 4);
+			ide_write(diskno, secno, va, 1);
+		} else {
+			work[diskno - 1] = 0;
+			not_work_num++;
+		}
+	}
+	int disk5 = 5;
+	int code[128] = {0};
+	int *p = (int*) src;
+	int i = 0;
+	for (i = 0; i < 128; ++i) {
+		for (diskno = 1; diskno <= 4; diskno++) {
+			if (work[diskno - 1]) {
+			}
+		}
+	}
+	return 0;
+}
+
+int raid4_read(u_int blockno, void *dst) {
+
+	return 1;
+}
+
 void
 ide_write(u_int diskno, u_int secno, void *src, u_int nsecs)
 {

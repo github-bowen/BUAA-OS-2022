@@ -32,6 +32,7 @@ void file_flush(struct File *);
 
  int raid4_write(u_int blockno, void *src);
 
+ int raid4_read(u_int blockno, void *dst);
 
 void fs_init(void);
 void fs_sync(void);
