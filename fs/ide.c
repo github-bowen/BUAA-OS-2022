@@ -77,7 +77,7 @@ int time_read() {
 		syscall_read_dev((u_int) &time, read, 4);
 	} while (time == 0);
 */	
-	int a = 999;	
+	int a = 1;	
 	syscall_read_dev(&time, read, 4);
 	while (time == 0) {
 		//syscall_read_dev((u_int) &time, trigger, 4);
