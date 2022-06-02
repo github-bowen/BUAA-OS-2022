@@ -89,9 +89,7 @@ int time_read() {
 
 
 void raid0_write(u_int secno, void *src, u_int nsecs) {
-	int offset_begin = secno * 0x200;
 	int count = 0;
-	int offset = offset_begin;
 	int cur_secno = secno;
 	int write_secno;
 	while (count < nsecs) {
@@ -108,6 +106,23 @@ void raid0_write(u_int secno, void *src, u_int nsecs) {
 }
 
 
+void raid0_read(u_int secno, void *dst, u_int nsecs) {
+	int count = 0;
+	int cur_secno = secno;
+	int read_secno;
+	while (count < nsecs) {
+		if (cur_secno % 2 == 0) {
+			read_secno = cur_secno / 2;
+			ide_read(1, read_secno, dst + count * 0x200, 1);
+		} else {
+			read_secno = (cur_secno - 1) / 2;
+			ide_read(2, read_secno, dst + count * 0x200, 1);
+		}
+		count++;
+		cur_secno++;
+	}
+
+}
 
 // Overview:
 // 	write data to IDE disk.
