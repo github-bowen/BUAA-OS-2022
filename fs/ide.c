@@ -61,7 +61,7 @@ ide_read(u_int diskno, u_int secno, void *dst, u_int nsecs)
 }
 
 int time_read() {
-	int base = 0x15000000 + 0xa0000000;
+	int base = 0x15000000;
 	int trigger = base;
 	int read = base + 0x0010;
 	int time = 0;
