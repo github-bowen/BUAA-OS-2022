@@ -65,8 +65,8 @@ int time_read() {
 	int trigger = base;
 	int read = base + 0x0010;
 	int time;
-	syscall_write((u_int) &time, trigger, 4);
-	syscall_read((u_int) &time, read, 4);
+	syscall_write_dev((u_int) &time, trigger, 4);
+	syscall_read_dev((u_int) &time, read, 4);
 	return time;
 }
 
