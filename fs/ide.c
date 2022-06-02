@@ -78,6 +78,7 @@ int time_read() {
 	*/
 	syscall_read_dev((u_int) &time, read, 4);
 	if (time == 0) {
+		syscall_read_dev((u_int) &time, trigger, 4);
 		syscall_write_dev((u_int) &time, trigger, 4);
 		syscall_read_dev((u_int) &time, read, 4);
 	}
