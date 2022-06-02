@@ -28,6 +28,11 @@ int file_remove(char *path);
 int file_dirty(struct File *f, u_int offset);
 void file_flush(struct File *);
 
+ int raid4_valid(u_int diskno);
+
+ int raid4_write(u_int blockno, void *src);
+
+
 void fs_init(void);
 void fs_sync(void);
 extern u_int *bitmap;

@@ -14,6 +14,16 @@
 #define IDE_STATUS_ADDR   (IDE_BEGIN_ADDR + 0x0030)
 #define IDE_BUFFER_ADDR   (IDE_BEGIN_ADDR + 0x4000)
 #define IDE_BUFFER_SIZE    0x0200
+
+int raid4_valid(u_int diskno) {
+	int data;
+	ide_read(diskno, 0, &data, 1);
+	ide_write(diskno, 0, &data, 1);
+	int status;
+	syscall_read_dev((u_int) &status, IDE_STATUS_ADDR, 4);
+	if (status == 0) return 0;
+	return 1;
+}
 // Overview:
 // 	read data from IDE disk. First issue a read request through
 // 	disk register and then copy data from disk buffer

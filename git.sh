@@ -2,4 +2,4 @@
 
 git add .
 git commit -m "commit by bash"
-git push
+git push origin lab5-1-Extra:lab5-1-Extra
