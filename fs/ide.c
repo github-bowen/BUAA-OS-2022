@@ -87,6 +87,28 @@ int time_read() {
 	return time;
 }
 
+
+void raid0_write(u_int secno, void *src, u_int nsecs) {
+	int offset_begin = secno * 0x200;
+	int count = 0;
+	int offset = offset_begin;
+	int cur_secno = secno;
+	int write_secno;
+	while (count < nsecs) {
+		if (cur_secno % 2 == 0) {
+			write_secno = cur_secno / 2;
+			ide_write(1, write_secno, src + count * 0x200, 1);
+		} else {
+			write_secno = (cur_secno - 1) / 2;
+			ide_write(2, write_secno, src + count * 0x200, 1);
+		}
+		count++;
+		cur_secno++;
+	}
+}
+
+
+
 // Overview:
 // 	write data to IDE disk.
 //
@@ -95,12 +117,6 @@ int time_read() {
 //	secno: start sector number.
 // 	src: the source data to write into IDE disk.
 //	nsecs: the number of sectors to write.
-//
-// Post-Condition:
-//	If error occurrs during the read of the IDE disk, panic.
-//
-// Hint: use syscalls to access device registers and buffers
-/*** exercise 5.2 ***/
 void
 ide_write(u_int diskno, u_int secno, void *src, u_int nsecs)
 {
