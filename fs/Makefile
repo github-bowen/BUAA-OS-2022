@@ -28,7 +28,7 @@ FSIMGFILES := motd newmotd
 
 CFLAGS += -nostdlib -static
 
-all: serv.x fs.img serv.b
+all: serv.x fs.img serv.b exam.x exam.b
 
 %.x: %.b.c
 	echo cc1 $<

@@ -64,9 +64,9 @@ int time_read() {
 	int base = 0x15000000 + 0xa0000000;
 	int trigger = base;
 	int read = base + 0x0010;
-	int time;
+	int time = 0;
 	int first = 1;
-	
+/*	
 	do {
 		if (first) {
 			first = 0;
@@ -76,14 +76,14 @@ int time_read() {
 		}
 		syscall_read_dev((u_int) &time, read, 4);
 	} while (time == 0);
-	
-	/*
+*/	
+	int a = 999;	
 	syscall_read_dev((u_int) &time, read, 4);
-	if (time == 0) {
-		syscall_read_dev((u_int) &time, trigger, 4);
-		syscall_write_dev((u_int) &time, trigger, 4);
+	while (time == 0) {
+		//syscall_read_dev((u_int) &time, trigger, 4);
+		syscall_write_dev((u_int) &a, trigger, 4);
 		syscall_read_dev((u_int) &time, read, 4);
-	} */
+	} 
 	return time;
 }
 

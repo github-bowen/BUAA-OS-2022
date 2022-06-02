@@ -30,7 +30,7 @@ void umain(void) {
     int data[2][128], read[2][128], i;
     init_data(data[0], 256);
     print_data(data[0], "Standard data is: \n", 256);
-    raid0_write(25, data[0], 2);
+    raid0_write(25, data[0], 2);	/* 写入扇区 25 26*/
     ide_read(2, 12, read[0], 1);
     ide_read(1, 13, read[1], 1);
     for (i = 0; i < 128; i++) {
@@ -49,3 +49,5 @@ void umain(void) {
     }
     writef("Your raid0 write & read are basically correct\n");
 }
+
+
