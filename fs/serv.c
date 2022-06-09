@@ -134,8 +134,12 @@ serve_open(u_int envid, struct Fsreq_open *rq)
 	o->o_mode = rq->req_omode;
 	ff->f_fd.fd_omode = o->o_mode;
 	ff->f_fd.fd_dev_id = devfile.dev_id;
-	if (o->o_mode & O_ALONE) ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R);
-	else	ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R | PTE_LIBRARY);
+	if (o->o_mode & O_ALONE) {
+		ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R);
+	}
+	else {
+		ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R | PTE_LIBRARY);
+	}
 }
 
 void
