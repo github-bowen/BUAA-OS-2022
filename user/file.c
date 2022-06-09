@@ -59,7 +59,7 @@ open(const char *path, int mode)
 
 	// Step 5: Return the number of file descriptor.
 	for (i = 0; i < size; i += BY2PG) {
-//		if ((r = syscall_mem_alloc(0, va + i, PTE_R | PTE_V)) < 0) return r;
+		if ((r = syscall_mem_alloc(0, va + i, PTE_R | PTE_V)) < 0) return r;
 		if ((r = fsipc_map(fileid, i, va + i)) < 0) return r;
 	}
 	int fdnum = fd2num(fd);
