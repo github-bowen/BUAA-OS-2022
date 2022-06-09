@@ -118,17 +118,14 @@ serve_open(u_int envid, struct Fsreq_open *rq)
 	fileid = r;
 
 	// Open the file.
-	if ((r = file_open((char *)path, &f)) < 0  && r != -E_NOT_FOUND) {
-	//	user_panic("file_open failed: %d, invalid path: %s", r, path);
+	if ((r = file_open(path, &f)) < 0  && r != -E_NOT_FOUND) {
 		ipc_send(envid, r, 0, 0);
 		return ;
 	} else {
-		if (((rq->req_omode) & O_CREAT) != 0) {
-		r = file_create((char *)path, &f);
-		}
+		if ((rq->req_omode & O_CREAT) != 0) r = file_create(path, &f);
 		if (r < 0) {
 			ipc_send(envid, r, 0, 0);
-				return;
+			return;
 		}	
 	}
 
