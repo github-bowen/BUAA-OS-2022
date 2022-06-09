@@ -106,8 +106,6 @@ open(const char *path, int mode)
 	int fdnum = fd2num(fd);
     if (mode & O_APPEND) seek(fdnum, size);
     return fdnum;
-
-
 }
 
 

@@ -103,7 +103,7 @@ serve_open(u_int envid, struct Fsreq_open *rq)
 	int r;
 	struct Open *o;
 
-	if (rq->req_omode & O_CREAT) file_create(path, &f);
+	//if (rq->req_omode & O_CREAT) file_create(path, &f);
 
 	// Copy in the path, making sure it's null-terminated
 	user_bcopy(rq->req_path, path, MAXPATHLEN);
