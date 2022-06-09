@@ -83,14 +83,15 @@ open(const char *path, int mode)
 	r = fd_alloc(&fd);
 	if (r) return r;
 
-
-	int fdnum = fd2num(fd);
-    if (mode & O_APPEND) seek(fdnum, size);
 	// Step 2: Get the file descriptor of the file to open.
 	// Hint: Read fsipc.c, and choose a function.
 	r = fsipc_open(path, mode, fd);
 	if (r) return r;
 	ffd = fd;
+
+	
+	int fdnum = fd2num(fd);
+    if (mode & O_APPEND) seek(fdnum, size);
 
 	// Step 3: Set the start address storing the file's content. Set size and fileid correctly.
 	// Hint: Use fd2data to get the start address.
