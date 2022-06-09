@@ -82,6 +82,8 @@ open(const char *path, int mode)
 	// Hint: Please use fd_alloc.
 	r = fd_alloc(&fd);
 	if (r) return r;
+	int fdnum = fd2num(fd);
+    if (mode & O_APPEND) seek(fdnum, size);
 
 	// Step 2: Get the file descriptor of the file to open.
 	// Hint: Read fsipc.c, and choose a function.
@@ -95,8 +97,6 @@ open(const char *path, int mode)
 	size = ffd->f_file.f_size;
 	fileid = ffd->f_fileid;
 
-	int fdnum = fd2num(fd);
-    if (mode & O_APPEND & (!O_CREAT)) seek(fdnum, size);
 
 	// Step 4: Alloc memory, map the file content into memory.
 	for (i = 0; i < size; i += BY2PG) {
