@@ -37,6 +37,8 @@ open(const char *path, int mode)
 	int r;
 	u_int va;
 	u_int i;
+	struct File *file;
+	if (mode & O_CREAT) file_create(path, &file);
 
 	// Step 1: Alloc a new Fd, return error code when fail to alloc.
 	// Hint: Please use fd_alloc.
@@ -61,7 +63,7 @@ open(const char *path, int mode)
 		if ((r = fsipc_map(fileid, i, va + i)) < 0) return r;
 	}
 	int fdnum = fd2num(fd);
-	if (mode & O_APPEND) seek(fdnum, size);
+	if (mode & O_APPEND) seek(fdnum, size); 
 	return fdnum;
 }
 

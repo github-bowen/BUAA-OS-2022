@@ -200,6 +200,8 @@ read(int fdnum, void *buf, u_int n)
 		return -E_INVAL;
 	}
 
+//	if (fd->fd_omode & O_ALONE) 
+
 	// Step 3: Read starting from seek position.
 	if (debug) writef("read %d %p %d via dev %s\n", fdnum, buf, n, dev->dev_name);
 	r = (*dev->dev_read)(fd, buf, n, fd->fd_offset);
