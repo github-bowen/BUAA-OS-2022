@@ -96,7 +96,7 @@ open(const char *path, int mode)
 	fileid = ffd->f_fileid;
 
 	int fdnum = fd2num(fd);
-    if (mode & O_APPEND) seek(fdnum, size);
+    if (mode & O_APPEND & (!O_CREATE)) seek(fdnum, size);
 
 	// Step 4: Alloc memory, map the file content into memory.
 	for (i = 0; i < size; i += BY2PG) {
