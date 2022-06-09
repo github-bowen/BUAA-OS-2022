@@ -37,7 +37,7 @@ enum {
 };
 
 struct Block {
-    uint8_t data[BY2BLK];
+    uint8_t data[BY2BLK];  // BY2BLK = BY2PG = 4096         BIT2BLK = (BY2BLK*8)
     uint32_t type;
 } disk[NBLOCK];
 
@@ -110,25 +110,25 @@ void init_disk() {
     disk[0].type = BLOCK_BOOT;
 
     // Step 2: Initialize boundary.
-    nbitblock = (NBLOCK + BIT2BLK - 1) / BIT2BLK;
-    nextbno = 2 + nbitblock;
+    nbitblock = (NBLOCK + BIT2BLK - 1) / BIT2BLK;    // the number of bitmap blocks.  // ROUND(NBLOCK / BIT2BLK)  
+    nextbno = 2 + nbitblock;  // set the next free block number
 
     // Step 2: Initialize bitmap blocks.
     for(i = 0; i < nbitblock; ++i) {
         disk[2+i].type = BLOCK_BMAP;
     }
     for(i = 0; i < nbitblock; ++i) {
-        memset(disk[2+i].data, 0xff, BY2BLK);
+        memset(disk[2+i].data, 0xff, BY2BLK);  //1: frebl
     }
     if(NBLOCK != nbitblock * BIT2BLK) {
         diff = NBLOCK % BIT2BLK / 8;
-        memset(disk[2+(nbitblock-1)].data+diff, 0x00, BY2BLK - diff);
+        memset(disk[2+(nbitblock-1)].data+diff, 0x00, BY2BLK - diff);  //flag excessive bits as 0: used
     }
 
     // Step 3: Initialize super block.
     disk[1].type = BLOCK_SUPER;
     super.s_magic = FS_MAGIC;
-    super.s_nblocks = NBLOCK;
+    super.s_nblocks = NBLOCK;  // 1024
     super.s_root.f_type = FTYPE_DIR;
     strcpy(super.s_root.f_name, "/");
 }
@@ -209,16 +209,21 @@ int make_link_block(struct File *dirf, int nblk) {
 struct File *create_file(struct File *dirf) {
     struct File *dirblk;
     int i, bno, found;
-    int nblk = dirf->f_size / BY2BLK;
-
+    int nblk = dirf->f_size / BY2BLK;  // current number of blocks linked to dirf
+	int j;
     // Your code here
     // Step1: According to different range of nblk, make classified discussion to
-    //        calculate the correct block number.
-
-
+    //        calculate the correct block number. 
     // Step2: Find an unused pointer
-
-
+	for (i = 0; i < nblk; ++i) {  // traverse used blocks
+		if (i < NDIRECT) bno = dirf->f_direct[i];
+		else bno = ((int*) (disk[dirf->f_indirect].data))[i];
+		dirblk = (struct File *) (disk[bno].data);	
+		for (j = 0; j < FILE2BLK; ++j)
+			if (dirblk[j].f_name[0] == '\0') return dirblk + j;
+	}
+	bno = make_link_block(dirf, nblk);
+	return (struct File *) (disk[bno].data);
 }
 
 // Write file to disk under specified dir.

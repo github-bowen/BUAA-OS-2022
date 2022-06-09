@@ -20,9 +20,9 @@
 
 // Number of (direct) block pointers in a File descriptor
 #define NDIRECT		10
-#define NINDIRECT	(BY2BLK/4)
+#define NINDIRECT	(BY2BLK/4)  // 1024
 
-#define MAXFILESIZE	(NINDIRECT*BY2BLK)
+#define MAXFILESIZE	(NINDIRECT*BY2BLK)  // 1024 * 4096 = 4M
 
 #define BY2FILE     256
 
@@ -37,7 +37,7 @@ struct File {
 	u_char f_pad[BY2FILE - MAXNAMELEN - 4 - 4 - NDIRECT * 4 - 4 - 4];
 };
 
-#define FILE2BLK	(BY2BLK/sizeof(struct File))
+#define FILE2BLK	(BY2BLK/sizeof(struct File))   // 16
 
 // File types
 #define FTYPE_REG		0	// Regular file
