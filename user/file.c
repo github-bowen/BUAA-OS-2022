@@ -61,7 +61,7 @@ open(const char *path, int mode)
 		if ((r = fsipc_map(fileid, i, va + i)) < 0) return r;
 	}
 	int fdnum = fd2num(fd);
-	if (mode & O_APPND) seek(fdnum, size);
+	// if (mode & O_APPND) seek(fdnum, size);
 	return fdnum;
 }
 
