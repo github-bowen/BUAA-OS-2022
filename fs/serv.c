@@ -124,8 +124,7 @@ serve_open(u_int envid, struct Fsreq_open *rq)
 	} else {
 		if ((rq->req_omode & O_CREAT) != 0) r = file_create(path, &f);
 		if (r < 0) {
-			ipc_send(envid, r, 0, 0);
-			return;
+			ipc_send(envid, r, 0, 0); return;
 		}	
 	}
 
