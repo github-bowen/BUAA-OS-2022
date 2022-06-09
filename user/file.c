@@ -110,6 +110,10 @@ open(const char *path, int mode)
 		if (r) return r;
 	}
 	// Step 5: Return the number of file descriptor.
+	int fdnum = fd2num(fd);
+    if (mode & O_APPEND) seek(fdnum, size);
+
+
     return fdnum;
 }
 
