@@ -38,7 +38,7 @@ open(const char *path, int mode)
 	u_int va;
 	u_int i;
 	struct File *file;
-	if (mode & O_CREAT) file_create(path, &file);
+//	if (mode & O_CREAT) file_create(path, &file);
 
 	// Step 1: Alloc a new Fd, return error code when fail to alloc.
 	// Hint: Please use fd_alloc.
