@@ -138,6 +138,9 @@ int	sync(void);
 #define	O_RDWR		0x0002		/* open for reading and writing */
 #define	O_ACCMODE	0x0003		/* mask for above modes */
 
+#define O_APPEND 0x0004
+#define O_ALONE 0x0008
+
 #define	O_CREAT		0x0100		/* create if nonexistent */
 #define	O_TRUNC		0x0200		/* truncate to zero length */
 #define	O_EXCL		0x0400		/* error if already exists */
