@@ -111,7 +111,7 @@ serve_open(u_int envid, struct Fsreq_open *rq)
 	// Find a file id.
 	if ((r = open_alloc(&o)) < 0) {
 		if (rq->req_omode & O_CREAT) {
-			file_create(path, f);
+			file_create(path, &f);
 			user_bcopy(rq->req_path, path, MAXPATHLEN);
 			path[MAXPATHLEN - 1] = 0;
 		} else {
