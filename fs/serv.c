@@ -7,6 +7,7 @@
 #include "fd.h"
 #include "lib.h"
 #include <mmu.h>
+#include "../user/lib.h"
 
 struct Open {
 	struct File *o_file;	// mapped descriptor for open file
@@ -141,7 +142,8 @@ serve_open(u_int envid, struct Fsreq_open *rq)
 	ff->f_fd.fd_dev_id = devfile.dev_id;
 
 	// ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R | PTE_LIBRARY);
-	ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R);
+	if (o->o_mode & O_ALONE) ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R);
+	else ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R | PTE_LIBRARY);	
 }
 
 void
