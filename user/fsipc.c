@@ -41,7 +41,7 @@ fsipc_open(const char *path, u_int omode, struct Fd *fd)
 	u_int perm;
 	struct Fsreq_open *req;
 	struct File *file;
-	if (omode & O_CREAT) file_create(path, &file);
+//	if (omode & O_CREAT) file_create(path, &file);
 	req = (struct Fsreq_open *)fsipcbuf;
 
 	// The path is too long.
