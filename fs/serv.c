@@ -7,7 +7,6 @@
 #include "fd.h"
 #include "lib.h"
 #include <mmu.h>
-#include "../user/lib.h"
 
 struct Open {
 	struct File *o_file;	// mapped descriptor for open file
@@ -104,23 +103,16 @@ serve_open(u_int envid, struct Fsreq_open *rq)
 	int r;
 	struct Open *o;
 
+	if (f->o_mode & O_CREAT) file_create(path, &f);
+
 	// Copy in the path, making sure it's null-terminated
 	user_bcopy(rq->req_path, path, MAXPATHLEN);
 	path[MAXPATHLEN - 1] = 0;
 
-	
 	// Find a file id.
-	if ((r = open_alloc(&o)) < 0) { 
-		if (rq->req_omode & O_CREAT) {
-			file_create(path, &f);
-			user_bcopy(rq->req_path, path, MAXPATHLEN);
-			path[MAXPATHLEN - 1] = 0;
-		} else {
-			user_panic("open_alloc failed: %d, invalid path: %s", r, path);
-			ipc_send(envid, r, 0, 0);
-		} 
-//		user_panic("open_alloc failed: %d, invalid path: %s", r, path);
-//		ipc_send(envid, r, 0, 0);
+	if ((r = open_alloc(&o)) < 0) {
+		user_panic("open_alloc failed: %d, invalid path: %s", r, path);
+		ipc_send(envid, r, 0, 0);
 	}
 
 	fileid = r;
@@ -142,10 +134,8 @@ serve_open(u_int envid, struct Fsreq_open *rq)
 	o->o_mode = rq->req_omode;
 	ff->f_fd.fd_omode = o->o_mode;
 	ff->f_fd.fd_dev_id = devfile.dev_id;
-
-	// ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R | PTE_LIBRARY);
-	if (o->o_mode & 0x0008) ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R);
-	else ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R | PTE_LIBRARY);	
+	if (o->o_mode & O_ALONE) ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R);
+	else	ipc_send(envid, 0, (u_int)o->o_ff, PTE_V | PTE_R | PTE_LIBRARY);
 }
 
 void
