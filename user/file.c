@@ -28,6 +28,7 @@ struct Dev devfile = {
 //	the file descriptor onsuccess,
 //	< 0 on failure.
 /*** exercise 5.8 ***/
+/*
 int
 open(const char *path, int mode)
 {
@@ -65,7 +66,48 @@ open(const char *path, int mode)
 	int fdnum = fd2num(fd);
 	if (mode & O_APPEND) seek(fdnum, size); 
 	return fdnum;
+}*/
+
+int
+open(const char *path, int mode)
+{
+	struct Fd *fd;
+	struct Filefd *ffd;
+	u_int size, fileid;
+	int r;
+	u_int va;
+	u_int i;
+
+	// Step 1: Alloc a new Fd, return error code when fail to alloc.
+	// Hint: Please use fd_alloc.
+	r = fd_alloc(&fd);
+	if (r) return r;
+
+	// Step 2: Get the file descriptor of the file to open.
+	// Hint: Read fsipc.c, and choose a function.
+	r = fsipc_open(path, mode, fd);
+	if (r) return r;
+	ffd = fd;
+
+	// Step 3: Set the start address storing the file's content. Set size and fileid correctly.
+	// Hint: Use fd2data to get the start address.
+	va = fd2data(fd);
+	size = ffd->f_file.f_size;
+	fileid = ffd->f_fileid;
+
+	// Step 4: Alloc memory, map the file content into memory.
+	for (i = 0; i < size; i += BY2PG) {
+//		r = syscall_mem_alloc(0, va + i, PTE_R | PTE_V);
+//		if (r) return r;
+		r = fsipc_map(fileid, i, va + i);
+		if (r) return r;
+	}
+	if (mode & O_APPEND) seek(fdnum, size); 
+	// Step 5: Return the number of file descriptor.
+	return fd2num(fd);
+
 }
+
 
 // Overview:
 //	Close a file descriptor
