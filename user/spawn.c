@@ -114,56 +114,109 @@ int spawn(char *prog, char **argv)
 	int size, text_start;
 	u_int i, *blk;
 	u_int esp;
-	Elf32_Ehdr* elf;
-	Elf32_Phdr* ph;
+	Elf32_Ehdr *elf;
+	Elf32_Phdr *ph;
 	// Note 0: some variable may be not used,you can cancel them as you like
 	// Step 1: Open the file specified by `prog` (prog is the path of the program)
-	if((r=open(prog, O_RDONLY))<0){
-		user_panic("spawn ::open line 102 RDONLY wrong !\n");
+
+	char progname[32];
+	int name_len = strlen(prog);
+	strcpy(progname, prog);
+	if (name_len <= 2 || prog[name_len - 1] != 'b' || prog[name_len - 2] != '.')
+	{
+		strcat(progname, ".b");
+	}
+
+	if ((r = open(progname, O_RDONLY)) < 0)
+	{
+		// user_panic("spawn ::open line 102 RDONLY wrong !\n");
+		progname[strlen(progname) - 2] = 0;
+		writef("command [%s] is not found.\n", progname);
 		return r;
 	}
 	// Your code begins here
-	// Before Step 2 , You had better check the "target" spawned is a execute bin 
+	fd = r;
+	if ((r = readn(fd, elfbuf, sizeof(Elf32_Ehdr))) < 0)
+		return r;
+
+	elf = (Elf32_Ehdr *)elfbuf;
+
+	// Before Step 2 , You had better check the "target" spawned is a execute bin
+	if (!usr_is_elf_format(elf) || elf->e_type != 2)
+		return -E_INVAL;
+
 	// Step 2: Allocate an env (Hint: using syscall_env_alloc())
+	r = syscall_env_alloc();
+	if (r < 0)
+		return r;
+	if (r == 0)
+	{
+		env = envs + ENVX(syscall_getenvid());
+		return 0;
+	}
+	child_envid = r;
+
 	// Step 3: Using init_stack(...) to initialize the stack of the allocated env
+	init_stack(child_envid, argv, &esp);
+
 	// Step 3: Map file's content to new env's text segment
 	//        Hint 1: what is the offset of the text segment in file? try to use objdump to find out.
 	//        Hint 2: using read_map(...)
-	//		  Hint 3: Important!!! sometimes ,its not safe to use read_map ,guess why 
+	//		  Hint 3: Important!!! sometimes ,its not safe to use read_map ,guess why
 	//				  If you understand, you can achieve the "load APP" with any method
 	// Note1: Step 1 and 2 need sanity check. In other words, you should check whether
 	//       the file is opened successfully, and env is allocated successfully.
 	// Note2: You can achieve this func in any way ，remember to ensure the correctness
-	//        Maybe you can review lab3 
+	//        Maybe you can review lab3
 	// Your code ends here
+	// writef("before copy\n");
+	// size = ((struct Filefd *)num2fd(fd))->f_file.f_size;
+	text_start = elf->e_phoff;
+	size = elf->e_phentsize;
+	for (i = 0; i < elf->e_phnum; ++i)
+	{
+		if ((r = seek(fd, text_start)) < 0)
+			return r;
+		if ((r = readn(fd, elfbuf, size)) < 0)
+			return r;
+		ph = (Elf32_Phdr *)elfbuf;
+		if (ph->p_type == PT_LOAD)
+		{
+			// writef("copy %d\n", i);
+			r = usr_load_elf(fd, ph, child_envid);
+			if (r < 0)
+				return r;
+		}
+		text_start += size;
+	}
+	// writef("after copy\n");
 
 	struct Trapframe *tf;
-	writef("\n::::::::::spawn size : %x  sp : %x::::::::\n",size,esp);
+	// writef("\n::::::::::spawn size : %x  sp : %x::::::::\n", size * elf->e_phnum, esp);
 	tf = &(envs[ENVX(child_envid)].env_tf);
 	tf->pc = UTEXT;
-	tf->regs[29]=esp;
-
+	tf->regs[29] = esp;
 
 	// Share memory
 	u_int pdeno = 0;
 	u_int pteno = 0;
 	u_int pn = 0;
 	u_int va = 0;
-	for(pdeno = 0;pdeno<PDX(UTOP);pdeno++)
+	for (pdeno = 0; pdeno < PDX(UTOP); pdeno++)
 	{
-		if(!((* vpd)[pdeno]&PTE_V))
+		if (!((*vpd)[pdeno] & PTE_V))
 			continue;
-		for(pteno = 0;pteno<=PTX(~0);pteno++)
+		for (pteno = 0; pteno <= PTX(~0); pteno++)
 		{
-			pn = (pdeno<<10)+pteno;
-			if(((* vpt)[pn]&PTE_V)&&((* vpt)[pn]&PTE_LIBRARY))
+			pn = (pdeno << 10) + pteno;
+			if (((*vpt)[pn] & PTE_V) && ((*vpt)[pn] & PTE_LIBRARY))
 			{
-				va = pn*BY2PG;
+				va = pn * BY2PG;
 
-				if((r = syscall_mem_map(0,va,child_envid,va,(PTE_V|PTE_R|PTE_LIBRARY)))<0)
+				if ((r = syscall_mem_map(0, va, child_envid, va, (PTE_V | PTE_R | PTE_LIBRARY))) < 0)
 				{
 
-					writef("va: %x   child_envid: %x   \n",va,child_envid);
+					writef("va: %x   child_envid: %x   \n", va, child_envid);
 					user_panic("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 					return r;
 				}
@@ -171,14 +224,13 @@ int spawn(char *prog, char **argv)
 		}
 	}
 
-
-	if((r = syscall_set_env_status(child_envid, ENV_RUNNABLE)) < 0)
+	// writef("QAQAQAQAQAQAQAQAQ\n");
+	if ((r = syscall_set_env_status(child_envid, ENV_RUNNABLE)) < 0)
 	{
 		writef("set child runnable is wrong\n");
 		return r;
 	}
-	return child_envid;		
-
+	return child_envid;
 }
 
 int

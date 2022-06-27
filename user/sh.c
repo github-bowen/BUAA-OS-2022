@@ -77,41 +77,130 @@ gettoken(char *s, char **p1)
 }
 
 #define MAXARGS 16
-void
-runcmd(char *s)
+void runcmd(char *s)
 {
 	char *argv[MAXARGS], *t;
+	char buffer[MAXARGS][65];
+	int buf_len = 0;
+	int hang = 0;
 	int argc, c, i, r, p[2], fd, rightpipe;
 	int fdnum;
+	int pid;
+	struct Stat state;
 	rightpipe = 0;
 	gettoken(s, 0);
 again:
 	argc = 0;
-	for(;;){
+	for (;;)
+	{
 		c = gettoken(0, &t);
-		switch(c){
+		switch (c)
+		{
 		case 0:
 			goto runit;
+		case '&':
+			hang = 1;
+			break;
+		case ';':
+			if ((pid = fork()) == 0)
+			{
+				hang = 0;
+				goto runit;
+			}
+			wait(pid);
+			argc = 0;
+			hang = 0;
+			buf_len = 0;
+			rightpipe = 0;
+			do
+			{
+				close(0);
+				if ((r = opencons()) < 0)
+					user_panic("opencons: %e", r);
+			} while (r != 0);
+			dup(0, 1);
+			break;
 		case 'w':
-			if(argc == MAXARGS){
+			if (argc == MAXARGS)
+			{
 				writef("too many arguments\n");
 				exit();
 			}
 			argv[argc++] = t;
 			break;
+		case '$':
+			if (argc == MAXARGS)
+			{
+				writef("too many arguments\n");
+				exit();
+			}
+			if (syscall_get_env(t, buffer[buf_len]) < 0)
+			{
+				argv[argc++] = t;
+			}
+			else
+			{
+				argv[argc++] = buffer[buf_len++];
+			}
+			break;
 		case '<':
-			if(gettoken(0, &t) != 'w'){
+			if (gettoken(0, &t) != 'w')
+			{
 				writef("syntax error: < not followed by word\n");
 				exit();
 			}
 			// Your code here -- open t for reading,
 			// dup it onto fd 0, and then close the fd you got.
-			user_panic("< redirection not implemented");
+			r = stat(t, &state);
+			if (r < 0)
+			{
+				writef("cannot open file\n");
+				exit();
+			}
+			if (state.st_type != FTYPE_REG)
+			{
+				writef("specified path should be file\n");
+				exit();
+			}
+			fdnum = open(t, O_RDONLY);
+			dup(fdnum, 0);
+			close(fdnum);
+			// user_panic("< redirection not implemented");
 			break;
 		case '>':
+			if (gettoken(0, &t) != 'w')
+			{
+				writef("syntax error: > not followed by word\n");
+				exit();
+			}
 			// Your code here -- open t for writing,
 			// dup it onto fd 1, and then close the fd you got.
-			user_panic("> redirection not implemented");
+			r = stat(t, &state);
+			if (r >= 0 && state.st_type != FTYPE_REG)
+			{
+				writef("specified path should be file\n");
+				exit();
+			}
+			fdnum = open(t, O_WRONLY | O_CREAT);
+			dup(fdnum, 1);
+			close(fdnum);
+			// user_panic("> redirection not implemented");
+			break;
+		case 'a':
+			if (gettoken(0, &t) != 'w')
+			{
+				writef("syntax error: >> not followed by word\n");
+				exit();
+			}
+			r = stat(t, &state);
+			if (r >= 0 && state.st_type != FTYPE_REG)
+			{
+				writef("specified path should be file\n");
+				exit();
+			}
+			fdnum = open(t, O_WRONLY | O_CREAT | O_APPND);
+			dup(fdnum, 1);
+			close(fdnum);
 			break;
 		case '|':
 			// Your code here.
@@ -129,36 +218,80 @@ again:
 			//		set "rightpipe" to the child envid
 			//		goto runit, to execute this piece of the pipeline
 			//			and then wait for the right side to finish
-			user_panic("| not implemented");
+			pipe(p);
+			rightpipe = fork();
+			if (rightpipe == 0)
+			{
+				dup(p[0], 0);
+				close(p[0]);
+				close(p[1]);
+				goto again;
+			}
+			else
+			{
+				dup(p[1], 1);
+				close(p[1]);
+				close(p[0]);
+				goto runit;
+			}
+			// user_panic("| not implemented");
+			break;
+		default:
 			break;
 		}
 	}
 
 runit:
-	if(argc == 0) {
-		if (debug_) writef("EMPTY COMMAND\n");
+	if (argc == 0)
+	{
+		if (debug_)
+			writef("EMPTY COMMAND\n");
 		return;
 	}
 	argv[argc] = 0;
-	if (1) {
+	if (debug_)
+	{
 		writef("[%08x] SPAWN:", env->env_id);
-		for (i=0; argv[i]; i++)
+		for (i = 0; argv[i]; i++)
 			writef(" %s", argv[i]);
 		writef("\n");
 	}
-
-	if ((r = spawn(argv[0], argv)) < 0)
-		writef("spawn %s: %e\n", argv[0], r);
-	close_all();
-	if (r >= 0) {
-		if (debug_) writef("[%08x] WAIT %s %08x\n", env->env_id, argv[0], r);
-		wait(r);
+	if (call_inner_instr(argc, argv))
+	{
+		exit();
 	}
-	if (rightpipe) {
-		if (debug_) writef("[%08x] WAIT right-pipe %08x\n", env->env_id, rightpipe);
+	if ((r = spawn(argv[0], argv)) < 0)
+	{
+		exit();
+	}
+	close_all();
+	if (r > 0)
+	{
+		if (debug_)
+			writef("[%08x] WAIT %s %08x\n", env->env_id, argv[0], r);
+		if (!hang)
+			wait(r);
+		else
+		{
+			writef("\x1b[33m[%08x]\x1b[0m\t", r);
+			for (i = 0; i < argc; ++i)
+				writef("%s ", argv[i]);
+			writef("\n");
+			pid = fork();
+			if (pid == 0)
+			{
+				wait(r);
+				writef("\x1b[33m[%08x]\x1b[35m\tDone\x1b[0m\n", r);
+				exit();
+			}
+		}
+	}
+	if (rightpipe)
+	{
+		if (debug_)
+			writef("[%08x] WAIT right-pipe %08x\n", env->env_id, rightpipe);
 		wait(rightpipe);
 	}
-
 	exit();
 }
 
