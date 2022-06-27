@@ -6,7 +6,7 @@
 #define debug 0
 #define TMPPAGE		(BY2PG)
 #define TMPPAGETOP	(TMPPAGE+BY2PG)
-
+extern void __asm_pgfault_handler(void);
 int
 init_stack(u_int child, char **argv, u_int *init_esp)
 {
@@ -98,10 +98,62 @@ int usr_is_elf_format(u_char *binary){
     return 0;
 }
 
+#define BUFPAGE 0x40000000
+
 int 
 usr_load_elf(int fd , Elf32_Phdr *ph, int child_envid){
 	//Hint: maybe this function is useful 
 	//      If you want to use this func, you should fill it ,it's not hard
+	u_int va = ph->p_vaddr;
+	u_int sgsize = ph->p_memsz;
+	u_int bin_size = ph->p_filesz;
+	u_int file_offset = ph->p_offset;
+	u_char buf[BY2PG];
+	int i = 0, r, size;
+	
+	u_int offset = va + i - ROUNDDOWN(va + i, BY2PG);
+	if (offset) {
+		if ((r = syscall_mem_alloc(child_envid, va + i, PTE_V | PTE_R)) < 0)
+			return r;
+		size = MIN(bin_size - i, BY2PG - offset);
+		if ((r = seek(fd, file_offset + i)) < 0) return r;
+		if ((r = readn(fd, buf, size)) < 0) return r;
+		if ((r = syscall_mem_map(child_envid, va + i, 0, BUFPAGE, PTE_V | PTE_R)) < 0)
+			return r;
+		user_bcopy((void*)buf, (void*)(BUFPAGE + offset), size);
+		if ((r = syscall_mem_unmap(0, BUFPAGE)) < 0) return r;
+		i += size;
+	}
+	while (i < bin_size) {
+		size = MIN(BY2PG, bin_size - i);
+		if ((r = syscall_mem_alloc(child_envid, va + i, PTE_V | PTE_R)) < 0)
+			return r;
+		if ((r = seek(fd, file_offset + i)) < 0) return r;
+		if ((r = readn(fd, buf, size)) < 0) return r;
+		if ((r = syscall_mem_map(child_envid, va + i, 0, BUFPAGE, PTE_V | PTE_R)))
+			return r;
+		user_bcopy((void*)buf, (void*)BUFPAGE, size);
+		if ((r = syscall_mem_unmap(0, BUFPAGE)) < 0) return r;
+		i += size;
+	}
+
+	offset = va + i - ROUNDDOWN(va + i, BY2PG);
+	if (offset)
+	{
+		size = MIN(sgsize - i, BY2PG - offset);
+		if ((r = syscall_mem_map(child_envid, va + i, 0, BUFPAGE, PTE_V | PTE_R)) < 0)
+			return r;
+		user_bzero((void*)(BUFPAGE + offset), size);
+		if ((r = syscall_mem_unmap(0, BUFPAGE)) < 0) return r;
+		i += size;
+	}
+	while (i < sgsize)
+	{
+		size = MIN(BY2PG, sgsize - i);
+		if ((r = syscall_mem_alloc(child_envid, va + i, PTE_V | PTE_R)) < 0)
+			return r;
+		i += size;
+	}
 	return 0;
 }
 
@@ -111,46 +163,38 @@ int spawn(char *prog, char **argv)
 	int r;
 	int fd;
 	u_int child_envid;
-	int size, text_start;
+	int size, text_start, count;
 	u_int i, *blk;
 	u_int esp;
 	Elf32_Ehdr* elf;
 	Elf32_Phdr* ph;
 	// Note 0: some variable may be not used,you can cancel them as you like
 	// Step 1: Open the file specified by `prog` (prog is the path of the program)
-	
-    // writef("DEBUG::open file %s\n", prog);
-    if((r=open(prog, O_RDONLY))<0){
-        //writef("DEBUG::open file %s\n", prog);
-		user_panic("spawn ::open line 102 RDONLY wrong!\n");
+	if((r=open(prog, O_RDONLY))<0){
+		user_panic("spawn ::open line 102 RDONLY wrong !\n");
 		return r;
 	}
 	// Your code begins here
-	// Before Step 2 , You had better check the "target" spawned is a execute bin
-    fd = r;
-    if((r= read(fd, elfbuf, 512)) < 0) {
-        return r;
-    }
-    if (strlen(elfbuf)<4 || !usr_is_elf_format(elfbuf)) {
-        return -E_INVAL;
-    }
-    elf = (Elf32_Ehdr*)elf;
-    if(elf->e_type != 2) {
-        return -E_INVAL;
-    }
+	// Before Step 2 , You had better check the "target" spawned is a execute bin 
+//	writef("before step2\n");
+	fd = r;
+	if ((r = readn(fd, elfbuf, sizeof(Elf32_Ehdr))) < 0) return r;
+//	elfbuf = (u_char *)fd2data(num2fd(fd));
+	elf = (Elf32_Ehdr *)elfbuf;
+	if (!usr_is_elf_format((u_char *)elf) || elf->e_type != 2)
+		user_panic("Not ELF or EXEC!\n");	
+	size = elf->e_phentsize;
+	text_start = elf->e_phoff;
+	count = elf->e_phnum;
 
 	// Step 2: Allocate an env (Hint: using syscall_env_alloc())
-    if ((r=syscall_env_alloc()) < 0) {
-        return r;
-    }
-    else if (r == 0) {
-        return 0;
-    }
-    child_envid = r;
+//	writef("step2\n");
+	if ((child_envid = syscall_env_alloc()) < 0) 
+		user_panic("alloc env failed!\n");
 
 	// Step 3: Using init_stack(...) to initialize the stack of the allocated env
-    r = init_stack(r, argv, &esp);
-    if (r<0) return r;
+//	writef("step3-1\n");
+	init_stack(child_envid, argv, &esp);
 
 	// Step 3: Map file's content to new env's text segment
 	//        Hint 1: what is the offset of the text segment in file? try to use objdump to find out.
@@ -161,27 +205,46 @@ int spawn(char *prog, char **argv)
 	//       the file is opened successfully, and env is allocated successfully.
 	// Note2: You can achieve this func in any way ，remember to ensure the correctness
 	//        Maybe you can review lab3 
+//	writef("step3-2\n");
+	for (i = 0; i < count; i++) {
+		if ((r = seek(fd, text_start)) < 0) user_panic("seek failed!\n");
+		if ((r = readn(fd, elfbuf, size)) < 0) user_panic("readn failed!\n");
+		ph = (Elf32_Phdr *)elfbuf;
+		if (ph->p_type == PT_LOAD) {
+			if ((r = usr_load_elf(fd, ph, child_envid)) < 0)
+				user_panic("load elf failed!\n");
+		}
+		text_start += size;
+	}
+	/*while (count--) {
+		ph = (Elf32_Phdr *)text_start;
+		if (ph->p_type == PT_LOAD) {
+			if ((r = usr_load_elf(fd, ph, child_envid)) < 0)
+                user_panic("load elf failed!\n");
+		}
+		text_start += size;
+	}
+	syscall_set_pgfault_handler(child_envid, __asm_pgfault_handler, UXSTACKTOP);
+	*/
+	/*size = ((struct Filefd*)num2fd(fd))->f_file.f_size;
+	for(i = 0x1000; i < size; i += BY2PG) {
+		if((r = read_map(fd, i, &blk)) < 0)	{
+			writef("mapping text region is wrong\n");
+			return r;
+		}
+		syscall_mem_map(0, blk, child_envid, UTEXT + text_start, PTE_V |PTE_R);
+		text_start += BY2PG;
+	}*/
 	// Your code ends here
-    struct Stat binaryStat;
-    r = fstat(fd, &binaryStat);
-    if (r<0) return r;
-    u_char* binary;
-    r = read_map(fd, 0, &binary);
-    if (r<0) return r;
-    syscall_load_icode(child_envid, binary, binaryStat.st_size);
-    size = binaryStat.st_size;
-    close(fd);
+//	writef("code end.\n");
 
 	struct Trapframe *tf;
 	writef("\n::::::::::spawn size : %x  sp : %x::::::::\n",size,esp);
 	tf = &(envs[ENVX(child_envid)].env_tf);
 	tf->pc = UTEXT;
 	tf->regs[29]=esp;
-    
-    /*if (syscall_set_pgfault_handler(child_envid, __asm_pgfault_handler, UXSTACKTOP)<0) {
-        //writef("cannot set pagefault_handler\n");
-    }*/
 
+//	writef("share memory...\n");
 	// Share memory
 	u_int pdeno = 0;
 	u_int pteno = 0;
@@ -191,6 +254,7 @@ int spawn(char *prog, char **argv)
 	{
 		if(!((* vpd)[pdeno]&PTE_V))
 			continue;
+	//	writef("point1\n");
 		for(pteno = 0;pteno<=PTX(~0);pteno++)
 		{
 			pn = (pdeno<<10)+pteno;
@@ -209,12 +273,13 @@ int spawn(char *prog, char **argv)
 		}
 	}
 
-
+//	writef("point2\n");
 	if((r = syscall_set_env_status(child_envid, ENV_RUNNABLE)) < 0)
 	{
 		writef("set child runnable is wrong\n");
 		return r;
 	}
+//	writef("point3\n");
 	return child_envid;		
 
 }

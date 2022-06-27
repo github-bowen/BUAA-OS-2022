@@ -104,34 +104,24 @@ again:
 				writef("syntax error: < not followed by word\n");
 				exit();
 			}
-			// Your code here -- open t for readinig,
-            fd = open(t, O_RDONLY);
-            if (r<0) {
-                writef("case '<' : open t failed\n");
-                exit();
-            }
-
+			// Your code here -- open t for reading,
 			// dup it onto fd 0, and then close the fd you got.
-            dup(fd, 0);
-            close(fd);
-			// user_panic("< redirection not implemented");
+			if ((fd = open(t, O_RDONLY)) < 0) user_panic("< open failed!\n");
+			dup(fd, 0);
+			close(fd);
+//			user_panic("< redirection not implemented");
 			break;
 		case '>':
 			if(gettoken(0, &t) != 'w'){
-				writef("syntax error: < not followed by word\n");
-				exit();
-			}
-			// Your code here -- open t for writing,
-            fd = open(t, O_WRONLY);
-            if (r<0) {
-                writef("case '>' : open t failed\n");
+                writef("syntax error: > not followed by word\n");
                 exit();
             }
-
+			// Your code here -- open t for writing,
 			// dup it onto fd 1, and then close the fd you got.
-			dup(fd, 1);
+			if ((fd = open(t, O_WRONLY)) < 0) user_panic("> open failed!\n");
+            dup(fd, 1);
             close(fd);
-            //user_panic("> redirection not implemented");
+//			user_panic("> redirection not implemented");
 			break;
 		case '|':
 			// Your code here.
@@ -149,29 +139,19 @@ again:
 			//		set "rightpipe" to the child envid
 			//		goto runit, to execute this piece of the pipeline
 			//			and then wait for the right side to finish
-		    r = pipe(p);
-            if (r < 0) {
-                user_panic("BUG: in runcmd: pipe: %e\n", r);
-            }
-            r = fork();
-            if (r<0) {
-                writef("| not implemented (fork)\n");
-                exit();
-            }
-            if (r==0) { //this is child.
-                dup(p[0], 0); // p[0] becomes stdin.
-                close(p[0]);
-                close(p[1]);
-                goto again;
-            }
-            if (r > 0) { //this is parent.
-                dup(p[1], 1);// p[1] becomes stdout.
-                close(p[1]);
-                close(p[0]);
-                rightpipe = r;
-                goto runit;
-            }
-            //user_panic("| not implemented");
+			pipe(p);
+			if (!(rightpipe = fork())) {
+				dup(p[0], 0);
+				close(p[0]);
+				close(p[1]);
+				goto again;
+			} else {
+				dup(p[1], 1);
+				close(p[1]);
+				close(p[0]);
+				goto runit;
+			}
+//			user_panic("| not implemented");
 			break;
 		}
 	}
@@ -248,11 +228,11 @@ umain(int argc, char **argv)
 	int r, interactive, echocmds;
 	interactive = '?';
 	echocmds = 0;
-	writef("\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
+/*	writef("\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 	writef("::                                                         ::\n");
 	writef("::              Super Shell  V0.0.0_1                      ::\n");
 	writef("::                                                         ::\n");
-	writef(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
+	writef(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");*/
 	ARGBEGIN{
 	case 'd':
 		debug_++;
