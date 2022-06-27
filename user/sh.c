@@ -1,7 +1,7 @@
 #include "lib.h"
 #include <args.h>
 
-int debug = 0;
+int debug_ = 0;
 
 //
 // get the next token from string s
@@ -24,11 +24,11 @@ _gettoken(char *s, char **p1, char **p2)
 	int t;
 
 	if (s == 0) {
-		//if (debug > 1) writef("GETTOKEN NULL\n");
+		//if (debug_ > 1) writef("GETTOKEN NULL\n");
 		return 0;
 	}
 
-	//if (debug > 1) writef("GETTOKEN: %s\n", s);
+	//if (debug_ > 1) writef("GETTOKEN: %s\n", s);
 
 	*p1 = 0;
 	*p2 = 0;
@@ -36,7 +36,7 @@ _gettoken(char *s, char **p1, char **p2)
 	while(strchr(WHITESPACE, *s))
 		*s++ = 0;
 	if(*s == 0) {
-	//	if (debug > 1) writef("EOL\n");
+	//	if (debug_ > 1) writef("EOL\n");
 		return 0;
 	}
 	if(strchr(SYMBOLS, *s)){
@@ -44,14 +44,14 @@ _gettoken(char *s, char **p1, char **p2)
 		*p1 = s;
 		*s++ = 0;
 		*p2 = s;
-//		if (debug > 1) writef("TOK %c\n", t);
+//		if (debug_ > 1) writef("TOK %c\n", t);
 		return t;
 	}
 	*p1 = s;
 	while(*s && !strchr(WHITESPACE SYMBOLS, *s))
 		s++;
 	*p2 = s;
-	if (debug > 1) {
+	if (debug_ > 1) {
 		t = **p2;
 		**p2 = 0;
 //		writef("WORD: %s\n", *p1);
@@ -104,16 +104,17 @@ again:
 				writef("syntax error: < not followed by word\n");
 				exit();
 			}
-			// Your code here -- open t for reading,
+			// Your code here -- open t for readinig,
+            fd = open(t, O_RDONLY);
+            if (r<0) {
+                writef("case '<' : open t failed\n");
+                exit();
+            }
+
 			// dup it onto fd 0, and then close the fd you got.
-			r = open(t, O_RDONLY);
-			if (r < 0)
-			{
-				user_panic("< open file failed!");
-			}
-			fd = r;
-			dup(fd, 0);
-			close(fd);
+            dup(fd, 0);
+            close(fd);
+			// user_panic("< redirection not implemented");
 			break;
 		case '>':
 			if(gettoken(0, &t) != 'w'){
@@ -121,15 +122,16 @@ again:
 				exit();
 			}
 			// Your code here -- open t for writing,
+            fd = open(t, O_WRONLY);
+            if (r<0) {
+                writef("case '>' : open t failed\n");
+                exit();
+            }
+
 			// dup it onto fd 1, and then close the fd you got.
-			r = open(t, O_WRONLY);
-			if (r < 0)
-			{
-				user_panic("> open file failed!");
-			}
-			fd = r;
 			dup(fd, 1);
-			close(fd);
+            close(fd);
+            //user_panic("> redirection not implemented");
 			break;
 		case '|':
 			// Your code here.
@@ -147,28 +149,36 @@ again:
 			//		set "rightpipe" to the child envid
 			//		goto runit, to execute this piece of the pipeline
 			//			and then wait for the right side to finish
-			pipe(p);
-			if ((rightpipe = fork()) == 0)
-			{
-				dup(p[0], 0);
-				close(p[0]);
-				close(p[1]);
-				goto again;
-			}
-			else
-			{
-				dup(p[1], 1);
-				close(p[1]);
-				close(p[0]);
-				goto runit;
-			}
+		    r = pipe(p);
+            if (r < 0) {
+                user_panic("BUG: in runcmd: pipe: %e\n", r);
+            }
+            r = fork();
+            if (r<0) {
+                writef("| not implemented (fork)\n");
+                exit();
+            }
+            if (r==0) { //this is child.
+                dup(p[0], 0); // p[0] becomes stdin.
+                close(p[0]);
+                close(p[1]);
+                goto again;
+            }
+            if (r > 0) { //this is parent.
+                dup(p[1], 1);// p[1] becomes stdout.
+                close(p[1]);
+                close(p[0]);
+                rightpipe = r;
+                goto runit;
+            }
+            //user_panic("| not implemented");
 			break;
 		}
 	}
 
 runit:
 	if(argc == 0) {
-		if (debug) writef("EMPTY COMMAND\n");
+		if (debug_) writef("EMPTY COMMAND\n");
 		return;
 	}
 	argv[argc] = 0;
@@ -183,11 +193,11 @@ runit:
 		writef("spawn %s: %e\n", argv[0], r);
 	close_all();
 	if (r >= 0) {
-		if (debug) writef("[%08x] WAIT %s %08x\n", env->env_id, argv[0], r);
+		if (debug_) writef("[%08x] WAIT %s %08x\n", env->env_id, argv[0], r);
 		wait(r);
 	}
 	if (rightpipe) {
-		if (debug) writef("[%08x] WAIT right-pipe %08x\n", env->env_id, rightpipe);
+		if (debug_) writef("[%08x] WAIT right-pipe %08x\n", env->env_id, rightpipe);
 		wait(rightpipe);
 	}
 
@@ -245,7 +255,7 @@ umain(int argc, char **argv)
 	writef(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 	ARGBEGIN{
 	case 'd':
-		debug++;
+		debug_++;
 		break;
 	case 'i':
 		interactive = 1;
@@ -286,4 +296,3 @@ umain(int argc, char **argv)
 			wait(r);
 	}
 }
-
