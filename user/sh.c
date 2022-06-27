@@ -1,7 +1,7 @@
 #include "lib.h"
 #include <args.h>
 
-int debug_ = 0;
+int debug = 0;
 
 //
 // get the next token from string s
@@ -24,11 +24,11 @@ _gettoken(char *s, char **p1, char **p2)
 	int t;
 
 	if (s == 0) {
-		//if (debug_ > 1) writef("GETTOKEN NULL\n");
+		//if (debug > 1) writef("GETTOKEN NULL\n");
 		return 0;
 	}
 
-	//if (debug_ > 1) writef("GETTOKEN: %s\n", s);
+	//if (debug > 1) writef("GETTOKEN: %s\n", s);
 
 	*p1 = 0;
 	*p2 = 0;
@@ -36,7 +36,7 @@ _gettoken(char *s, char **p1, char **p2)
 	while(strchr(WHITESPACE, *s))
 		*s++ = 0;
 	if(*s == 0) {
-	//	if (debug_ > 1) writef("EOL\n");
+	//	if (debug > 1) writef("EOL\n");
 		return 0;
 	}
 	if(strchr(SYMBOLS, *s)){
@@ -44,14 +44,14 @@ _gettoken(char *s, char **p1, char **p2)
 		*p1 = s;
 		*s++ = 0;
 		*p2 = s;
-//		if (debug_ > 1) writef("TOK %c\n", t);
+//		if (debug > 1) writef("TOK %c\n", t);
 		return t;
 	}
 	*p1 = s;
 	while(*s && !strchr(WHITESPACE SYMBOLS, *s))
 		s++;
 	*p2 = s;
-	if (debug_ > 1) {
+	if (debug > 1) {
 		t = **p2;
 		**p2 = 0;
 //		writef("WORD: %s\n", *p1);
@@ -77,130 +77,59 @@ gettoken(char *s, char **p1)
 }
 
 #define MAXARGS 16
-void runcmd(char *s)
+void
+runcmd(char *s)
 {
 	char *argv[MAXARGS], *t;
-	char buffer[MAXARGS][65];
-	int buf_len = 0;
-	int hang = 0;
 	int argc, c, i, r, p[2], fd, rightpipe;
 	int fdnum;
-	int pid;
-	struct Stat state;
 	rightpipe = 0;
 	gettoken(s, 0);
 again:
 	argc = 0;
-	for (;;)
-	{
+	for(;;){
 		c = gettoken(0, &t);
-		switch (c)
-		{
+		switch(c){
 		case 0:
 			goto runit;
-		case '&':
-			hang = 1;
-			break;
-		case ';':
-			if ((pid = fork()) == 0)
-			{
-				hang = 0;
-				goto runit;
-			}
-			wait(pid);
-			argc = 0;
-			hang = 0;
-			buf_len = 0;
-			rightpipe = 0;
-			do
-			{
-				close(0);
-				if ((r = opencons()) < 0)
-					user_panic("opencons: %e", r);
-			} while (r != 0);
-			dup(0, 1);
-			break;
 		case 'w':
-			if (argc == MAXARGS)
-			{
+			if(argc == MAXARGS){
 				writef("too many arguments\n");
 				exit();
 			}
 			argv[argc++] = t;
 			break;
-		case '$':
-			if (argc == MAXARGS)
-			{
-				writef("too many arguments\n");
-				exit();
-			}
-			if (syscall_get_env(t, buffer[buf_len]) < 0)
-			{
-				argv[argc++] = t;
-			}
-			else
-			{
-				argv[argc++] = buffer[buf_len++];
-			}
-			break;
 		case '<':
-			if (gettoken(0, &t) != 'w')
-			{
+			if(gettoken(0, &t) != 'w'){
 				writef("syntax error: < not followed by word\n");
 				exit();
 			}
 			// Your code here -- open t for reading,
 			// dup it onto fd 0, and then close the fd you got.
-			r = stat(t, &state);
+			r = open(t, O_RDONLY);
 			if (r < 0)
 			{
-				writef("cannot open file\n");
-				exit();
+				user_panic("< open file failed!");
 			}
-			if (state.st_type != FTYPE_REG)
-			{
-				writef("specified path should be file\n");
-				exit();
-			}
-			fdnum = open(t, O_RDONLY);
-			dup(fdnum, 0);
-			close(fdnum);
-			// user_panic("< redirection not implemented");
+			fd = r;
+			dup(fd, 0);
+			close(fd);
 			break;
 		case '>':
-			if (gettoken(0, &t) != 'w')
-			{
-				writef("syntax error: > not followed by word\n");
+			if(gettoken(0, &t) != 'w'){
+				writef("syntax error: < not followed by word\n");
 				exit();
 			}
 			// Your code here -- open t for writing,
 			// dup it onto fd 1, and then close the fd you got.
-			r = stat(t, &state);
-			if (r >= 0 && state.st_type != FTYPE_REG)
+			r = open(t, O_WRONLY);
+			if (r < 0)
 			{
-				writef("specified path should be file\n");
-				exit();
+				user_panic("> open file failed!");
 			}
-			fdnum = open(t, O_WRONLY | O_CREAT);
-			dup(fdnum, 1);
-			close(fdnum);
-			// user_panic("> redirection not implemented");
-			break;
-		case 'a':
-			if (gettoken(0, &t) != 'w')
-			{
-				writef("syntax error: >> not followed by word\n");
-				exit();
-			}
-			r = stat(t, &state);
-			if (r >= 0 && state.st_type != FTYPE_REG)
-			{
-				writef("specified path should be file\n");
-				exit();
-			}
-			fdnum = open(t, O_WRONLY | O_CREAT | O_APPND);
-			dup(fdnum, 1);
-			close(fdnum);
+			fd = r;
+			dup(fd, 1);
+			close(fd);
 			break;
 		case '|':
 			// Your code here.
@@ -219,8 +148,7 @@ again:
 			//		goto runit, to execute this piece of the pipeline
 			//			and then wait for the right side to finish
 			pipe(p);
-			rightpipe = fork();
-			if (rightpipe == 0)
+			if ((rightpipe = fork()) == 0)
 			{
 				dup(p[0], 0);
 				close(p[0]);
@@ -234,64 +162,35 @@ again:
 				close(p[0]);
 				goto runit;
 			}
-			// user_panic("| not implemented");
-			break;
-		default:
 			break;
 		}
 	}
 
 runit:
-	if (argc == 0)
-	{
-		if (debug_)
-			writef("EMPTY COMMAND\n");
+	if(argc == 0) {
+		if (debug) writef("EMPTY COMMAND\n");
 		return;
 	}
 	argv[argc] = 0;
-	if (debug_)
-	{
+	if (1) {
 		writef("[%08x] SPAWN:", env->env_id);
-		for (i = 0; argv[i]; i++)
+		for (i=0; argv[i]; i++)
 			writef(" %s", argv[i]);
 		writef("\n");
 	}
-	if (call_inner_instr(argc, argv))
-	{
-		exit();
-	}
+
 	if ((r = spawn(argv[0], argv)) < 0)
-	{
-		exit();
-	}
+		writef("spawn %s: %e\n", argv[0], r);
 	close_all();
-	if (r > 0)
-	{
-		if (debug_)
-			writef("[%08x] WAIT %s %08x\n", env->env_id, argv[0], r);
-		if (!hang)
-			wait(r);
-		else
-		{
-			writef("\x1b[33m[%08x]\x1b[0m\t", r);
-			for (i = 0; i < argc; ++i)
-				writef("%s ", argv[i]);
-			writef("\n");
-			pid = fork();
-			if (pid == 0)
-			{
-				wait(r);
-				writef("\x1b[33m[%08x]\x1b[35m\tDone\x1b[0m\n", r);
-				exit();
-			}
-		}
+	if (r >= 0) {
+		if (debug) writef("[%08x] WAIT %s %08x\n", env->env_id, argv[0], r);
+		wait(r);
 	}
-	if (rightpipe)
-	{
-		if (debug_)
-			writef("[%08x] WAIT right-pipe %08x\n", env->env_id, rightpipe);
+	if (rightpipe) {
+		if (debug) writef("[%08x] WAIT right-pipe %08x\n", env->env_id, rightpipe);
 		wait(rightpipe);
 	}
+
 	exit();
 }
 
@@ -346,7 +245,7 @@ umain(int argc, char **argv)
 	writef(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 	ARGBEGIN{
 	case 'd':
-		debug_++;
+		debug++;
 		break;
 	case 'i':
 		interactive = 1;
