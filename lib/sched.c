@@ -47,5 +47,6 @@ void sched_yield(void)
 		} while (cur == NULL || cur->env_status != ENV_RUNNABLE);
 	}
 	--count;
+	cur->env_runs++;
 	env_run(cur);
 }
